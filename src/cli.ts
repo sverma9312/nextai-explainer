@@ -13,6 +13,7 @@ export async function runPipeline(): Promise<void> {
   const args = process.argv.slice(2);
   const isDryRun = args.includes('--dry-run');
   const isForce = args.includes('--force');
+  const isNoPublish = args.includes('--no-publish');
   const topicIdx = args.indexOf('--topic');
   const targetTopicId = topicIdx !== -1 && args[topicIdx + 1] ? args[topicIdx + 1] : undefined;
 
@@ -79,7 +80,18 @@ export async function runPipeline(): Promise<void> {
 
   // Step 4: Render MP4 via Remotion
   const outDir = path.resolve(process.cwd(), 'out');
-  const outVideoPath = path.resolve(outDir, `${topic.id}.mp4`);
+  let outVideoPath = path.resolve(outDir, `${topic.id}.mp4`);
+
+  // Check if target file is locked by a media player or other process
+  try {
+    const handle = await fsp.open(outVideoPath, 'r+');
+    await handle.close();
+  } catch (err: any) {
+    if (err && (err.code === 'EBUSY' || err.code === 'EPERM')) {
+      outVideoPath = path.resolve(outDir, `${topic.id}_latest.mp4`);
+      console.warn(`⚠️ Target video file is open in an external application. Rendering to: ${outVideoPath}`);
+    }
+  }
 
   console.log('🎬 [4/5] Rendering 1080x1920 30FPS MP4 via Remotion headless engine...');
   let lastPct = 0;
@@ -95,6 +107,16 @@ export async function runPipeline(): Promise<void> {
   });
 
   // Step 5: Multi-Platform Publishing (YouTube Shorts & Instagram Reels)
+  if (isNoPublish) {
+    console.log('⏩ [5/5] Skipping social distribution (--no-publish passed).');
+    console.log('\n====================================================');
+    console.log('🎉 Explainer Video Rendered Successfully!');
+    console.log(`   MP4 Video: ${outVideoPath}`);
+    console.log(`   Title:     ${script.videoTitle}`);
+    console.log('====================================================\n');
+    return;
+  }
+
   console.log('🚀 [5/5] Multi-platform social publishing...');
   const publishRequest = {
     videoPath: outVideoPath,

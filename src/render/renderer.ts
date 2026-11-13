@@ -46,20 +46,35 @@ export async function renderVideoToDisk(options: RenderOptions): Promise<string>
 
   console.log(`🎥 Rendering MP4 (${composition.width}x${composition.height} @ ${composition.fps}fps, ${inputProps.durationInFrames} frames)...`);
 
-  await renderMedia({
-    composition: {
-      ...composition,
-      durationInFrames: inputProps.durationInFrames,
-    },
-    serveUrl: bundleLocation,
-    codec: 'h264',
-    outputLocation: outputPath,
-    inputProps,
-    onProgress: ({ progress }) => {
-      const pct = Math.round(progress * 100);
-      if (onProgress) onProgress(pct);
-    },
-  });
+  try {
+    await renderMedia({
+      composition: {
+        ...composition,
+        durationInFrames: inputProps.durationInFrames,
+      },
+      serveUrl: bundleLocation,
+      codec: 'h264',
+      outputLocation: outputPath,
+      inputProps,
+      onProgress: ({ progress }) => {
+        const pct = Math.round(progress * 100);
+        if (onProgress) onProgress(pct);
+      },
+    });
+  } catch (err: any) {
+    if (err && (err.code === 'EPERM' || err.code === 'EBUSY' || err.code === 'EACCES') && err.path) {
+      const fallbackPath = outputPath.replace(/\.mp4$/, `_latest.mp4`);
+      console.warn(`\n⚠️ Destination file "${outputPath}" is locked by another application (e.g. VLC).`);
+      console.log(`   Saving output to: ${fallbackPath}`);
+      await fsp.copyFile(err.path, fallbackPath);
+      try {
+        await fsp.unlink(err.path);
+      } catch {}
+      console.log(`✅ Explainer MP4 saved successfully: ${fallbackPath}`);
+      return fallbackPath;
+    }
+    throw err;
+  }
 
   console.log(`✅ Explainer MP4 rendered successfully: ${outputPath}`);
   return outputPath;

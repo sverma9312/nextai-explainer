@@ -4,7 +4,6 @@ import type { ExplainerCompositionProps } from '../schema/types';
 import { Background } from './components/Background';
 import { MasterStoryStage } from './components/story/MasterStoryStage';
 import { KineticCaptions } from './components/KineticCaptions';
-import { Waveform } from './components/Waveform';
 
 export const ExplainerComposition: React.FC<ExplainerCompositionProps> = ({
   script,
@@ -84,13 +83,10 @@ export const ExplainerComposition: React.FC<ExplainerCompositionProps> = ({
       {/* 3. Master Visual Story Stage (5 Scenes with Real Icons & Animations) */}
       <MasterStoryStage script={script} />
 
-      {/* 4. Synchronized Kinetic Captions */}
+      {/* 4. Synchronized Tech Captions (Clean Dock-Style, No Equalizer Bars) */}
       <KineticCaptions subtitles={subtitles} />
 
-      {/* 5. Audio Waveform */}
-      <Waveform />
-
-      {/* 6. Voiceover Audio */}
+      {/* 5. Voiceover Audio */}
       {audioSrc && <Audio src={audioSrc} />}
     </div>
   );
