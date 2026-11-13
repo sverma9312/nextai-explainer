@@ -38,12 +38,18 @@ export async function runPipeline(): Promise<void> {
   console.log(`   Hook:    "${script.hook}"`);
   console.log(`   Words:   ${script.fullSpokenText.split(/\s+/).length} words\n`);
 
-  // Step 3: Synthesize voiceover & subtitles via Edge-TTS
+  // Step 3: Synthesize voiceover & subtitles via Chunked Edge-TTS
   const buildDir = path.resolve(process.cwd(), 'build');
   const outAudioPath = path.resolve(buildDir, `${topic.id}_audio.mp3`);
 
-  console.log('🎙️ [3/5] Generating neural voiceover & word timestamps (Edge-TTS)...');
-  const ttsResult = await synthesizeVoiceover(script.fullSpokenText, outAudioPath);
+  console.log('🎙️ [3/5] Generating neural voiceover & word timestamps (Chunked Edge-TTS)...');
+  const scriptChunks = [
+    script.hook,
+    ...script.steps.map((s) => s.narration),
+    script.takeaway,
+  ].filter(Boolean);
+
+  const ttsResult = await synthesizeVoiceover(scriptChunks, outAudioPath);
   console.log(`   Duration: ${ttsResult.durationSeconds}s`);
   console.log(`   Words:    ${ttsResult.subtitles.length} timestamped tokens captured\n`);
 
