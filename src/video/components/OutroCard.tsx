@@ -104,3 +104,4 @@ export const OutroCard: React.FC = () => {
     </div>
   );
 };
+

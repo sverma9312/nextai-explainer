@@ -78,3 +78,4 @@ export const ExplainerComposition: React.FC<ExplainerCompositionProps> = ({
     </div>
   );
 };
+

@@ -80,3 +80,4 @@ export const KineticCaptions: React.FC<KineticCaptionsProps> = ({ subtitles }) =
     </div>
   );
 };
+

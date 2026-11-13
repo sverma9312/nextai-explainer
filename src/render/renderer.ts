@@ -54,3 +54,4 @@ export async function renderVideoToDisk(options: RenderOptions): Promise<string>
   console.log(`✅ Explainer MP4 rendered successfully: ${outputPath}`);
   return outputPath;
 }
+

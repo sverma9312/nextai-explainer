@@ -308,3 +308,4 @@ export const TOPICS: ExplainerTopic[] = [
     takeaway: 'Eliminating JVM garbage collection with C++ thread-per-core architecture reduced Discord message latency by 400x.',
   },
 ];
+

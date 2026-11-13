@@ -89,3 +89,4 @@ pnpm test:catalog
 ## 📄 License
 
 MIT © 2026 [NextAI Apps Studio](https://nextai-apps.com/)
+

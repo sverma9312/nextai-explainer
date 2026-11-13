@@ -140,3 +140,4 @@ runPipeline().catch((err) => {
   console.error('\n❌ Pipeline execution failed:', err);
   process.exit(1);
 });
+

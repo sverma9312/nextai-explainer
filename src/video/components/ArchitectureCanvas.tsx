@@ -260,3 +260,4 @@ export const ArchitectureCanvas: React.FC<ArchitectureCanvasProps> = ({
     </div>
   );
 };
+

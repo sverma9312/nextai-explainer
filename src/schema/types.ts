@@ -96,3 +96,4 @@ export interface PostedExplainerRecord {
   youtubeUrl?: string;
   instagramUrl?: string;
 }
+

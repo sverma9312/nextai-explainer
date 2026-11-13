@@ -34,3 +34,4 @@ export async function selectTopicForVideo(options: TopicSelectionOptions = {}): 
 
   return candidates[0];
 }
+
