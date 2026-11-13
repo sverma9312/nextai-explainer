@@ -46,7 +46,7 @@ Step 2: ${topic.steps[1].stepTitle} - ${topic.steps[1].narration}
 Step 3: ${topic.steps[2].stepTitle} - ${topic.steps[2].narration}
 Takeaway: ${topic.takeaway}`;
 
-    const candidateModels = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
+    const candidateModels = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
     let response: any = null;
     let lastError: any = null;
 
