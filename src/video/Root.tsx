@@ -30,7 +30,7 @@ const defaultProps: ExplainerCompositionProps = {
     { text: 'in', start: 2.0, end: 2.3 },
     { text: '100ms?', start: 2.3, end: 3.0 },
   ],
-  durationInFrames: 30 * 45, // 45 seconds default
+  durationInFrames: 30 * 60, // 60 seconds default
   fps: 30,
 };
 
@@ -39,7 +39,7 @@ export const Root: React.FC = () => {
     <Composition
       id="ExplainerReel"
       component={ExplainerComposition}
-      durationInFrames={30 * 45}
+      durationInFrames={30 * 60}
       fps={30}
       width={1080}
       height={1920}

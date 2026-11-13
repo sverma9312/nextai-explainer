@@ -49,6 +49,10 @@ export async function runPipeline(): Promise<void> {
     script.takeaway,
   ].filter(Boolean);
 
+  console.log('--- SCRIPT CHUNKS ---');
+  scriptChunks.forEach((c, i) => console.log(`   [Chunk ${i + 1}] (${c.length} chars): "${c}"`));
+  console.log('');
+
   const ttsResult = await synthesizeVoiceover(scriptChunks, outAudioPath);
   console.log(`   Duration: ${ttsResult.durationSeconds}s`);
   console.log(`   Words:    ${ttsResult.subtitles.length} timestamped tokens captured\n`);
@@ -95,6 +99,7 @@ export async function runPipeline(): Promise<void> {
   const publishRequest = {
     videoPath: outVideoPath,
     title: script.videoTitle,
+    topic: topic.title,
     description: `🧠 System Design: ${topic.title}
 🏢 Company: ${topic.company}
 ⚡ Scale: ${topic.scaleMetric}
@@ -111,13 +116,12 @@ ${script.takeaway}
 
 #SystemDesign #SoftwareArchitecture #${topic.company.replace(/\s+/g, '')} #DistributedSystems #Engineering #TechExplained #Shorts`,
     tags: ['System Design', 'Software Architecture', topic.company, 'Distributed Systems', 'Engineering', 'Coding'],
-    privacyStatus: (process.env.YOUTUBE_PRIVACY_STATUS as 'private' | 'public' | 'unlisted') || 'public',
   };
 
   const publishResults = await publishToAllChannels(publishRequest);
 
   // Record published episode in ledger only if published to at least one channel
-  if (publishResults.youtube?.videoUrl || publishResults.instagram?.reelUrl) {
+  if (publishResults.youtube?.publishedUrl || publishResults.instagram?.publishedUrl) {
     await recordPostedExplainer({
       topicId: topic.id,
       company: topic.company,
@@ -127,8 +131,8 @@ ${script.takeaway}
       audioPath: ttsResult.audioPath,
       durationSeconds: ttsResult.durationSeconds,
       postedAt: new Date().toISOString(),
-      youtubeUrl: publishResults.youtube?.videoUrl,
-      instagramUrl: publishResults.instagram?.reelUrl,
+      youtubeUrl: publishResults.youtube?.publishedUrl,
+      instagramUrl: publishResults.instagram?.publishedUrl,
     });
   } else {
     console.log('ℹ️ Social publishing was skipped (ENABLE_*=false). Video rendered to disk without updating archive ledger.');
@@ -137,11 +141,11 @@ ${script.takeaway}
   console.log('\n====================================================');
   console.log('🎉 Explainer Video Pipeline Completed Successfully!');
   console.log(`   Topic:     ${topic.title}`);
-  if (publishResults.youtube?.videoUrl) {
-    console.log(`   YouTube:   ${publishResults.youtube.videoUrl}`);
+  if (publishResults.youtube?.publishedUrl) {
+    console.log(`   YouTube:   ${publishResults.youtube.publishedUrl}`);
   }
-  if (publishResults.instagram?.reelUrl) {
-    console.log(`   Instagram: ${publishResults.instagram.reelUrl}`);
+  if (publishResults.instagram?.publishedUrl) {
+    console.log(`   Instagram: ${publishResults.instagram.publishedUrl}`);
   }
   console.log('====================================================\n');
 }

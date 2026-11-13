@@ -14,25 +14,27 @@ export async function generateExplainerScript(topic: ExplainerTopic): Promise<Ex
     const ai = new GoogleGenAI({ apiKey });
 
     const systemPrompt = `You are a Principal Distributed Systems Architect and viral technical video creator for NextAI Explainer.
-Your task is to take a software architecture case study and generate an ultra-crisp, authoritative, 30-to-35-second vertical video script.
+Your task is to take a software architecture case study and generate an ultra-crisp, authoritative, 55-to-60-second vertical video script.
+
+Follow this 5-scene narrative arc:
+1. Hook & Setup: State the high-stakes scale and problem (e.g. How does Uber match 1 million active drivers in under 100 milliseconds?).
+2. The Naive Bottleneck: Explain why the obvious approach (calculating distance to every single vehicle) crashes CPU and lags.
+3. The Breakthrough: The spatial/in-memory data structure (e.g. Earth divided into H3 hexagonal cells stored in Redis in-memory clusters).
+4. Smart Search & Resolution: How candidate lookups query only immediate neighbor cells to lock the best ETA in microseconds.
+5. Golden Engineering Rule: 1 punchy architectural takeaway principle.
 
 Rules:
-1. Hook must start with high-stakes scale or technical mystery (e.g. "How does Uber match 1 million drivers in under 100 milliseconds?").
-2. Follow the 3 architectural layers:
-   - Layer 1: Ingestion / Network Gateway
-   - Layer 2: Core Distributed Engine / In-Memory State
-   - Layer 3: Persistence / Consensus / Scale Takeaway
-3. Pacing: Punchy, zero filler, zero greeting, high technical density (mention protocols, data structures, and algorithms).
-4. Total spoken words must be strictly between 70 and 85 words (approx 28-34 seconds speech).
+- Pacing: Clean, energetic, high technical clarity, zero fluff, zero introductory greetings.
+- Total spoken words must be strictly between 125 and 140 words (approx 54-58 seconds of natural speech).
 
 Return ONLY valid JSON with this exact schema:
 {
   "videoTitle": "Short YouTube Shorts title ending with #Shorts (max 60 chars)",
-  "hook": "Opening 1-sentence hook (approx 10-14 words)",
-  "step1Narration": "Layer 1 narration (approx 18-22 words)",
-  "step2Narration": "Layer 2 narration (approx 18-22 words)",
-  "step3Narration": "Layer 3 narration (approx 18-22 words)",
-  "takeaway": "Closing 1-sentence engineering rule (approx 10-14 words)"
+  "hook": "Opening hook introducing problem and scale (approx 24-28 words)",
+  "step1Narration": "The obvious approach and why it fails under scale (approx 24-28 words)",
+  "step2Narration": "The spatial indexing and Redis in-memory storage breakthrough (approx 30-35 words)",
+  "step3Narration": "Neighbor cell lookup, ETA evaluation, and atomic state match (approx 24-28 words)",
+  "takeaway": "Closing engineering rule (approx 16-20 words)"
 }`;
 
     const userPrompt = `Topic: ${topic.title}
@@ -40,10 +42,6 @@ Company: ${topic.company}
 Scale: ${topic.scaleMetric}
 Problem: ${topic.problemStatement}
 Key Tech: ${topic.tags.join(', ')}
-Existing Step Details:
-Step 1: ${topic.steps[0].stepTitle} - ${topic.steps[0].narration}
-Step 2: ${topic.steps[1].stepTitle} - ${topic.steps[1].narration}
-Step 3: ${topic.steps[2].stepTitle} - ${topic.steps[2].narration}
 Takeaway: ${topic.takeaway}`;
 
     const candidateModels = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];

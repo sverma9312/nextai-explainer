@@ -17,7 +17,29 @@ interface ChunkSynthesisResult {
 }
 
 /**
- * Synthesizes a single short chunk (10-25 words) using MsEdgeTTS file generator with isolated retries.
+ * Sanitizes speech text to remove XML-breaking entities, curly quotes, and expand technical acronyms.
+ * Edge-TTS WebSocket drops connections if raw unescaped `<` or `&` or mismatched quotes are sent.
+ */
+export function sanitizeSpeechText(text: string): string {
+  return text
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/&/g, ' and ')
+    .replace(/</g, ' under ')
+    .replace(/>/g, ' over ')
+    .replace(/(\d+)\s*ms\b/gi, '$1 milliseconds')
+    .replace(/(\d+)\s*s\b/gi, '$1 seconds')
+    .replace(/(\d+)\s*min\b/gi, '$1 minutes')
+    .replace(/(\d+)\s*km²\b/gi, '$1 square kilometers')
+    .replace(/O\(N\)/gi, 'O of N')
+    .replace(/O\(1\)/gi, 'O of 1')
+    .replace(/[#*~`_\/\\]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Synthesizes a single short chunk (10-25 words) using MsEdgeTTS file generator with isolated retries and hard timeouts.
  * Short payloads and fresh WebSocket instances with clean attempt directories prevent drops.
  */
 async function synthesizeSingleChunk(
@@ -35,13 +57,30 @@ async function synthesizeSingleChunk(
     const chunkDir = path.join(tempRootDir, `c_${chunkIndex}_a_${attempt}_${Date.now()}`);
     await fsp.mkdir(chunkDir, { recursive: true });
 
+    const candidateVoices = [voiceName, 'en-US-GuyNeural', 'en-US-AndrewNeural', 'en-US-BrianNeural'];
+    const selectedVoice = candidateVoices[(attempt - 1) % candidateVoices.length];
+
     const tts = new MsEdgeTTS();
     try {
-      await tts.setMetadata(voiceName, OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3, {
+      await tts.setMetadata(selectedVoice, OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3, {
         wordBoundaryEnabled: true,
       });
 
-      const res = await tts.toFile(chunkDir, text, { rate: voiceRate });
+      // 15-second hard timeout to prevent hanging connections
+      let timer: NodeJS.Timeout;
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        timer = setTimeout(() => {
+          reject(new Error('Edge-TTS synthesis timed out after 15s'));
+        }, 15000);
+      });
+
+      const res = await Promise.race([
+        tts.toFile(chunkDir, text, { rate: voiceRate }),
+        timeoutPromise,
+      ]).finally(() => {
+        clearTimeout(timer);
+      });
+
       try {
         tts.close();
       } catch {}
@@ -130,13 +169,15 @@ export async function synthesizeVoiceover(
   const tempChunksDir = path.join(dir, `tts_chunks_${Date.now()}`);
   await fsp.mkdir(tempChunksDir, { recursive: true });
 
-  // Determine section chunks
+  // Determine section chunks and sanitize each one
   let chunks: string[] = [];
   if (Array.isArray(spokenInput)) {
-    chunks = spokenInput.map((s) => s.trim()).filter((s) => s.length > 0);
-  } else {
-    // If a single monolithic string is passed, split by sentence boundaries
     chunks = spokenInput
+      .map((s) => sanitizeSpeechText(s))
+      .filter((s) => s.length > 0);
+  } else {
+    const sanitized = sanitizeSpeechText(spokenInput);
+    chunks = sanitized
       .split(/(?<=[.!?])\s+/)
       .map((s) => s.trim())
       .filter((s) => s.length > 0);

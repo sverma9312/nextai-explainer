@@ -41,6 +41,61 @@ export interface ArchitectureStep {
   calloutMetric: string; // e.g. "< 5ms In-Memory Spatial Query"
 }
 
+export type VisualArchetype =
+  | 'spatial_matching'
+  | 'cache_cluster'
+  | 'event_streaming'
+  | 'cdn_edge'
+  | 'distributed_db'
+  | 'payment_idempotency';
+
+export interface StoryScenes {
+  archetype: VisualArchetype;
+  actors: {
+    primary: 'person' | 'phone' | 'client';
+    secondary: 'car' | 'tv' | 'phone' | 'card' | 'database';
+    centerHub: string; // e.g. "Uber", "Netflix", "WhatsApp", "Stripe"
+    brandColor?: string;
+  };
+  scene1: {
+    badge: string;
+    headline: string;
+    narration: string;
+  };
+  scene2: {
+    badge: string;
+    headline: string;
+    badMetric: string;
+    whyItFails: string;
+    narration: string;
+  };
+  scene3: {
+    badge: string;
+    headline: string;
+    techLogo: 'redis' | 'kafka' | 'cassandra' | 'postgres' | 'envoy' | 'aws' | 'generic';
+    techName: string;
+    visualType: 'hex_grid' | 'key_value_table' | 'event_stream' | 'cache_ring' | 'cdn_cache';
+    dataRows?: Array<{ key: string; val: string }>;
+    narration: string;
+  };
+  scene4: {
+    badge: string;
+    headline: string;
+    metricBadge: string;
+    comparison?: {
+      targetA: { label: string; before: string; after: string };
+      targetB: { label: string; before: string; after: string };
+    };
+    narration: string;
+  };
+  scene5: {
+    badge: string;
+    headline: string;
+    engineeringRule: string;
+    narration: string;
+  };
+}
+
 export interface ExplainerTopic {
   id: string;
   company: string;
@@ -54,6 +109,7 @@ export interface ExplainerTopic {
   edges: ArchitectureEdge[];
   steps: ArchitectureStep[];
   takeaway: string;
+  storyScenes?: StoryScenes;
 }
 
 export interface WordSubtitle {
@@ -74,9 +130,10 @@ export interface ExplainerScript {
   steps: ArchitectureStep[];
   takeaway: string;
   fullSpokenText: string;
+  storyScenes?: StoryScenes;
 }
 
-export interface ExplainerCompositionProps {
+export interface ExplainerCompositionProps extends Record<string, unknown> {
   script: ExplainerScript;
   audioSrc: string; // base64 data URI or public path
   subtitles: WordSubtitle[];
@@ -96,4 +153,3 @@ export interface PostedExplainerRecord {
   youtubeUrl?: string;
   instagramUrl?: string;
 }
-

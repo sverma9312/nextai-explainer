@@ -1,81 +1,97 @@
 import React from 'react';
-import { Audio, useCurrentFrame, useVideoConfig } from 'remotion';
+import { Audio } from 'remotion';
 import type { ExplainerCompositionProps } from '../schema/types';
 import { Background } from './components/Background';
-import { HeaderBanner } from './components/HeaderBanner';
-import { ArchitectureCanvas } from './components/ArchitectureCanvas';
-import { StepCalloutBar } from './components/StepCalloutBar';
+import { MasterStoryStage } from './components/story/MasterStoryStage';
 import { KineticCaptions } from './components/KineticCaptions';
 import { Waveform } from './components/Waveform';
-import { OutroCard } from './components/OutroCard';
 
 export const ExplainerComposition: React.FC<ExplainerCompositionProps> = ({
   script,
   audioSrc,
   subtitles,
 }) => {
-  const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
-
-  const totalDurationSeconds = durationInFrames / fps;
-  const currentTime = frame / fps;
-
-  // Calculate current active step based on progress
-  // Step 1: 0% to 33%
-  // Step 2: 33% to 66%
-  // Step 3: 66% to 100%
-  const stepFraction = currentTime / totalDurationSeconds;
-  let currentStep = 1;
-  if (stepFraction >= 0.33 && stepFraction < 0.66) {
-    currentStep = 2;
-  } else if (stepFraction >= 0.66) {
-    currentStep = 3;
-  }
-
   return (
     <div
       style={{
         position: 'relative',
         width: 1080,
         height: 1920,
-        backgroundColor: '#07080C',
+        backgroundColor: '#050608',
         overflow: 'hidden',
         fontFamily: 'sans-serif',
       }}
     >
-      {/* 1. Background Grid & Radial Cyberpunk Glow */}
+      {/* 1. Subtle Dark Canvas Glow */}
       <Background />
 
-      {/* 2. Top Header Title & Scale Badge */}
-      <HeaderBanner
-        company={script.company}
-        companyLogo={script.companyLogo}
-        title={script.videoTitle.replace(/#Shorts/gi, '').trim()}
-        scaleMetric={script.scaleMetric}
-      />
+      {/* 2. Top Header Brand Pill */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 50,
+          left: 50,
+          right: 50,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          zIndex: 20,
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            backgroundColor: '#0E1019',
+            border: '1.5px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: 999,
+            padding: '8px 20px',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.6)',
+          }}
+        >
+          <span style={{ fontSize: 22 }}>{script.companyLogo || '🚗'}</span>
+          <span
+            style={{
+              fontSize: 16,
+              fontWeight: 900,
+              color: '#FFFFFF',
+              letterSpacing: 2,
+              fontFamily: 'sans-serif',
+            }}
+          >
+            {script.company.toUpperCase()} ARCHITECTURE
+          </span>
+        </div>
 
-      {/* 3. Main Architecture Canvas (Nodes, Edges, Packets) */}
-      <ArchitectureCanvas
-        nodes={script.nodes}
-        edges={script.edges}
-        currentStep={currentStep}
-      />
+        <div
+          style={{
+            backgroundColor: 'rgba(34, 211, 238, 0.12)',
+            border: '1.5px solid #22D3EE',
+            borderRadius: 999,
+            padding: '8px 20px',
+            fontSize: 16,
+            fontWeight: 800,
+            color: '#22D3EE',
+            fontFamily: 'monospace',
+            letterSpacing: 1,
+          }}
+        >
+          {script.scaleMetric}
+        </div>
+      </div>
 
-      {/* 4. Layer Step Callout Bar */}
-      <StepCalloutBar steps={script.steps} currentStep={currentStep} />
+      {/* 3. Master Visual Story Stage (5 Scenes with Real Icons & Animations) */}
+      <MasterStoryStage script={script} />
 
-      {/* 5. Synchronized Kinetic Captions */}
+      {/* 4. Synchronized Kinetic Captions */}
       <KineticCaptions subtitles={subtitles} />
 
-      {/* 6. Audio Waveform */}
+      {/* 5. Audio Waveform */}
       <Waveform />
 
-      {/* 7. Outro Card */}
-      <OutroCard />
-
-      {/* 8. Voiceover Audio */}
+      {/* 6. Voiceover Audio */}
       {audioSrc && <Audio src={audioSrc} />}
     </div>
   );
 };
-
