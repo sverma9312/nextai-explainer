@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NextAI Explainer — 60-Second Animated System Design Breakdowns</title>
+  <meta
+    name="description"
+    content="60-second animated software architecture and distributed system design breakdowns. Deconstructing Uber, Netflix, WhatsApp, Stripe, and UPI with zero infra cost."
+  />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://explainer.nextai-apps.com/" />
+  <meta property="og:title" content="NextAI Explainer — Animated System Design Breakdowns" />
+  <meta property="og:description" content="60-second animated system design breakdowns. Deconstructing Uber, Netflix, WhatsApp, and Stripe architectures." />
+  <meta property="og:image" content="https://nextai-apps.com/icon.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111118'/%3E%3Cpath d='M10 52V12h9l14 22v18l-14-22v22z' fill='%237466f5'/%3E%3Cpath d='M38 12 56 32 38 52V41l8-9-8-9z' fill='%23fff'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #07080C;
+      color: #F3F4F6;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Ambient Glow */
+    .ambient-glow-top {
+      position: absolute;
+      width: 750px;
+      height: 750px;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.14) 0%, rgba(99, 102, 241, 0.08) 40%, transparent 70%);
+      top: -160px;
+      left: 50%;
+      transform: translateX(-50%);
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .ambient-glow-bottom {
+      position: absolute;
+      width: 650px;
+      height: 650px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 65%);
+      bottom: -100px;
+      right: 5%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Header */
+    header {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 14.5px;
+    }
+    .brand-logo-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: #111118;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .brand-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(6, 182, 212, 0.14);
+      color: #67E8F9;
+      border: 1px solid rgba(6, 182, 212, 0.35);
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-btn {
+      font-size: 12px;
+      font-weight: 600;
+      color: #9CA3AF;
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.2s ease;
+    }
+    .nav-btn:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Main Container */
+    main {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 10px 24px 60px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 38px;
+    }
+
+    /* Hero */
+    .hero-header {
+      text-align: center;
+      max-width: 780px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .pipeline-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px;
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.28);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #A5F3FC;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      backdrop-filter: blur(10px);
+    }
+    .live-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #06B6D4;
+      box-shadow: 0 0 10px #06B6D4;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    h1 {
+      font-size: clamp(32px, 4.5vw, 48px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+    }
+    .text-gradient {
+      background: linear-gradient(135deg, #22D3EE 0%, #818CF8 50%, #C084FC 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-desc {
+      font-size: 14.5px;
+      color: #9CA3AF;
+      line-height: 1.55;
+      max-width: 640px;
+    }
+
+    /* Showcase Grid */
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 36px;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 32px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Phone Mockup Frame */
+    .phone-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .phone-frame {
+      width: 100%;
+      max-width: 320px;
+      aspect-ratio: 9 / 16;
+      background: #000000;
+      border-radius: 36px;
+      border: 2px solid rgba(6, 182, 212, 0.4);
+      box-shadow: 0 0 35px rgba(6, 182, 212, 0.25), 0 20px 40px rgba(0, 0, 0, 0.8);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .phone-notch {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 18px;
+      background: #111116;
+      border-radius: 12px;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .phone-notch-camera {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #08090C;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .phone-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #050608;
+    }
+    .phone-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 24px;
+      text-align: center;
+      gap: 12px;
+      background: radial-gradient(circle at center, rgba(6, 182, 212, 0.08), #050608 70%);
+    }
+
+    /* Right Column */
+    .details-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      text-align: left;
+    }
+    .topic-header-box {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 16px;
+    }
+    .topic-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #22D3EE;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .topic-title {
+      font-size: clamp(22px, 2.5vw, 28px);
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.25;
+    }
+    .topic-desc {
+      font-size: 13.5px;
+      color: #9CA3AF;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    /* Interactive Steps */
+    .steps-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .step-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .step-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: rgba(6, 182, 212, 0.15);
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      color: #67E8F9;
+      font-size: 11.5px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-content strong {
+      color: #FFFFFF;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .step-content span {
+      color: #9CA3AF;
+      font-size: 12px;
+    }
+
+    /* Key Takeaway Card */
+    .takeaway-card {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 12.5px;
+      color: #D1FAE5;
+      line-height: 1.45;
+    }
+
+    /* Topics Catalog Grid */
+    .catalog-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .catalog-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .catalog-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 14px;
+    }
+    .topic-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .topic-card:hover {
+      background: rgba(6, 182, 212, 0.04);
+      border-color: rgba(6, 182, 212, 0.45);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px -8px rgba(6, 182, 212, 0.25);
+    }
+    .topic-card.active {
+      background: rgba(6, 182, 212, 0.08);
+      border-color: #06B6D4;
+    }
+    .topic-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topic-card-company {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+    .topic-card-metric {
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #34D399;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+    .topic-card-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.35;
+    }
+    .topic-card-desc {
+      font-size: 12px;
+      color: #9CA3AF;
+      line-height: 1.45;
+    }
+    .topic-card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .tag-pill {
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #C7D2FE;
+    }
+
+    /* Footer */
+    footer {
+      width: 100%;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 24px;
+      text-align: center;
+      font-size: 12px;
+      color: #6B7280;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    footer a {
+      color: #9CA3AF;
+      text-decoration: none;
+    }
+    footer a:hover {
+      color: #FFFFFF;
+    }
+
+    @media (max-width: 860px) {
+      .showcase-grid {
+        grid-template-columns: 1fr;
+        padding: 20px;
+      }
+      .phone-frame {
+        max-width: 280px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow-top"></div>
+  <div class="ambient-glow-bottom"></div>
+
+  <!-- Top Navigation -->
+  <header>
+    <a href="https://nextai-apps.com/" class="brand-link">
+      <div class="brand-logo-badge">
+        <svg viewBox="0 0 64 64" style="width: 18px; height: 18px; border-radius: 4px;">
+          <rect width="64" height="64" rx="14" fill="#111118"/>
+          <path d="M10 52V12h9l14 22v18l-14-22v22z" fill="#7466f5"/>
+          <path d="M38 12 56 32 38 52V41l8-9-8-9z" fill="#fff"/>
+        </svg>
+      </div>
+      <span>NextAI Explainer</span>
+      <span class="brand-pill">System Design</span>
+    </a>
+
+    <div class="nav-actions">
+      <a href="https://ainewsvideo.nextai-apps.com/" class="nav-btn">AI Tech Videos ↗</a>
+      <a href="https://aishort.nextai-apps.com/" class="nav-btn">AIShort ↗</a>
+      <a href="https://nextai-apps.com/" class="nav-btn">Studio Hub ↗</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Header -->
+    <section class="hero-header">
+      <div class="pipeline-badge">
+        <span class="live-pulse"></span>
+        60-Second Animated System Design · $0 Infra Cost
+      </div>
+
+      <h1>
+        NextAI Explainer<br />
+        <span class="text-gradient">Software Architecture in 60s</span>
+      </h1>
+
+      <p class="hero-desc">
+        Deconstructing distributed systems, real-time protocols, and high-concurrency engineering from Uber, Netflix, WhatsApp, Stripe, and UPI into cinematic 60-second animated diagrams.
+      </p>
+    </section>
+
+    <!-- Showcase Grid -->
+    <section class="showcase-grid">
+      <!-- Phone Mockup Frame -->
+      <div class="phone-container">
+        <div class="phone-frame">
+          <div class="phone-notch">
+            <div class="phone-notch-camera"></div>
+          </div>
+          <div class="phone-placeholder" id="player-placeholder">
+            <div style="font-size: 40px;" id="featured-logo">🚗</div>
+            <h3 style="font-size: 16px; font-weight: 800; color: #FFFFFF;" id="featured-phone-title">Uber Architecture</h3>
+            <p style="font-size: 12px; color: #9CA3AF; line-height: 1.4;">H3 Hexagonal Spatial Indexing + Redis Clusters in 60 Seconds</p>
+            <div style="font-size: 11px; font-family: monospace; color: #34D399; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 999px;">
+              ⚡ 100ms Driver Match
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Details -->
+      <div class="details-container">
+        <div class="topic-header-box">
+          <div class="topic-eyebrow">
+            <span>●</span>
+            <span id="active-category">DISTRIBUTED SYSTEMS CASE STUDY</span>
+          </div>
+          <h2 class="topic-title" id="active-title">
+            How Uber Matches 1M Drivers in 100ms
+          </h2>
+          <p class="topic-desc" id="active-desc">
+            How does Uber pinpoint the closest driver to your exact location in under 100 milliseconds among 1 million moving vehicles?
+          </p>
+        </div>
+
+        <div class="steps-box" id="active-steps-box">
+          <!-- Populated dynamically -->
+        </div>
+
+        <div class="takeaway-card" id="active-takeaway">
+          💡 <strong>Key Architecture Takeaway:</strong> By replacing geometric distance calculations with integer hexagon lookups in Redis, Uber searches 1M vehicles in microseconds.
+        </div>
+      </div>
+    </section>
+
+    <!-- Topics Catalog -->
+    <section class="catalog-section">
+      <div class="catalog-header">
+        <h3 class="catalog-title">Architecture Case Studies</h3>
+        <span style="font-size: 12px; color: #9CA3AF; font-family: monospace;" id="catalog-count">6 Curated Case Studies</span>
+      </div>
+
+      <div class="catalog-grid" id="catalog-grid">
+        <!-- Dynamically populated from TOPICS catalog -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <span>NextAI Apps Studio · NextAI Explainer</span>
+    <span>·</span>
+    <a href="https://nextai-apps.com/">Studio Hub</a>
+    <span>·</span>
+    <a href="https://ainewsvideo.nextai-apps.com/">AI Tech Videos</a>
+    <span>·</span>
+    <a href="https://aishort.nextai-apps.com/">AIShort</a>
+    <span>·</span>
+    <span>Engineered with $0 Infra Cost</span>
+  </footer>
+
+  <script>
+    const CATALOG = [
+      {
+        id: 'uber-h3-matching',
+        company: 'Uber',
+        companyLogo: '🚗',
+        title: 'How Uber Matches 1M Drivers in 100ms',
+        category: 'Distributed Systems',
+        scaleMetric: '1M+ Drivers // <100ms P99',
+        desc: 'How does Uber pinpoint the closest driver to your exact location in under 100 milliseconds among 1 million moving vehicles?',
+        tags: ['H3 Geospatial', 'Redis Cluster', 'Ringpop'],
+        steps: [
+          { num: '01', title: 'INGESTION & GPS STREAMING', desc: '1M drivers stream raw GPS coordinates through Envoy edge gateways every 4s.' },
+          { num: '02', title: 'H3 HEXAGONAL SPATIAL INDEX', desc: 'Maps the globe into hierarchical hexagons stored in Redis clusters for <5ms lookups.' },
+          { num: '03', title: 'DISPATCH & STATE COMMIT', desc: 'Queries neighboring cells in parallel, ranks candidates via ETA ML, and locks state in DocStore.' }
+        ],
+        takeaway: 'By replacing geometric distance calculations with integer hexagon lookups in Redis, Uber searches 1M vehicles in microseconds.'
+      },
+      {
+        id: 'netflix-openconnect-cdn',
+        company: 'Netflix',
+        companyLogo: '🍿',
+        title: 'How Netflix Streams 4K to 250M Users',
+        category: 'High-Throughput Streaming',
+        scaleMetric: '250M Users // 15% Web Traffic',
+        desc: 'Netflix accounts for 15% of all internet traffic. How do they stream 4K globally without buffering or commercial CDNs?',
+        tags: ['Open Connect CDN', 'FreeBSD Kernel', 'Zero-Copy'],
+        steps: [
+          { num: '01', title: 'AWS CONTROL PLANE DISPATCH', desc: 'AWS handles UI and user auth, then points your player to your local internet provider.' },
+          { num: '02', title: 'OPEN CONNECT APPLIANCES', desc: 'Custom hardware appliances installed directly inside 1000+ ISP data centers globally.' },
+          { num: '03', title: 'ZERO-COPY KERNEL STREAMING', desc: 'Custom FreeBSD kernel TLS flows bytes directly from NVMe flash to 100Gbps network cards.' }
+        ],
+        takeaway: 'Netflix avoids CDN bandwidth costs by installing custom zero-copy FreeBSD appliances directly inside internet service providers.'
+      },
+      {
+        id: 'whatsapp-erlang-concurrency',
+        company: 'WhatsApp',
+        companyLogo: '💬',
+        title: 'How WhatsApp Handles 100B Messages Daily',
+        category: 'Real-Time Messaging',
+        scaleMetric: '100B Msgs/Day // 50 Engineers',
+        desc: 'How does WhatsApp handle 100 billion daily messages across 2 billion users with a tiny engineering team?',
+        tags: ['Erlang BEAM', 'Actor Model', 'FreeBSD Sockets'],
+        steps: [
+          { num: '01', title: 'LIGHTWEIGHT PROCESSES', desc: 'Erlang actors consume just 300 bytes of RAM, allowing 2M concurrent TCP connections per server.' },
+          { num: '02', title: 'THE ACTOR MODEL', desc: 'Each user is represented by an actor. Messages pass directly without thread locks or shared state.' },
+          { num: '03', title: 'MNESIA ROUTING & PUSH', desc: 'Mnesia in-memory routing delivers packets in sub-milliseconds or diverts to APNS if offline.' }
+        ],
+        takeaway: 'Erlang actor model lets one physical server maintain millions of live sockets with near-zero memory footprint.'
+      },
+      {
+        id: 'upi-instant-payments',
+        company: 'UPI',
+        companyLogo: '💳',
+        title: 'How UPI Handles 50,000 TPS with 0 Downtime',
+        category: 'FinTech & Payments',
+        scaleMetric: '14B Monthly Txns // 50k TPS',
+        desc: 'How does India UPI process over 14 billion monthly transactions across hundreds of banks with zero money loss?',
+        tags: ['NPCI Central Switch', 'Distributed 2PC', 'HSM Encryption'],
+        steps: [
+          { num: '01', title: 'NPCI SWITCH ORCHESTRATION', desc: 'Encrypted MPIN payloads route through the high-speed NPCI central switch.' },
+          { num: '02', title: 'ATOMIC DEBIT & CREDIT', desc: 'Fires dual ISO 8583 banking streams to verify remitter balance and trigger instant credit.' },
+          { num: '03', title: 'TWO-PHASE DISTRIBUTED COMMIT', desc: 'Automated distributed reversal rollbacks state if either bank times out, ensuring zero money loss.' }
+        ],
+        takeaway: 'NPCI acts as an atomic transaction coordinator ensuring distributed ACID consistency across independent legacy banks.'
+      },
+      {
+        id: 'stripe-idempotency-engine',
+        company: 'Stripe',
+        companyLogo: '💳',
+        title: 'How Stripe Never Double-Charges You',
+        category: 'FinTech & Payments',
+        scaleMetric: '99.999% Consistency // Millions TPS',
+        desc: 'When internet connections drop right after clicking Pay, how does Stripe ensure network retries never charge you twice?',
+        tags: ['Idempotency Keys', 'Redis Locks', 'Distributed ACID'],
+        steps: [
+          { num: '01', title: 'CLIENT IDEMPOTENCY KEYS', desc: 'Every payment injects a unique client UUID inside the HTTP header before leaving the browser.' },
+          { num: '02', title: 'DISTRIBUTED REDIS MUTEX', desc: 'Stripe gateway acquires an atomic SETNX lock in Redis. In-flight duplicates are held safely.' },
+          { num: '03', title: 'RESPONSE CACHING & REPLAY', desc: 'Successful payloads are stored for 24h. Repeated retries simply receive cached responses.' }
+        ],
+        takeaway: 'By storing client idempotency keys in Redis locks and tables, Stripe turns dangerous retries into safe idempotent reads.'
+      },
+      {
+        id: 'discord-scylladb-migration',
+        company: 'Discord',
+        companyLogo: '🎮',
+        title: 'Why Discord Moved to ScyllaDB for Trillions of Messages',
+        category: 'Distributed Systems',
+        scaleMetric: 'Trillions of Msgs // 5ms P99',
+        desc: 'Why did Discord abandon Apache Cassandra for C++ ScyllaDB to store trillions of chat messages?',
+        tags: ['ScyllaDB', 'C++ Thread-per-Core', 'Zero GC Lag'],
+        steps: [
+          { num: '01', title: 'THE JAVA GC LATENCY PROBLEM', desc: 'On Cassandra, JVM garbage collection pauses stalled reading nodes, causing P99 spikes above 2000ms.' },
+          { num: '02', title: 'RUST BATCHING SERVICES', desc: 'Rust message aggregators coalesce hot-channel chats before touching disk storage.' },
+          { num: '03', title: 'THREAD-PER-CORE ARCHITECTURE', desc: 'ScyllaDB pins one C++ thread per CPU core with zero garbage collection, slashing P99 to 5ms flat.' }
+        ],
+        takeaway: 'Eliminating JVM garbage collection with C++ thread-per-core architecture reduced Discord message latency by 400x.'
+      }
+    ];
+
+    let currentSelectedId = CATALOG[0].id;
+
+    function renderCatalog() {
+      const grid = document.getElementById('catalog-grid');
+      grid.innerHTML = CATALOG.map(item => `
+        <div class="topic-card \${item.id === currentSelectedId ? 'active' : ''}" onclick="selectTopic('\${item.id}')">
+          <div class="topic-card-top">
+            <div class="topic-card-company">
+              <span>\${item.companyLogo}</span>
+              <span>\${item.company}</span>
+            </div>
+            <span class="topic-card-metric">\${item.scaleMetric}</span>
+          </div>
+          <div class="topic-card-title">\${item.title}</div>
+          <div class="topic-card-desc">\${item.desc}</div>
+          <div class="topic-card-tags">
+            \${item.tags.map(t => \`<span class="tag-pill">#\${t}</span>\`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function selectTopic(id) {
+      currentSelectedId = id;
+      const topic = CATALOG.find(t => t.id === id);
+      if (!topic) return;
+
+      document.getElementById('featured-logo').textContent = topic.companyLogo;
+      document.getElementById('featured-phone-title').textContent = topic.company + ' Architecture';
+      document.getElementById('active-title').textContent = topic.title;
+      document.getElementById('active-desc').textContent = topic.desc;
+      document.getElementById('active-category').textContent = topic.category.toUpperCase() + ' CASE STUDY';
+      document.getElementById('active-takeaway').innerHTML = '💡 <strong>Key Architecture Takeaway:</strong> ' + topic.takeaway;
+
+      const stepsBox = document.getElementById('active-steps-box');
+      stepsBox.innerHTML = topic.steps.map(s => `
+        <div class="step-item">
+          <div class="step-badge">\${s.num}</div>
+          <div class="step-content">
+            <strong>\${s.title}</strong>
+            <span>\${s.desc}</span>
+          </div>
+        </div>
+      `).join('');
+
+      renderCatalog();
+
+      if (window.innerWidth < 860) {
+        document.querySelector('.showcase-grid').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Initialize
+    selectTopic(CATALOG[0].id);
+  </script>
+</body>
+</html>
