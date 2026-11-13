@@ -260,6 +260,12 @@
       border: none;
       background: #050608;
     }
+    .phone-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000000;
+    }
     .phone-placeholder {
       display: flex;
       flex-direction: column;
@@ -268,7 +274,7 @@
       height: 100%;
       padding: 24px;
       text-align: center;
-      gap: 12px;
+      gap: 10px;
       background: radial-gradient(circle at center, rgba(6, 182, 212, 0.08), #050608 70%);
     }
 
@@ -426,6 +432,28 @@
       padding: 2px 7px;
       border-radius: 6px;
     }
+    .video-pill {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .video-pill.live {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ADE80;
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
+    }
+    .video-pill.queued {
+      background: rgba(148, 163, 184, 0.1);
+      color: #94A3B8;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
     .topic-card-title {
       font-size: 14.5px;
       font-weight: 700;
@@ -537,14 +565,49 @@
           <div class="phone-notch">
             <div class="phone-notch-camera"></div>
           </div>
+
+          <!-- Native 1080p Video Player for Rendered Architecture Reels -->
+          <video
+            id="phone-video"
+            class="phone-video"
+            playsinline
+            loop
+            controls
+            preload="auto"
+            style="display: none;"
+          ></video>
+
+          <!-- Interactive Studio Blueprint & Pipeline Console -->
           <div class="phone-placeholder" id="player-placeholder">
-            <div style="font-size: 40px;" id="featured-logo">🚗</div>
+            <div style="font-size: 38px;" id="featured-logo">🚗</div>
             <h3 style="font-size: 16px; font-weight: 800; color: #FFFFFF;" id="featured-phone-title">Uber Architecture</h3>
-            <p style="font-size: 12px; color: #9CA3AF; line-height: 1.4;">H3 Hexagonal Spatial Indexing + Redis Clusters in 60 Seconds</p>
-            <div style="font-size: 11px; font-family: monospace; color: #34D399; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 999px;">
+            <p style="font-size: 11.5px; color: #9CA3AF; line-height: 1.4; padding: 0 10px;" id="featured-phone-subtitle">
+              H3 Hexagonal Spatial Indexing + Redis Clusters in 60 Seconds
+            </p>
+            <div style="font-size: 11px; font-family: monospace; color: #34D399; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 999px;" id="featured-phone-metric">
               ⚡ 100ms Driver Match
             </div>
+
+            <div id="phone-pipeline-box" style="margin-top: 8px; width: 88%; padding: 10px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); font-size: 11px; text-align: left; display: flex; flex-direction: column; gap: 5px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; font-weight: 700; color: #94A3B8; font-size: 10px; text-transform: uppercase;">
+                <span>Autonomous Studio</span>
+                <span id="pipeline-status-badge" style="color: #38BDF8;">Queued</span>
+              </div>
+              <div id="sim-step-1" style="color: #10B981;">✓ 1. Scripting (Gemini 2.5)</div>
+              <div id="sim-step-2" style="color: #10B981;">✓ 2. Vector Synthesis (Iconify)</div>
+              <div id="sim-step-3" style="color: #38BDF8;">⏳ 3. Neural Voice (Edge-TTS)</div>
+              <div id="sim-step-4" style="color: #64748B;">○ 4. Remotion Render (1080p)</div>
+            </div>
+
+            <button id="sim-btn" onclick="runPipelineSimulation()" style="margin-top: 8px; font-size: 11px; font-weight: 700; padding: 7px 14px; border-radius: 999px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); color: #38BDF8; cursor: pointer; transition: all 0.2s;">
+              ⚡ Simulate Pipeline
+            </button>
           </div>
+        </div>
+
+        <div style="margin-top: 6px; font-size: 12px; color: #9CA3AF; display: flex; align-items: center; gap: 8px; text-align: center;">
+          <span style="color: #6B7280;">Selected:</span>
+          <strong id="active-playing-title" style="color: #FFFFFF;">Uber Architecture</strong>
         </div>
       </div>
 
@@ -606,6 +669,10 @@
         title: 'How Uber Matches 1M Drivers in 100ms',
         category: 'Distributed Systems',
         scaleMetric: '1M+ Drivers // <100ms P99',
+        phoneSubtitle: 'H3 Hexagonal Spatial Indexing + Redis Clusters in 60s',
+        phoneMetric: '⚡ 100ms Driver Match',
+        videoSrc: 'videos/uber-h3-matching.mp4',
+        hasVideo: true,
         desc: 'How does Uber pinpoint the closest driver to your exact location in under 100 milliseconds among 1 million moving vehicles?',
         tags: ['H3 Geospatial', 'Redis Cluster', 'Ringpop'],
         steps: [
@@ -616,12 +683,36 @@
         takeaway: 'By replacing geometric distance calculations with integer hexagon lookups in Redis, Uber searches 1M vehicles in microseconds.'
       },
       {
+        id: 'stripe-idempotency-engine',
+        company: 'Stripe',
+        companyLogo: '💳',
+        title: 'How Stripe Never Double-Charges You',
+        category: 'FinTech & Payments',
+        scaleMetric: '99.999% Consistency // Millions TPS',
+        phoneSubtitle: 'Client Idempotency Keys + Redis Mutex Lock in 60s',
+        phoneMetric: '🔐 99.999% ACID Consistency',
+        videoSrc: 'videos/stripe-idempotency-engine.mp4',
+        hasVideo: true,
+        desc: 'When internet connections drop right after clicking Pay, how does Stripe ensure network retries never charge you twice?',
+        tags: ['Idempotency Keys', 'Redis Locks', 'Distributed ACID'],
+        steps: [
+          { num: '01', title: 'CLIENT IDEMPOTENCY KEYS', desc: 'Every payment injects a unique client UUID inside the HTTP header before leaving the browser.' },
+          { num: '02', title: 'DISTRIBUTED REDIS MUTEX', desc: 'Stripe gateway acquires an atomic SETNX lock in Redis. In-flight duplicates are held safely.' },
+          { num: '03', title: 'RESPONSE CACHING & REPLAY', desc: 'Successful payloads are stored for 24h. Repeated retries simply receive cached responses.' }
+        ],
+        takeaway: 'By storing client idempotency keys in Redis locks and tables, Stripe turns dangerous retries into safe idempotent reads.'
+      },
+      {
         id: 'netflix-openconnect-cdn',
         company: 'Netflix',
         companyLogo: '🍿',
         title: 'How Netflix Streams 4K to 250M Users',
         category: 'High-Throughput Streaming',
         scaleMetric: '250M Users // 15% Web Traffic',
+        phoneSubtitle: 'Open Connect CDN + Zero-Copy FreeBSD Kernel in 60s',
+        phoneMetric: '🍿 15% Global Web Traffic',
+        videoSrc: null,
+        hasVideo: false,
         desc: 'Netflix accounts for 15% of all internet traffic. How do they stream 4K globally without buffering or commercial CDNs?',
         tags: ['Open Connect CDN', 'FreeBSD Kernel', 'Zero-Copy'],
         steps: [
@@ -638,6 +729,10 @@
         title: 'How WhatsApp Handles 100B Messages Daily',
         category: 'Real-Time Messaging',
         scaleMetric: '100B Msgs/Day // 50 Engineers',
+        phoneSubtitle: 'Erlang BEAM 2M Sockets/Node + Mnesia in 60s',
+        phoneMetric: '💬 100B Messages / Day',
+        videoSrc: null,
+        hasVideo: false,
         desc: 'How does WhatsApp handle 100 billion daily messages across 2 billion users with a tiny engineering team?',
         tags: ['Erlang BEAM', 'Actor Model', 'FreeBSD Sockets'],
         steps: [
@@ -654,6 +749,10 @@
         title: 'How UPI Handles 50,000 TPS with 0 Downtime',
         category: 'FinTech & Payments',
         scaleMetric: '14B Monthly Txns // 50k TPS',
+        phoneSubtitle: 'NPCI Central Switch + Distributed 2PC in 60s',
+        phoneMetric: '💳 50,000 TPS · Zero Money Loss',
+        videoSrc: null,
+        hasVideo: false,
         desc: 'How does India UPI process over 14 billion monthly transactions across hundreds of banks with zero money loss?',
         tags: ['NPCI Central Switch', 'Distributed 2PC', 'HSM Encryption'],
         steps: [
@@ -664,28 +763,16 @@
         takeaway: 'NPCI acts as an atomic transaction coordinator ensuring distributed ACID consistency across independent legacy banks.'
       },
       {
-        id: 'stripe-idempotency-engine',
-        company: 'Stripe',
-        companyLogo: '💳',
-        title: 'How Stripe Never Double-Charges You',
-        category: 'FinTech & Payments',
-        scaleMetric: '99.999% Consistency // Millions TPS',
-        desc: 'When internet connections drop right after clicking Pay, how does Stripe ensure network retries never charge you twice?',
-        tags: ['Idempotency Keys', 'Redis Locks', 'Distributed ACID'],
-        steps: [
-          { num: '01', title: 'CLIENT IDEMPOTENCY KEYS', desc: 'Every payment injects a unique client UUID inside the HTTP header before leaving the browser.' },
-          { num: '02', title: 'DISTRIBUTED REDIS MUTEX', desc: 'Stripe gateway acquires an atomic SETNX lock in Redis. In-flight duplicates are held safely.' },
-          { num: '03', title: 'RESPONSE CACHING & REPLAY', desc: 'Successful payloads are stored for 24h. Repeated retries simply receive cached responses.' }
-        ],
-        takeaway: 'By storing client idempotency keys in Redis locks and tables, Stripe turns dangerous retries into safe idempotent reads.'
-      },
-      {
         id: 'discord-scylladb-migration',
         company: 'Discord',
         companyLogo: '🎮',
         title: 'Why Discord Moved to ScyllaDB for Trillions of Messages',
         category: 'Distributed Systems',
         scaleMetric: 'Trillions of Msgs // 5ms P99',
+        phoneSubtitle: 'ScyllaDB C++ Thread-per-Core Zero-GC in 60s',
+        phoneMetric: '🎮 5ms P99 Message Read',
+        videoSrc: null,
+        hasVideo: false,
         desc: 'Why did Discord abandon Apache Cassandra for C++ ScyllaDB to store trillions of chat messages?',
         tags: ['ScyllaDB', 'C++ Thread-per-Core', 'Zero GC Lag'],
         steps: [
@@ -698,6 +785,7 @@
     ];
 
     let currentSelectedId = CATALOG[0].id;
+    let simTimer = null;
 
     function renderCatalog() {
       const grid = document.getElementById('catalog-grid');
@@ -708,7 +796,12 @@
               <span>${item.companyLogo}</span>
               <span>${item.company}</span>
             </div>
-            <span class="topic-card-metric">${item.scaleMetric}</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="video-pill ${item.hasVideo ? 'live' : 'queued'}">
+                ${item.hasVideo ? '▶ Watch Reel' : '🗓️ Queued'}
+              </span>
+              <span class="topic-card-metric">${item.scaleMetric}</span>
+            </div>
           </div>
           <div class="topic-card-title">${item.title}</div>
           <div class="topic-card-desc">${item.desc}</div>
@@ -719,17 +812,105 @@
       `).join('');
     }
 
+    function resetSimulationState(topic) {
+      if (simTimer) clearTimeout(simTimer);
+      const btn = document.getElementById('sim-btn');
+      const badge = document.getElementById('pipeline-status-badge');
+      if (btn) {
+        btn.textContent = '⚡ Simulate Studio Pipeline';
+        btn.disabled = false;
+      }
+      if (badge) {
+        badge.textContent = 'Queued';
+        badge.style.color = '#38BDF8';
+      }
+      const s1 = document.getElementById('sim-step-1');
+      const s2 = document.getElementById('sim-step-2');
+      const s3 = document.getElementById('sim-step-3');
+      const s4 = document.getElementById('sim-step-4');
+      if (s1) { s1.innerHTML = '✓ 1. Scripting (Gemini 2.5)'; s1.style.color = '#10B981'; }
+      if (s2) { s2.innerHTML = '✓ 2. Vector Synthesis (Iconify)'; s2.style.color = '#10B981'; }
+      if (s3) { s3.innerHTML = '⏳ 3. Neural Voice (Edge-TTS)'; s3.style.color = '#38BDF8'; }
+      if (s4) { s4.innerHTML = '○ 4. Remotion Render (1080p)'; s4.style.color = '#64748B'; }
+    }
+
+    function runPipelineSimulation() {
+      const btn = document.getElementById('sim-btn');
+      const badge = document.getElementById('pipeline-status-badge');
+      if (!btn || btn.disabled) return;
+
+      btn.disabled = true;
+      btn.textContent = '⚙️ Simulating Pipeline...';
+      badge.textContent = 'Synthesizing Voice...';
+
+      const s3 = document.getElementById('sim-step-3');
+      const s4 = document.getElementById('sim-step-4');
+      if (s3) {
+        s3.innerHTML = '🔄 3. Neural Voice (Edge-TTS) — Generating...';
+        s3.style.color = '#F59E0B';
+      }
+
+      simTimer = setTimeout(() => {
+        if (s3) {
+          s3.innerHTML = '✓ 3. Neural Voice (Edge-TTS) — 128 words';
+          s3.style.color = '#10B981';
+        }
+        badge.textContent = 'Headless Render...';
+
+        if (s4) {
+          s4.innerHTML = '🔄 4. Remotion Render — Encoding 1,775 frames...';
+          s4.style.color = '#22D3EE';
+        }
+
+        simTimer = setTimeout(() => {
+          if (s4) {
+            s4.innerHTML = '✓ 4. Remotion Render — Blueprint Ready!';
+            s4.style.color = '#10B981';
+          }
+          badge.textContent = 'Autonomous Ready';
+          badge.style.color = '#10B981';
+          btn.textContent = '✨ Release Scheduled in Catalog';
+        }, 1300);
+      }, 1100);
+    }
+
     function selectTopic(id) {
       currentSelectedId = id;
       const topic = CATALOG.find(t => t.id === id);
       if (!topic) return;
 
+      const videoEl = document.getElementById('phone-video');
+      const placeholderEl = document.getElementById('player-placeholder');
+      const playingTitleEl = document.getElementById('active-playing-title');
+
       document.getElementById('featured-logo').textContent = topic.companyLogo;
       document.getElementById('featured-phone-title').textContent = topic.company + ' Architecture';
+      document.getElementById('featured-phone-subtitle').textContent = topic.phoneSubtitle || topic.desc;
+      document.getElementById('featured-phone-metric').textContent = topic.phoneMetric || topic.scaleMetric;
+      if (playingTitleEl) {
+        playingTitleEl.textContent = topic.title;
+      }
+
       document.getElementById('active-title').textContent = topic.title;
       document.getElementById('active-desc').textContent = topic.desc;
       document.getElementById('active-category').textContent = topic.category.toUpperCase() + ' CASE STUDY';
       document.getElementById('active-takeaway').innerHTML = '💡 <strong>Key Architecture Takeaway:</strong> ' + topic.takeaway;
+
+      if (topic.videoSrc) {
+        placeholderEl.style.display = 'none';
+        videoEl.style.display = 'block';
+        if (videoEl.getAttribute('data-active-id') !== topic.id) {
+          videoEl.setAttribute('data-active-id', topic.id);
+          videoEl.src = topic.videoSrc;
+          videoEl.load();
+          videoEl.play().catch(() => {});
+        }
+      } else {
+        videoEl.pause();
+        videoEl.style.display = 'none';
+        placeholderEl.style.display = 'flex';
+        resetSimulationState(topic);
+      }
 
       const stepsBox = document.getElementById('active-steps-box');
       stepsBox.innerHTML = topic.steps.map(s => `
@@ -749,7 +930,7 @@
       }
     }
 
-    // Initialize
+    // Initialize with first topic
     selectTopic(CATALOG[0].id);
   </script>
 </body>

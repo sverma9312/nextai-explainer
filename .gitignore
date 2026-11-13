@@ -6,6 +6,7 @@ out/
 build/
 dist/
 *.mp4
+!web/videos/*.mp4
 *.mp3
 *.wav
 .remotion/
