@@ -1,9 +1,12 @@
 import React from 'react';
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { CarVector, MapPinVector, RedisLogo } from '../icons/TechLogos';
+import { DynamicIcon } from '../icons/DynamicIcon';
+import type { VisualEntity } from '../../../schema/types';
 
 interface HexagonGridStageProps {
   sceneStep: 3 | 4; // Scene 3 (Breakthrough/Redis) or Scene 4 (Neighbor Search/Dispatch)
+  visualEntities?: VisualEntity[];
 }
 
 /**
@@ -63,9 +66,16 @@ const CELLS: CellDef[] = [
   { id: 18, col: 1.5, row: -1, hasCar: true, carId: 'drv_4490' },
 ];
 
-export const HexagonGridStage: React.FC<HexagonGridStageProps> = ({ sceneStep }) => {
+export const HexagonGridStage: React.FC<HexagonGridStageProps> = ({ sceneStep, visualEntities }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+
+  const redisEntity = visualEntities?.find(
+    (e) => e.id === 'redis' || e.iconQuery?.includes('redis') || e.label?.toLowerCase().includes('redis')
+  );
+  const carEntity = visualEntities?.find(
+    (e) => e.id === 'driver' || e.iconQuery?.includes('car') || e.iconQuery?.includes('vehicle')
+  );
 
   const entrance = spring({
     frame,
@@ -195,11 +205,19 @@ export const HexagonGridStage: React.FC<HexagonGridStageProps> = ({ sceneStep })
                   zIndex: isWinningCar ? 25 : 10,
                 }}
               >
-                <CarVector
-                  size={46}
-                  color={isWinningCar ? '#10B981' : '#FBBF24'}
-                  active={isWinningCar}
-                />
+                {carEntity?.svgDataUri ? (
+                  <DynamicIcon
+                    svgDataUri={carEntity.svgDataUri}
+                    size={42}
+                    glowColor={isWinningCar ? '#10B981' : '#FBBF24'}
+                  />
+                ) : (
+                  <CarVector
+                    size={46}
+                    color={isWinningCar ? '#10B981' : '#FBBF24'}
+                    active={isWinningCar}
+                  />
+                )}
               </div>
             );
           }
@@ -210,7 +228,7 @@ export const HexagonGridStage: React.FC<HexagonGridStageProps> = ({ sceneStep })
 
       {/* 2. Bottom Content Cards */}
       {sceneStep === 3 ? (
-        /* SCENE 3: In-Memory Storage with ACTUAL REDIS LOGO & Key-Value Table */
+        /* SCENE 3: In-Memory Storage with DYNAMIC REAL REDIS LOGO & Key-Value Table */
         <div
           style={{
             width: 860,
@@ -234,7 +252,11 @@ export const HexagonGridStage: React.FC<HexagonGridStageProps> = ({ sceneStep })
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <RedisLogo size={56} />
+              {redisEntity?.svgDataUri ? (
+                <DynamicIcon svgDataUri={redisEntity.svgDataUri} size={56} glowColor="#DC382D" />
+              ) : (
+                <RedisLogo size={56} />
+              )}
               <div>
                 <div
                   style={{
@@ -429,3 +451,4 @@ export const HexagonGridStage: React.FC<HexagonGridStageProps> = ({ sceneStep })
     </div>
   );
 };
+

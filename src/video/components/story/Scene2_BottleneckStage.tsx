@@ -1,6 +1,12 @@
 import React from 'react';
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { CarVector, MapPinVector } from '../icons/TechLogos';
+import { DynamicIcon } from '../icons/DynamicIcon';
+import type { VisualEntity } from '../../../schema/types';
+
+interface Scene2Props {
+  visualEntities?: VisualEntity[];
+}
 
 // Scattered Car Positions around the center pin
 const CAR_LOCATIONS = [
@@ -18,9 +24,11 @@ const CAR_LOCATIONS = [
   { x: 340, y: 380 },
 ];
 
-export const Scene2_BottleneckStage: React.FC = () => {
+export const Scene2_BottleneckStage: React.FC<Scene2Props> = ({ visualEntities }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+
+  const carEntity = visualEntities?.find((e) => e.id === 'driver' || e.iconQuery?.includes('car') || e.iconQuery?.includes('vehicle'));
 
   const entrance = spring({
     frame,
@@ -117,7 +125,11 @@ export const Scene2_BottleneckStage: React.FC = () => {
               zIndex: 20,
             }}
           >
-            <CarVector size={48} color="#FBBF24" />
+            {carEntity?.svgDataUri ? (
+              <DynamicIcon svgDataUri={carEntity.svgDataUri} size={48} glowColor="#FBBF24" />
+            ) : (
+              <CarVector size={48} color="#FBBF24" />
+            )}
           </div>
         ))}
       </div>
@@ -179,3 +191,4 @@ export const Scene2_BottleneckStage: React.FC = () => {
     </div>
   );
 };
+

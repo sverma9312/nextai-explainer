@@ -54,23 +54,32 @@ export const GenericTopicStage: React.FC<GenericTopicStageProps> = ({ script, sc
           }}
         />
 
-        {/* Central Company Brand Hub */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '46%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 10,
-          }}
-        >
-          <BrandHubCircle name={script.company} size={110} />
-        </div>
+        {/* Central Company Brand Hub (rendered only when center space is open) */}
+        {!script.nodes.some((n: ArchitectureNode) => Math.abs(n.x - 50) < 18 && Math.abs(n.y - 50) < 20) && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '46%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 10,
+            }}
+          >
+            <BrandHubCircle name={script.company} size={110} />
+          </div>
+        )}
 
         {/* Dynamic Nodes with Authentic Vector Logos */}
         {script.nodes.map((node: ArchitectureNode) => {
           const isActive = activeNodeIds.has(node.id) || sceneIndex === 1;
           const nodePulse = isActive ? Math.sin((frame + node.x) / 10) * 4 : 0;
+          const matchedEntity = script.visualEntities?.find(
+            (e) =>
+              e.id === node.id ||
+              node.label.toLowerCase().includes(e.id.toLowerCase()) ||
+              node.label.toLowerCase().includes(e.iconQuery.toLowerCase()) ||
+              e.label.toLowerCase().includes(node.label.toLowerCase())
+          );
 
           return (
             <div
@@ -101,7 +110,12 @@ export const GenericTopicStage: React.FC<GenericTopicStageProps> = ({ script, sc
                   justifyContent: 'center',
                 }}
               >
-                <AutoTechIcon name={`${node.label} ${node.sublabel}`} size={56} active={isActive} />
+                <AutoTechIcon
+                  name={`${node.label} ${node.sublabel}`}
+                  size={56}
+                  active={isActive}
+                  svgDataUri={matchedEntity?.svgDataUri}
+                />
               </div>
 
               {/* Node Labels */}

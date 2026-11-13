@@ -1,5 +1,36 @@
 import { GoogleGenAI } from '@google/genai';
-import type { ExplainerTopic, ExplainerScript } from '../schema/types.js';
+import type { ExplainerTopic, ExplainerScript, VisualEntity } from '../schema/types.js';
+import { resolveEntitiesIcons } from '../icons/resolver.js';
+
+function getDefaultVisualEntities(topic: ExplainerTopic): VisualEntity[] {
+  const isUber = topic.id.includes('uber') || topic.company.toLowerCase().includes('uber');
+  if (isUber) {
+    return [
+      { id: 'client', label: 'Rider App', iconQuery: 'person user mobile', role: 'actor' },
+      { id: 'gateway', label: 'Edge Gateway', iconQuery: 'network gateway shield proxy', role: 'gateway' },
+      { id: 'redis', label: 'Redis Spatial Cache', iconQuery: 'redis', role: 'cache' },
+      { id: 'driver', label: 'Driver Vehicle', iconQuery: 'car vehicle', role: 'actor' },
+      { id: 'db', label: 'Cassandra DocStore', iconQuery: 'database cassandra storage', role: 'database' },
+    ];
+  }
+
+  // Derive entities from topic nodes if available
+  if (topic.nodes && topic.nodes.length > 0) {
+    return topic.nodes.map((n) => ({
+      id: n.id,
+      label: n.label,
+      iconQuery: `${n.label} ${n.type}`.toLowerCase(),
+      role: (n.type === 'client' ? 'actor' : n.type === 'cache' ? 'cache' : n.type === 'db' ? 'database' : 'service') as any,
+    }));
+  }
+
+  return [
+    { id: 'client', label: 'Client', iconQuery: 'user person', role: 'actor' },
+    { id: 'service', label: 'Backend Service', iconQuery: 'server cloud', role: 'service' },
+    { id: 'cache', label: 'Cache Cluster', iconQuery: 'redis cache', role: 'cache' },
+    { id: 'db', label: 'Database', iconQuery: 'database storage', role: 'database' },
+  ];
+}
 
 export async function generateExplainerScript(topic: ExplainerTopic): Promise<ExplainerScript> {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -23,6 +54,17 @@ Follow this 5-scene narrative arc:
 4. Smart Search & Resolution: How candidate lookups query only immediate neighbor cells to lock the best ETA in microseconds.
 5. Golden Engineering Rule: 1 punchy architectural takeaway principle.
 
+Visual Entities:
+Identify 3 to 5 core architectural actors/components mentioned in this system (e.g. redis, car, client, gateway, database, kafka).
+For each, provide a search query keyword to fetch its official vector icon.
+
+Stage Archetype:
+Choose the best visual stage layout:
+- "spatial" for geolocation/grid/neighbor lookups (Uber, Lyft, DoorDash).
+- "pipeline" for streaming/event architectures (Kafka, Flink, EventBridge).
+- "ring" for consistent hashing / peer-to-peer rings (Dynamo, Cassandra, Ringpop).
+- "edge" for CDN, gateway, and multi-region routing (Cloudflare, Envoy).
+
 Rules:
 - Pacing: Clean, energetic, high technical clarity, zero fluff, zero introductory greetings.
 - Total spoken words must be strictly between 125 and 140 words (approx 54-58 seconds of natural speech).
@@ -34,7 +76,15 @@ Return ONLY valid JSON with this exact schema:
   "step1Narration": "The obvious approach and why it fails under scale (approx 24-28 words)",
   "step2Narration": "The spatial indexing and Redis in-memory storage breakthrough (approx 30-35 words)",
   "step3Narration": "Neighbor cell lookup, ETA evaluation, and atomic state match (approx 24-28 words)",
-  "takeaway": "Closing engineering rule (approx 16-20 words)"
+  "takeaway": "Closing engineering rule (approx 16-20 words)",
+  "stageArchetype": "spatial",
+  "visualEntities": [
+    { "id": "client", "label": "Rider", "iconQuery": "mobile person user", "role": "actor" },
+    { "id": "gateway", "label": "Edge Gateway", "iconQuery": "api gateway proxy envoy", "role": "gateway" },
+    { "id": "redis", "label": "Redis Spatial Cache", "iconQuery": "redis", "role": "cache" },
+    { "id": "driver", "label": "Driver Vehicle", "iconQuery": "car vehicle", "role": "actor" },
+    { "id": "db", "label": "Cassandra DB", "iconQuery": "database storage cassandra", "role": "database" }
+  ]
 }`;
 
     const userPrompt = `Topic: ${topic.title}
@@ -96,6 +146,16 @@ Takeaway: ${topic.takeaway}`;
     const takeaway = parsed.takeaway || topic.takeaway;
     const fullSpokenText = `${hook} ${steps[0].narration} ${steps[1].narration} ${steps[2].narration} ${takeaway}`;
 
+    const rawEntities: VisualEntity[] =
+      parsed.visualEntities && Array.isArray(parsed.visualEntities) && parsed.visualEntities.length > 0
+        ? parsed.visualEntities
+        : getDefaultVisualEntities(topic);
+
+    console.log(`🎨 [DynamicIconResolver] Resolving ${rawEntities.length} visual entities for "${topic.title}"...`);
+    const visualEntities = await resolveEntitiesIcons(rawEntities);
+
+    const stageArchetype = parsed.stageArchetype || 'spatial';
+
     return {
       topicId: topic.id,
       company: topic.company,
@@ -108,6 +168,8 @@ Takeaway: ${topic.takeaway}`;
       steps,
       takeaway,
       fullSpokenText,
+      stageArchetype,
+      visualEntities,
     };
   } catch (err: any) {
     console.warn(`⚠️ Gemini script generation error: ${err.message}. Falling back to curated script.`);
@@ -115,9 +177,12 @@ Takeaway: ${topic.takeaway}`;
   }
 }
 
-function buildFallbackScript(topic: ExplainerTopic): ExplainerScript {
+async function buildFallbackScript(topic: ExplainerTopic): Promise<ExplainerScript> {
   const hook = topic.problemStatement;
   const fullSpokenText = `${hook} ${topic.steps[0].narration} ${topic.steps[1].narration} ${topic.steps[2].narration} ${topic.takeaway}`;
+
+  const rawEntities = getDefaultVisualEntities(topic);
+  const visualEntities = await resolveEntitiesIcons(rawEntities);
 
   return {
     topicId: topic.id,
@@ -131,5 +196,7 @@ function buildFallbackScript(topic: ExplainerTopic): ExplainerScript {
     steps: topic.steps,
     takeaway: topic.takeaway,
     fullSpokenText,
+    stageArchetype: 'spatial',
+    visualEntities,
   };
 }

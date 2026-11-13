@@ -119,10 +119,29 @@ export const MasterStoryStage: React.FC<MasterStoryStageProps> = ({ script }) =>
       >
         {isSpatialMatching ? (
           <>
-            {sceneIndex === 1 && <Scene1_ContextStage company={script.company} />}
-            {sceneIndex === 2 && <Scene2_BottleneckStage />}
-            {sceneIndex === 3 && <HexagonGridStage sceneStep={3} />}
-            {sceneIndex === 4 && <HexagonGridStage sceneStep={4} />}
+            {sceneIndex === 1 && (
+              <Scene1_ContextStage
+                company={script.company}
+                visualEntities={script.visualEntities}
+              />
+            )}
+            {sceneIndex === 2 && (
+              <Scene2_BottleneckStage
+                visualEntities={script.visualEntities}
+              />
+            )}
+            {sceneIndex === 3 && (
+              <HexagonGridStage
+                sceneStep={3}
+                visualEntities={script.visualEntities}
+              />
+            )}
+            {sceneIndex === 4 && (
+              <HexagonGridStage
+                sceneStep={4}
+                visualEntities={script.visualEntities}
+              />
+            )}
           </>
         ) : (
           <>

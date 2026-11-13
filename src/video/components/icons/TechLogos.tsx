@@ -372,11 +372,18 @@ export const ScreenTvVector: React.FC<{ size?: number; color?: string }> = ({
  * Takes any system design component or service name and automatically renders
  * the corresponding authentic SVG vector or official tech logo.
  */
+import { DynamicIcon } from './DynamicIcon';
+
 export const AutoTechIcon: React.FC<{
   name: string;
   size?: number;
   active?: boolean;
-}> = ({ name, size = 64, active = false }) => {
+  svgDataUri?: string;
+}> = ({ name, size = 64, active = false, svgDataUri }) => {
+  if (svgDataUri) {
+    return <DynamicIcon svgDataUri={svgDataUri} size={size} glow={active} />;
+  }
+
   const norm = name.toLowerCase();
 
   if (norm.includes('redis')) {

@@ -118,6 +118,14 @@ export interface WordSubtitle {
   end: number; // seconds
 }
 
+export interface VisualEntity {
+  id: string;
+  label: string;
+  iconQuery: string; // keyword for Iconify or Gemini fallback
+  svgDataUri?: string; // resolved SVG data URI
+  role?: 'actor' | 'gateway' | 'service' | 'cache' | 'database' | 'queue';
+}
+
 export interface ExplainerScript {
   topicId: string;
   company: string;
@@ -130,6 +138,8 @@ export interface ExplainerScript {
   steps: ArchitectureStep[];
   takeaway: string;
   fullSpokenText: string;
+  stageArchetype?: 'pipeline' | 'spatial' | 'ring' | 'edge';
+  visualEntities?: VisualEntity[];
   storyScenes?: StoryScenes;
 }
 

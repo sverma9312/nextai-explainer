@@ -6,7 +6,7 @@
   <title>NextAI Explainer — 60-Second Animated System Design Breakdowns</title>
   <meta
     name="description"
-    content="60-second animated software architecture and distributed system design breakdowns. Deconstructing Uber, Netflix, WhatsApp, Stripe, and UPI with zero infra cost."
+    content="60-second animated software architecture and distributed system design breakdowns. Deconstructing Uber, Netflix, WhatsApp, Stripe, and UPI."
   />
 
   <!-- Open Graph -->
@@ -516,7 +516,7 @@
     <section class="hero-header">
       <div class="pipeline-badge">
         <span class="live-pulse"></span>
-        60-Second Animated System Design · $0 Infra Cost
+        60-Second Animated System Design
       </div>
 
       <h1>
@@ -595,8 +595,6 @@
     <a href="https://ainewsvideo.nextai-apps.com/">AI Tech Videos</a>
     <span>·</span>
     <a href="https://aishort.nextai-apps.com/">AIShort</a>
-    <span>·</span>
-    <span>Engineered with $0 Infra Cost</span>
   </footer>
 
   <script>
@@ -704,18 +702,18 @@
     function renderCatalog() {
       const grid = document.getElementById('catalog-grid');
       grid.innerHTML = CATALOG.map(item => `
-        <div class="topic-card \${item.id === currentSelectedId ? 'active' : ''}" onclick="selectTopic('\${item.id}')">
+        <div class="topic-card ${item.id === currentSelectedId ? 'active' : ''}" onclick="selectTopic('${item.id}')">
           <div class="topic-card-top">
             <div class="topic-card-company">
-              <span>\${item.companyLogo}</span>
-              <span>\${item.company}</span>
+              <span>${item.companyLogo}</span>
+              <span>${item.company}</span>
             </div>
-            <span class="topic-card-metric">\${item.scaleMetric}</span>
+            <span class="topic-card-metric">${item.scaleMetric}</span>
           </div>
-          <div class="topic-card-title">\${item.title}</div>
-          <div class="topic-card-desc">\${item.desc}</div>
+          <div class="topic-card-title">${item.title}</div>
+          <div class="topic-card-desc">${item.desc}</div>
           <div class="topic-card-tags">
-            \${item.tags.map(t => \`<span class="tag-pill">#\${t}</span>\`).join('')}
+            ${item.tags.map(t => `<span class="tag-pill">#${t}</span>`).join('')}
           </div>
         </div>
       `).join('');
@@ -736,10 +734,10 @@
       const stepsBox = document.getElementById('active-steps-box');
       stepsBox.innerHTML = topic.steps.map(s => `
         <div class="step-item">
-          <div class="step-badge">\${s.num}</div>
+          <div class="step-badge">${s.num}</div>
           <div class="step-content">
-            <strong>\${s.title}</strong>
-            <span>\${s.desc}</span>
+            <strong>${s.title}</strong>
+            <span>${s.desc}</span>
           </div>
         </div>
       `).join('');

@@ -1,15 +1,22 @@
 import React from 'react';
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { BrandHubCircle, CarVector, PersonVector, ServerRackVector } from '../icons/TechLogos';
+import { DynamicIcon } from '../icons/DynamicIcon';
+import type { VisualEntity } from '../../../schema/types';
 
 interface Scene1Props {
   company: string;
   category?: string;
+  visualEntities?: VisualEntity[];
 }
 
-export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company }) => {
+export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEntities }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+
+  const userEntity = visualEntities?.find((e) => e.id === 'client' || e.iconQuery?.includes('person') || e.iconQuery?.includes('user'));
+  const carEntity = visualEntities?.find((e) => e.id === 'driver' || e.iconQuery?.includes('car') || e.iconQuery?.includes('vehicle'));
+  const gatewayEntity = visualEntities?.find((e) => e.id === 'gateway' || e.iconQuery?.includes('gateway') || e.iconQuery?.includes('proxy'));
 
   const entrance = spring({
     frame,
@@ -83,9 +90,24 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company }) => {
           />
         </svg>
 
-        {/* 1. Left Actor: Stick Person with Phone ("YOU") */}
-        <div style={{ zIndex: 10 }}>
-          <PersonVector size={130} color="#22D3EE" label="YOU" />
+        {/* 1. Left Actor: User Person ("YOU") */}
+        <div style={{ zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+          {userEntity?.svgDataUri ? (
+            <DynamicIcon svgDataUri={userEntity.svgDataUri} size={110} glowColor="#22D3EE" />
+          ) : (
+            <PersonVector size={130} color="#22D3EE" label="YOU" />
+          )}
+          <span
+            style={{
+              fontSize: 22,
+              fontFamily: '"Comic Sans MS", "Chalkboard SE", sans-serif',
+              fontWeight: 900,
+              color: '#22D3EE',
+              letterSpacing: 2,
+            }}
+          >
+            YOU
+          </span>
         </div>
 
         {/* 2. Center Hub: Company Brand Circle */}
@@ -98,15 +120,28 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company }) => {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: 24,
+            gap: 20,
             alignItems: 'center',
             zIndex: 10,
           }}
         >
-          <CarVector size={72} color="#FBBF24" active={true} />
+          {carEntity?.svgDataUri ? (
+            <DynamicIcon svgDataUri={carEntity.svgDataUri} size={76} glowColor="#FBBF24" />
+          ) : (
+            <CarVector size={72} color="#FBBF24" active={true} />
+          )}
           <div style={{ display: 'flex', gap: 16 }}>
-            <CarVector size={54} color="#FBBF24" />
-            <CarVector size={54} color="#FBBF24" />
+            {carEntity?.svgDataUri ? (
+              <>
+                <DynamicIcon svgDataUri={carEntity.svgDataUri} size={54} glowColor="#FBBF24" />
+                <DynamicIcon svgDataUri={carEntity.svgDataUri} size={54} glowColor="#FBBF24" />
+              </>
+            ) : (
+              <>
+                <CarVector size={54} color="#FBBF24" />
+                <CarVector size={54} color="#FBBF24" />
+              </>
+            )}
           </div>
           <span
             style={{
@@ -129,11 +164,20 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company }) => {
           marginTop: 40,
           display: 'flex',
           alignItems: 'center',
-          gap: 28,
+          gap: 24,
         }}
       >
-        <ServerRackVector size={80} />
-        <ServerRackVector size={80} />
+        {gatewayEntity?.svgDataUri ? (
+          <>
+            <DynamicIcon svgDataUri={gatewayEntity.svgDataUri} size={64} glowColor="#22D3EE" />
+            <DynamicIcon svgDataUri={gatewayEntity.svgDataUri} size={64} glowColor="#22D3EE" />
+          </>
+        ) : (
+          <>
+            <ServerRackVector size={80} />
+            <ServerRackVector size={80} />
+          </>
+        )}
         <div
           style={{
             padding: '14px 28px',
@@ -171,3 +215,4 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company }) => {
     </div>
   );
 };
+

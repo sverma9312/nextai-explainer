@@ -154,3 +154,4 @@ export const Scene5_TakeawayStage: React.FC<Scene5Props> = ({ rule, company }) =
     </div>
   );
 };
+
