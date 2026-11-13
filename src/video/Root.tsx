@@ -1,8 +1,8 @@
 import React from 'react';
-import { Composition } from 'remotion';
-import { ExplainerComposition } from './Composition.js';
-import { TOPICS } from '../catalog/topics.js';
-import type { ExplainerCompositionProps } from '../schema/types.js';
+import { Composition, registerRoot } from 'remotion';
+import { ExplainerComposition } from './Composition';
+import { TOPICS } from '../catalog/topics';
+import type { ExplainerCompositionProps } from '../schema/types';
 
 const sampleTopic = TOPICS[0];
 
@@ -47,4 +47,7 @@ export const Root: React.FC = () => {
     />
   );
 };
+
+registerRoot(Root);
+
 

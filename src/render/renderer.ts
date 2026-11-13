@@ -24,7 +24,17 @@ export async function renderVideoToDisk(options: RenderOptions): Promise<string>
   console.log('📦 Bundling Remotion React composition...');
   const bundleLocation = await bundle({
     entryPoint,
-    webpackOverride: (config) => config,
+    webpackOverride: (config) => ({
+      ...config,
+      resolve: {
+        ...config.resolve,
+        extensionAlias: {
+          '.js': ['.ts', '.tsx', '.js', '.jsx'],
+          '.mjs': ['.mts', '.mjs'],
+          '.cjs': ['.cts', '.cjs'],
+        },
+      },
+    }),
   });
 
   console.log('🎬 Selecting composition "ExplainerReel"...');

@@ -110,19 +110,23 @@ ${script.takeaway}
 
   const publishResults = await publishToAllChannels(publishRequest);
 
-  // Record published episode in ledger
-  await recordPostedExplainer({
-    topicId: topic.id,
-    company: topic.company,
-    title: topic.title,
-    videoTitle: script.videoTitle,
-    videoPath: outVideoPath,
-    audioPath: ttsResult.audioPath,
-    durationSeconds: ttsResult.durationSeconds,
-    postedAt: new Date().toISOString(),
-    youtubeUrl: publishResults.youtube?.videoUrl,
-    instagramUrl: publishResults.instagram?.reelUrl,
-  });
+  // Record published episode in ledger only if published to at least one channel
+  if (publishResults.youtube?.videoUrl || publishResults.instagram?.reelUrl) {
+    await recordPostedExplainer({
+      topicId: topic.id,
+      company: topic.company,
+      title: topic.title,
+      videoTitle: script.videoTitle,
+      videoPath: outVideoPath,
+      audioPath: ttsResult.audioPath,
+      durationSeconds: ttsResult.durationSeconds,
+      postedAt: new Date().toISOString(),
+      youtubeUrl: publishResults.youtube?.videoUrl,
+      instagramUrl: publishResults.instagram?.reelUrl,
+    });
+  } else {
+    console.log('ℹ️ Social publishing was skipped (ENABLE_*=false). Video rendered to disk without updating archive ledger.');
+  }
 
   console.log('\n====================================================');
   console.log('🎉 Explainer Video Pipeline Completed Successfully!');

@@ -61,9 +61,45 @@ export async function synthesizeVoiceover(
       stream.audioStream.pipe(writeStream);
 
       await new Promise<void>((resolve, reject) => {
-        writeStream.on('finish', () => setTimeout(resolve, 100));
-        writeStream.on('error', reject);
-        stream.audioStream.on('error', reject);
+        let isDone = false;
+        const timeout = setTimeout(() => {
+          if (!isDone) {
+            isDone = true;
+            reject(new Error('Edge-TTS synthesis timed out after 25s'));
+          }
+        }, 25000);
+
+        writeStream.on('finish', () => {
+          if (!isDone) {
+            isDone = true;
+            clearTimeout(timeout);
+            setTimeout(resolve, 80);
+          }
+        });
+
+        writeStream.on('error', (err) => {
+          if (!isDone) {
+            isDone = true;
+            clearTimeout(timeout);
+            reject(err);
+          }
+        });
+
+        stream.audioStream.on('error', (err: any) => {
+          if (!isDone) {
+            // Gracefully accept if substantial words & audio were captured before abrupt socket drop
+            if (err?.message?.includes('no turn.end received') && words.length >= 20) {
+              isDone = true;
+              clearTimeout(timeout);
+              writeStream.end();
+              setTimeout(resolve, 80);
+            } else {
+              isDone = true;
+              clearTimeout(timeout);
+              reject(err);
+            }
+          }
+        });
       });
 
       try {

@@ -1,13 +1,13 @@
 import React from 'react';
 import { Audio, useCurrentFrame, useVideoConfig } from 'remotion';
-import type { ExplainerCompositionProps } from '../schema/types.js';
-import { Background } from './components/Background.js';
-import { HeaderBanner } from './components/HeaderBanner.js';
-import { ArchitectureCanvas } from './components/ArchitectureCanvas.js';
-import { StepCalloutBar } from './components/StepCalloutBar.js';
-import { KineticCaptions } from './components/KineticCaptions.js';
-import { Waveform } from './components/Waveform.js';
-import { OutroCard } from './components/OutroCard.js';
+import type { ExplainerCompositionProps } from '../schema/types';
+import { Background } from './components/Background';
+import { HeaderBanner } from './components/HeaderBanner';
+import { ArchitectureCanvas } from './components/ArchitectureCanvas';
+import { StepCalloutBar } from './components/StepCalloutBar';
+import { KineticCaptions } from './components/KineticCaptions';
+import { Waveform } from './components/Waveform';
+import { OutroCard } from './components/OutroCard';
 
 export const ExplainerComposition: React.FC<ExplainerCompositionProps> = ({
   script,

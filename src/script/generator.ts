@@ -14,7 +14,7 @@ export async function generateExplainerScript(topic: ExplainerTopic): Promise<Ex
     const ai = new GoogleGenAI({ apiKey });
 
     const systemPrompt = `You are a Principal Distributed Systems Architect and viral technical video creator for NextAI Explainer.
-Your task is to take a software architecture case study and generate an ultra-crisp, authoritative, 45-to-55-second vertical video script.
+Your task is to take a software architecture case study and generate an ultra-crisp, authoritative, 30-to-35-second vertical video script.
 
 Rules:
 1. Hook must start with high-stakes scale or technical mystery (e.g. "How does Uber match 1 million drivers in under 100 milliseconds?").
@@ -23,16 +23,16 @@ Rules:
    - Layer 2: Core Distributed Engine / In-Memory State
    - Layer 3: Persistence / Consensus / Scale Takeaway
 3. Pacing: Punchy, zero filler, zero greeting, high technical density (mention protocols, data structures, and algorithms).
-4. Total spoken words must be strictly between 110 and 130 words (approx 45-50 seconds speech).
+4. Total spoken words must be strictly between 70 and 85 words (approx 28-34 seconds speech).
 
 Return ONLY valid JSON with this exact schema:
 {
   "videoTitle": "Short YouTube Shorts title ending with #Shorts (max 60 chars)",
-  "hook": "Opening 1-sentence hook (approx 12-16 words)",
-  "step1Narration": "Layer 1 narration (approx 30-35 words)",
-  "step2Narration": "Layer 2 narration (approx 30-35 words)",
-  "step3Narration": "Layer 3 narration (approx 30-35 words)",
-  "takeaway": "Closing 1-sentence engineering rule (approx 12-18 words)"
+  "hook": "Opening 1-sentence hook (approx 10-14 words)",
+  "step1Narration": "Layer 1 narration (approx 18-22 words)",
+  "step2Narration": "Layer 2 narration (approx 18-22 words)",
+  "step3Narration": "Layer 3 narration (approx 18-22 words)",
+  "takeaway": "Closing 1-sentence engineering rule (approx 10-14 words)"
 }`;
 
     const userPrompt = `Topic: ${topic.title}
