@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284C7"/>
+      <stop offset="100%" stop-color="#0369A1"/>
+    </linearGradient>
+    <linearGradient id="topGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22D3EE"/>
+      <stop offset="100%" stop-color="#0EA5E9"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <!-- Back cylinder / Cloud base connection -->
+    <path d="M 30,35 L 30,50 C 30,60 70,60 70,50 L 70,35" fill="none" stroke="#38BDF8" stroke-width="2" stroke-opacity="0.4"/>
+    <path d="M 30,55 L 30,70 C 30,80 70,80 70,70 L 70,55" fill="none" stroke="#38BDF8" stroke-width="2" stroke-opacity="0.4"/>
+
+    <!-- Layer 3 (Bottom) -->
+    <path d="M 20,65 C 20,75 80,75 80,65 L 80,82 C 80,92 20,92 20,82 Z" fill="url(#skyGrad)"/>
+    <ellipse cx="50" cy="65" rx="30" ry="8" fill="url(#topGrad)" stroke="#7DD3FC" stroke-width="1.5"/>
+    <!-- Data pulse dots bottom -->
+    <circle cx="40" cy="74" r="2" fill="#22D3EE"/>
+    <circle cx="50" cy="74" r="2" fill="#22D3EE"/>
+    <circle cx="60" cy="74" r="2" fill="#22D3EE"/>
+
+    <!-- Layer 2 (Middle) -->
+    <path d="M 20,42 C 20,52 80,52 80,42 L 80,59 C 80,69 20,69 20,59 Z" fill="url(#skyGrad)"/>
+    <ellipse cx="50" cy="42" rx="30" ry="8" fill="url(#topGrad)" stroke="#7DD3FC" stroke-width="1.5"/>
+    <!-- Data pulse dots middle -->
+    <circle cx="45" cy="51" r="2" fill="#FFFFFF"/>
+    <circle cx="55" cy="51" r="2" fill="#22D3EE"/>
+
+    <!-- Layer 1 (Top) -->
+    <path d="M 20,19 C 20,29 80,29 80,19 L 80,36 C 80,46 20,46 20,36 Z" fill="url(#skyGrad)"/>
+    <ellipse cx="50" cy="19" rx="30" ry="8" fill="url(#accentGrad)" stroke="#E0F2FE" stroke-width="1.5"/>
+    <!-- Data pulse dots top -->
+    <circle cx="40" cy="28" r="2" fill="#FFFFFF"/>
+    <circle cx="50" cy="28" r="2.5" fill="#FFFFFF"/>
+    <circle cx="60" cy="28" r="2" fill="#FFFFFF"/>
+
+    <!-- Cassandra stylized 'C' / Node ring overlay or connection beams -->
+    <path d="M 15,19 C 15,10 35,8 50,12" fill="none" stroke="#22D3EE" stroke-width="3" stroke-linecap="round"/>
+    <path d="M 85,65 C 85,74 65,76 50,72" fill="none" stroke="#22D3EE" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>
