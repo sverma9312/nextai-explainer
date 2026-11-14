@@ -93,7 +93,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           VIDEO_VOICE_NAME: 'en-US-AndrewNeural'
-          VIDEO_VOICE_RATE: '+4%'
+          VIDEO_VOICE_RATE: '+14%'
           RETRY_LAST: ${{ inputs.retry_last }}
           ENABLE_YOUTUBE_PUBLISH: ${{ (github.event_name == 'workflow_dispatch' && inputs.publish_youtube) || vars.ENABLE_YOUTUBE_PUBLISH || secrets.ENABLE_YOUTUBE_PUBLISH || 'false' }}
           ENABLE_INSTAGRAM_PUBLISH: ${{ (github.event_name == 'workflow_dispatch' && inputs.publish_instagram) || vars.ENABLE_INSTAGRAM_PUBLISH || secrets.ENABLE_INSTAGRAM_PUBLISH || 'false' }}

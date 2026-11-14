@@ -199,12 +199,11 @@
       max-width: 640px;
     }
 
-    /* Showcase Grid - Responsive Widescreen Split */
+    /* Showcase Container */
     .showcase-grid {
-      display: grid;
-      grid-template-columns: 1.18fr 1fr;
-      gap: 32px;
-      align-items: start;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 24px;
@@ -213,17 +212,60 @@
       box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.5);
     }
 
-    /* 16:9 Cinema Blueprint Console Frame */
-    .phone-container {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 12px;
+    /* Topic Header Box (Above Video & 3 Steps) */
+    .topic-header-box {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 16px;
       width: 100%;
     }
+    .topic-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #22D3EE;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .topic-title {
+      font-size: clamp(24px, 2.8vw, 32px);
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+    .topic-desc {
+      font-size: 14px;
+      color: #9CA3AF;
+      margin-top: 6px;
+      line-height: 1.5;
+      max-width: 960px;
+    }
+
+    /* Showcase Body Split: Video + Takeaway on Left, 3 Steps on Right */
+    .showcase-body {
+      display: grid;
+      grid-template-columns: 1.18fr 1fr;
+      gap: 28px;
+      align-items: start;
+      width: 100%;
+    }
+
+    /* Left Column: Player + Takeaway */
+    .player-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+    }
+
+    /* Cinema Console Frame */
     .phone-frame {
       width: 100%;
       aspect-ratio: 16 / 9;
+      min-height: 250px;
       background: #000000;
       border-radius: 16px;
       border: 1.5px solid rgba(6, 182, 212, 0.4);
@@ -237,7 +279,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 14px;
+      padding: 9px 14px;
       background: rgba(8, 11, 20, 0.95);
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       font-size: 11px;
@@ -258,18 +300,12 @@
     .cinema-dot.red { background: #EF4444; }
     .cinema-dot.yellow { background: #F59E0B; }
     .cinema-dot.green { background: #10B981; }
-    .cinema-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 10px;
+    .cinema-title {
+      font-size: 10.5px;
       font-weight: 700;
+      letter-spacing: 0.05em;
       color: #38BDF8;
-      background: rgba(56, 189, 248, 0.1);
-      padding: 2px 8px;
-      border-radius: 4px;
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
     .phone-video {
       width: 100%;
@@ -287,6 +323,8 @@
       width: 100% !important;
       height: 100% !important;
     }
+
+    /* Responsive Non-Cropping Studio Placeholder */
     .phone-placeholder {
       display: flex;
       flex-direction: column;
@@ -294,45 +332,103 @@
       justify-content: center;
       flex: 1;
       height: 100%;
-      padding: 20px;
+      padding: 14px 18px;
       text-align: center;
-      gap: 8px;
+      gap: 10px;
       background: radial-gradient(circle at center, rgba(6, 182, 212, 0.08), #050608 70%);
+      box-sizing: border-box;
     }
-
-    /* Right Column */
-    .details-container {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      text-align: left;
-    }
-    .topic-header-box {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding-bottom: 16px;
-    }
-    .topic-eyebrow {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #22D3EE;
+    .placeholder-top-row {
       display: flex;
       align-items: center;
-      gap: 6px;
-      margin-bottom: 6px;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 520px;
+      gap: 12px;
     }
-    .topic-title {
-      font-size: clamp(22px, 2.5vw, 28px);
+    .placeholder-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+    }
+    .placeholder-title {
+      font-size: 15px;
       font-weight: 800;
       color: #FFFFFF;
-      line-height: 1.25;
+      margin: 0;
     }
-    .topic-desc {
-      font-size: 13.5px;
+    .placeholder-subtitle {
+      font-size: 11px;
       color: #9CA3AF;
-      margin-top: 6px;
+      margin: 2px 0 0;
+      line-height: 1.35;
+      max-width: 320px;
+    }
+    .placeholder-metric {
+      font-size: 11px;
+      font-family: monospace;
+      color: #34D399;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(52, 211, 153, 0.25);
+      padding: 3px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .placeholder-pipeline-box {
+      width: 100%;
+      max-width: 520px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 11px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      box-sizing: border-box;
+    }
+    .pipeline-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px 12px;
+      font-size: 10.5px;
+    }
+    .sim-btn {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 16px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #38BDF8;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sim-btn:hover {
+      background: rgba(56, 189, 248, 0.22);
+      border-color: #38BDF8;
+    }
+
+    /* Key Architecture Takeaway Card (Directly Below Video Console) */
+    .takeaway-card {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #D1FAE5;
       line-height: 1.5;
+    }
+
+    /* Right Column: Steps */
+    .steps-column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
     }
 
     /* Interactive Steps */
@@ -594,11 +690,33 @@
 
     @media (max-width: 860px) {
       .showcase-grid {
-        grid-template-columns: 1fr;
         padding: 18px;
+        gap: 18px;
+      }
+      .showcase-body {
+        grid-template-columns: 1fr;
+        gap: 18px;
       }
       .phone-frame {
-        max-width: 100%;
+        aspect-ratio: auto;
+        min-height: 240px;
+      }
+      .placeholder-top-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      .placeholder-brand {
+        gap: 8px;
+      }
+      .placeholder-subtitle {
+        font-size: 10.5px;
+        line-height: 1.25;
+      }
+      .pipeline-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 3px 8px;
+        font-size: 9.5px;
       }
       .stay-tuned-banner {
         flex-direction: column;
@@ -926,92 +1044,93 @@
 
     <!-- Showcase Grid -->
     <section class="showcase-grid">
-      <!-- 16:9 Architecture Cinema Console Frame -->
-      <div class="phone-container">
-        <div class="phone-frame">
-          <div class="cinema-topbar">
-            <div class="cinema-dots">
-              <span class="cinema-dot red"></span>
-              <span class="cinema-dot yellow"></span>
-              <span class="cinema-dot green"></span>
-            </div>
-            <span class="cinema-badge">16:9 BLUEPRINT • 1080P WIDESCREEN</span>
-            <span style="font-size: 10px; color: #64748B;">60s DEEP DIVE</span>
-          </div>
-
-          <!-- Native 1080p Video Player for Rendered Architecture Videos -->
-          <video
-            id="phone-video"
-            class="phone-video"
-            playsinline
-            loop
-            controls
-            preload="auto"
-            style="display: none;"
-          ></video>
-
-          <!-- Interactive Studio Blueprint & Pipeline Console -->
-          <div class="phone-placeholder" id="player-placeholder">
-            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 2px;">
-              <div style="font-size: 34px;" id="featured-logo">🚗</div>
-              <div style="text-align: left;">
-                <h3 style="font-size: 16px; font-weight: 800; color: #FFFFFF;" id="featured-phone-title">Uber Architecture</h3>
-                <p style="font-size: 11.5px; color: #9CA3AF; line-height: 1.35;" id="featured-phone-subtitle">
-                  H3 Hexagonal Spatial Indexing + Redis Clusters in 60 Seconds
-                </p>
-              </div>
-            </div>
-            <div style="font-size: 11px; font-family: monospace; color: #34D399; background: rgba(16, 185, 129, 0.1); padding: 3px 12px; border-radius: 999px;" id="featured-phone-metric">
-              ⚡ 100ms Driver Match
-            </div>
-
-            <div id="phone-pipeline-box" style="margin-top: 6px; width: 92%; max-width: 480px; padding: 10px 14px; border-radius: 12px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); font-size: 11px; text-align: left; display: flex; flex-direction: column; gap: 4px;">
-              <div style="display: flex; align-items: center; justify-content: space-between; font-weight: 700; color: #94A3B8; font-size: 10px; text-transform: uppercase;">
-                <span>Autonomous Studio</span>
-                <span id="pipeline-status-badge" style="color: #38BDF8;">Queued</span>
-              </div>
-              <div id="sim-step-1" style="color: #10B981;">✓ 1. Scripting (Gemini 3.5 Flash)</div>
-              <div id="sim-step-2" style="color: #10B981;">✓ 2. Vector Synthesis (Iconify)</div>
-              <div id="sim-step-3" style="color: #38BDF8;">⏳ 3. Neural Voice (Andrew Edge-TTS)</div>
-              <div id="sim-step-4" style="color: #64748B;">○ 4. Dual-Aspect Remotion Render (16:9 + 9:16)</div>
-            </div>
-
-            <button id="sim-btn" onclick="runPipelineSimulation()" style="margin-top: 6px; font-size: 11px; font-weight: 700; padding: 6px 16px; border-radius: 999px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); color: #38BDF8; cursor: pointer; transition: all 0.2s;">
-              ⚡ Simulate Pipeline
-            </button>
-          </div>
+      <!-- Topic Header (Moved directly ABOVE the video playback screen) -->
+      <div class="topic-header-box">
+        <div class="topic-eyebrow">
+          <span>●</span>
+          <span id="active-category">DISTRIBUTED SYSTEMS CASE STUDY</span>
         </div>
-
-        <div style="margin-top: 4px; font-size: 12px; color: #9CA3AF; display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 4px;">
-          <div>
-            <span style="color: #6B7280;">Selected:</span>
-            <strong id="active-playing-title" style="color: #FFFFFF; margin-left: 6px;">Uber Architecture</strong>
-          </div>
-          <span style="font-size: 11px; color: #38BDF8; font-family: monospace;">🖥️ 16:9 Cinema Blueprint</span>
-        </div>
+        <h2 class="topic-title" id="active-title">
+          How Uber Matches 1M Drivers in 100ms
+        </h2>
+        <p class="topic-desc" id="active-desc">
+          How does Uber pinpoint the closest driver to your exact location in under 100 milliseconds among 1 million moving vehicles?
+        </p>
       </div>
 
-      <!-- Right Column: Interactive Details -->
-      <div class="details-container">
-        <div class="topic-header-box">
-          <div class="topic-eyebrow">
-            <span>●</span>
-            <span id="active-category">DISTRIBUTED SYSTEMS CASE STUDY</span>
+      <!-- Main Showcase Split: Left = Video + Takeaway Card, Right = 3 Architecture Steps -->
+      <div class="showcase-body">
+        <!-- Left Column: Video Console + Key Architecture Takeaway directly underneath -->
+        <div class="player-column">
+          <div class="phone-frame">
+            <div class="cinema-topbar">
+              <div class="cinema-dots">
+                <span class="cinema-dot red"></span>
+                <span class="cinema-dot yellow"></span>
+                <span class="cinema-dot green"></span>
+              </div>
+              <span class="cinema-title">SYSTEM ARCHITECTURE BLUEPRINT</span>
+              <span style="font-size: 10px; color: #64748B;">60s DEEP DIVE</span>
+            </div>
+
+            <!-- Native 1080p Video Player for Rendered Architecture Videos -->
+            <video
+              id="phone-video"
+              class="phone-video"
+              playsinline
+              loop
+              controls
+              preload="auto"
+              style="display: none;"
+            ></video>
+
+            <!-- Interactive Studio Blueprint & Pipeline Console -->
+            <div class="phone-placeholder" id="player-placeholder">
+              <div class="placeholder-top-row">
+                <div class="placeholder-brand">
+                  <div style="font-size: 32px;" id="featured-logo">🚗</div>
+                  <div style="text-align: left;">
+                    <h3 class="placeholder-title" id="featured-phone-title">Uber Architecture</h3>
+                    <p class="placeholder-subtitle" id="featured-phone-subtitle">
+                      H3 Hexagonal Spatial Indexing + Redis Clusters in 60 Seconds
+                    </p>
+                  </div>
+                </div>
+                <div class="placeholder-metric" id="featured-phone-metric">
+                  ⚡ 100ms Driver Match
+                </div>
+              </div>
+
+              <div id="phone-pipeline-box" class="placeholder-pipeline-box">
+                <div style="display: flex; align-items: center; justify-content: space-between; font-weight: 700; color: #94A3B8; font-size: 10px; text-transform: uppercase;">
+                  <span>Autonomous Studio Pipeline</span>
+                  <span id="pipeline-status-badge" style="color: #38BDF8;">Queued</span>
+                </div>
+                <div class="pipeline-grid">
+                  <div id="sim-step-1" style="color: #10B981;">✓ 1. Scripting (Gemini 3.5 Flash)</div>
+                  <div id="sim-step-2" style="color: #10B981;">✓ 2. Vector Synthesis (Iconify)</div>
+                  <div id="sim-step-3" style="color: #38BDF8;">⏳ 3. Neural Voice (Andrew Edge-TTS)</div>
+                  <div id="sim-step-4" style="color: #64748B;">○ 4. Remotion Render (16:9 + 9:16)</div>
+                </div>
+              </div>
+
+              <button id="sim-btn" onclick="runPipelineSimulation()" class="sim-btn">
+                ⚡ Simulate Studio Pipeline
+              </button>
+            </div>
           </div>
-          <h2 class="topic-title" id="active-title">
-            How Uber Matches 1M Drivers in 100ms
-          </h2>
-          <p class="topic-desc" id="active-desc">
-            How does Uber pinpoint the closest driver to your exact location in under 100 milliseconds among 1 million moving vehicles?
-          </p>
+
+          <!-- Key Architecture Takeaway: Fills the empty space below the video! -->
+          <div class="takeaway-card" id="active-takeaway">
+            💡 <strong>Key Architecture Takeaway:</strong> By replacing geometric distance calculations with integer hexagon lookups in Redis, Uber searches 1M vehicles in microseconds.
+          </div>
         </div>
 
-        <div class="steps-box" id="active-steps-box">
-          <!-- Populated dynamically -->
-        </div>
-
-        <div class="takeaway-card" id="active-takeaway">
-          💡 <strong>Key Architecture Takeaway:</strong> By replacing geometric distance calculations with integer hexagon lookups in Redis, Uber searches 1M vehicles in microseconds.
+        <!-- Right Column: Interactive 3 Steps -->
+        <div class="steps-column">
+          <div class="steps-box" id="active-steps-box">
+            <!-- Populated dynamically -->
+          </div>
         </div>
       </div>
     </section>
@@ -1163,7 +1282,7 @@
         scaleMetric: '1M+ Drivers // <100ms P99',
         phoneSubtitle: 'H3 Hexagonal Spatial Indexing + Redis Clusters in 60s',
         phoneMetric: '⚡ 100ms Driver Match',
-        videoSrc: '/videos/uber-h3-matching.mp4?v=landscape',
+        videoSrc: '/videos/uber-h3-matching.mp4?v=landscape_fast',
         hasVideo: true,
         desc: 'How does Uber pinpoint the closest driver to your exact location in under 100 milliseconds among 1 million moving vehicles?',
         tags: ['H3 Geospatial', 'Redis Cluster', 'Ringpop'],
@@ -1183,7 +1302,7 @@
         scaleMetric: '99.999% Consistency // Millions TPS',
         phoneSubtitle: 'Client Idempotency Keys + Redis Mutex Lock in 60s',
         phoneMetric: '🔐 99.999% ACID Consistency',
-        videoSrc: '/videos/stripe-idempotency-engine.mp4',
+        videoSrc: '/videos/stripe-idempotency-engine.mp4?v=landscape',
         hasVideo: true,
         desc: 'When internet connections drop right after clicking Pay, how does Stripe ensure network retries never charge you twice?',
         tags: ['Idempotency Keys', 'Redis Locks', 'Distributed ACID'],
@@ -1320,10 +1439,10 @@
       const s2 = document.getElementById('sim-step-2');
       const s3 = document.getElementById('sim-step-3');
       const s4 = document.getElementById('sim-step-4');
-      if (s1) { s1.innerHTML = '✓ 1. Scripting (Gemini 2.5)'; s1.style.color = '#10B981'; }
+      if (s1) { s1.innerHTML = '✓ 1. Scripting (Gemini 3.5)'; s1.style.color = '#10B981'; }
       if (s2) { s2.innerHTML = '✓ 2. Vector Synthesis (Iconify)'; s2.style.color = '#10B981'; }
-      if (s3) { s3.innerHTML = '⏳ 3. Neural Voice (Edge-TTS)'; s3.style.color = '#38BDF8'; }
-      if (s4) { s4.innerHTML = '○ 4. Remotion Render (1080p)'; s4.style.color = '#64748B'; }
+      if (s3) { s3.innerHTML = '⏳ 3. Neural Voice (Andrew TTS)'; s3.style.color = '#38BDF8'; }
+      if (s4) { s4.innerHTML = '○ 4. Remotion Render (16:9 + 9:16)'; s4.style.color = '#64748B'; }
     }
 
     function runPipelineSimulation() {
