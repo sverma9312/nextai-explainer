@@ -54,20 +54,39 @@ export const GenericTopicStage: React.FC<GenericTopicStageProps> = ({ script, sc
           }}
         />
 
-        {/* Central Company Brand Hub (rendered only when center space is open) */}
-        {!script.nodes.some((n: ArchitectureNode) => Math.abs(n.x - 50) < 18 && Math.abs(n.y - 50) < 20) && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '46%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              zIndex: 10,
-            }}
-          >
-            <BrandHubCircle name={script.company} size={110} />
-          </div>
-        )}
+        {/* Animated Connecting Dotted Doodle Lines */}
+        <svg
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 1,
+          }}
+        >
+          {script.edges?.map((edge) => {
+            const fromNode = script.nodes.find((n) => n.id === edge.from);
+            const toNode = script.nodes.find((n) => n.id === edge.to);
+            if (!fromNode || !toNode) return null;
+
+            const isEdgeActive = activeEdgeIds.has(edge.id) || sceneIndex === 1;
+            const strokeColor = isEdgeActive ? '#22D3EE' : 'rgba(255, 255, 255, 0.15)';
+
+            return (
+              <line
+                key={edge.id}
+                x1={`${fromNode.x}%`}
+                y1={`${fromNode.y}%`}
+                x2={`${toNode.x}%`}
+                y2={`${toNode.y}%`}
+                stroke={strokeColor}
+                strokeWidth={isEdgeActive ? 3 : 1.5}
+                strokeDasharray="6 6"
+              />
+            );
+          })}
+        </svg>
 
         {/* Dynamic Nodes with Authentic Vector Logos */}
         {script.nodes.map((node: ArchitectureNode) => {

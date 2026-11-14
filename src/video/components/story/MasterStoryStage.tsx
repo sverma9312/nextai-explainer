@@ -19,11 +19,13 @@ export const MasterStoryStage: React.FC<MasterStoryStageProps> = ({ script }) =>
   const currentTime = frame / fps;
   const progress = currentTime / totalDuration; // 0 to 1
 
+  const isStudio = script.stageArchetype === 'pipeline';
   const isSpatialMatching =
-    script.topicId === 'uber-h3-matching' ||
-    script.topicId.toLowerCase().includes('uber') ||
-    script.company.toLowerCase().includes('uber') ||
-    script.steps.some((s: ArchitectureStep) => s.narration.toLowerCase().includes('hexagon'));
+    !isStudio &&
+    (script.topicId === 'uber-h3-matching' ||
+      script.topicId.toLowerCase().includes('uber') ||
+      script.company.toLowerCase().includes('uber') ||
+      script.steps.some((s: ArchitectureStep) => s.narration.toLowerCase().includes('hexagon')));
 
   // Dynamic Scene Time Windows:
   // Scene 1 (Hook & Actors): 0% - 20% (~0-12s)
@@ -92,11 +94,13 @@ export const MasterStoryStage: React.FC<MasterStoryStageProps> = ({ script }) =>
       >
         <span
           style={{
-            fontSize: sceneIndex === 1 ? 40 : 48,
-            fontFamily: '"Comic Sans MS", "Chalkboard SE", "Caveat", cursive, sans-serif',
-            fontWeight: 900,
+            fontSize: sceneIndex === 1 ? (isStudio ? 36 : 40) : (isStudio ? 42 : 48),
+            fontFamily: isStudio
+              ? '"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+              : '"Comic Sans MS", "Chalkboard SE", "Caveat", cursive, sans-serif',
+            fontWeight: 800,
             color: headerColor,
-            letterSpacing: 2,
+            letterSpacing: isStudio ? '0.02em' : 2,
             lineHeight: 1.25,
             textShadow: `0 0 25px ${headerColor}66`,
             textTransform: 'uppercase',
