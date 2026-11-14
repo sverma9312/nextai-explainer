@@ -31,13 +31,26 @@ export async function uploadToInstagramReels(
 
   try {
     const cleanTopic = (request.topic || request.title).replace(/#Shorts/gi, '').trim();
-    // Meta rupload (rupload.facebook.com) chokes on newlines and '#' characters in container initialization headers,
-    // which triggers an immediate ProcessingFailedError (HTTP 400).
-    // Keep the container caption safe, single-line, and under 200 chars.
-    let caption = `${cleanTopic}. 60s Animated System Design Breakdown: https://explainer.nextai-apps.com/`;
-    if (caption.length > 200) {
-      const truncatedTopic = cleanTopic.slice(0, 120) + '...';
-      caption = `${truncatedTopic} Watch: https://explainer.nextai-apps.com/`;
+    const formattedTags = (request.tags || [])
+      .map((t) => (t.startsWith('#') ? t : `#${t.replace(/\s+/g, '')}`))
+      .join(' ');
+
+    let caption: string;
+    if (request.description && request.description.includes('https://explainer.nextai-apps.com')) {
+      caption = request.description;
+    } else {
+      caption = [
+        `🧠 ${cleanTopic}`,
+        '',
+        request.description || cleanTopic,
+        '',
+        '🌐 Interactive Architecture Diagram & Case Study:',
+        '👉 https://explainer.nextai-apps.com/',
+        '',
+        formattedTags,
+      ]
+        .filter((line) => line !== undefined && line !== null)
+        .join('\n');
     }
 
     let containerId: string;
