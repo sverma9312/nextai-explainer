@@ -57,8 +57,8 @@ async function synthesizeSingleChunk(
     const chunkDir = path.join(tempRootDir, `c_${chunkIndex}_a_${attempt}_${Date.now()}`);
     await fsp.mkdir(chunkDir, { recursive: true });
 
-    const candidateVoices = [voiceName, 'en-US-GuyNeural', 'en-US-AndrewNeural', 'en-US-BrianNeural'];
-    const selectedVoice = candidateVoices[(attempt - 1) % candidateVoices.length];
+    // Consistently maintain the exact same chosen voice across all chunks and retries
+    const selectedVoice = voiceName;
 
     const tts = new MsEdgeTTS();
     try {
@@ -160,7 +160,7 @@ export async function synthesizeVoiceover(
   outAudioPath: string,
   voiceName?: string
 ): Promise<TTSResult> {
-  const selectedVoice = voiceName || process.env.VIDEO_VOICE_NAME || 'en-US-AndrewMultilingualNeural';
+  const selectedVoice = voiceName || process.env.VIDEO_VOICE_NAME || 'en-US-AndrewNeural';
   const voiceRate = process.env.VIDEO_VOICE_RATE || '+0%';
 
   const dir = path.dirname(outAudioPath);
