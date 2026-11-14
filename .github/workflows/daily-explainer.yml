@@ -15,14 +15,14 @@ on:
         description: 'Publish / retry YouTube Shorts'
         required: false
         type: boolean
-        default: true
+        default: false
       publish_instagram:
         description: 'Publish / retry Instagram Reels'
         required: false
         type: boolean
-        default: true
+        default: false
       topic:
-        description: 'Specific topic ID (e.g. uber-h3-matching, stripe-idempotency-engine)'
+        description: 'Specific topic ID or custom prompt (e.g. uber-h3-matching, or "LinkedIn Kafka: 7 Trillion Messages")'
         required: false
         type: string
         default: ''
