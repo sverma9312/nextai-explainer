@@ -132,6 +132,7 @@ export interface ExplainerScript {
   companyLogo: string;
   videoTitle: string;
   hook: string;
+  problemStatement?: string;
   scaleMetric: string;
   nodes: ArchitectureNode[];
   edges: ArchitectureEdge[];

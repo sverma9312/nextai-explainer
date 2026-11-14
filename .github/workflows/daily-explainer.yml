@@ -6,8 +6,28 @@ on:
     - cron: '0 10 * * *'
   workflow_dispatch:
     inputs:
+      retry_last:
+        description: 'Retry uploading last explainer video (skips already posted platforms unless force=true)'
+        required: false
+        type: boolean
+        default: false
+      publish_youtube:
+        description: 'Publish / retry YouTube Shorts'
+        required: false
+        type: boolean
+        default: true
+      publish_instagram:
+        description: 'Publish / retry Instagram Reels'
+        required: false
+        type: boolean
+        default: true
+      topic:
+        description: 'Specific topic ID (e.g. uber-h3-matching, stripe-idempotency-engine)'
+        required: false
+        type: string
+        default: ''
       force:
-        description: 'Force video generation even if topic was already posted'
+        description: 'Force upload even if URL already exists in archive ledger'
         required: false
         type: boolean
         default: false
@@ -16,11 +36,6 @@ on:
         required: false
         type: boolean
         default: false
-      topic:
-        description: 'Specific topic ID to generate (e.g. uber-h3-matching)'
-        required: false
-        type: string
-        default: ''
 
 permissions:
   contents: write
@@ -55,13 +70,33 @@ jobs:
       - name: Install Node dependencies
         run: pnpm install
 
+      - name: Download Previous Video Artifact (Retry Mode)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.retry_last }}
+        run: |
+          mkdir -p out build
+          echo "Looking for previous workflow run artifact to reuse rendered video..."
+          PREV_RUN_ID=$(gh run list --workflow="daily-explainer.yml" --limit 5 --json databaseId -q '.[] | select(.databaseId != ${{ github.run_id }}) | .databaseId' | head -n 1)
+          if [ -n "$PREV_RUN_ID" ]; then
+            echo "Downloading artifacts from run #$PREV_RUN_ID..."
+            gh run download "$PREV_RUN_ID" --dir ./downloaded_artifacts || true
+            find ./downloaded_artifacts -name "*.mp4" -exec cp {} out/ \; || true
+            find ./downloaded_artifacts -name "*_audio.mp3" -exec cp {} build/ \; || true
+            find ./downloaded_artifacts -name "*_subtitles.json" -exec cp {} build/ \; || true
+            rm -rf ./downloaded_artifacts
+          fi
+          echo "Available files in out/:"
+          ls -la out/ || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Run Explainer Generation Pipeline
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           VIDEO_VOICE_NAME: 'en-US-AndrewNeural'
           VIDEO_VOICE_RATE: '+4%'
-          ENABLE_YOUTUBE_PUBLISH: ${{ vars.ENABLE_YOUTUBE_PUBLISH || 'false' }}
-          ENABLE_INSTAGRAM_PUBLISH: ${{ vars.ENABLE_INSTAGRAM_PUBLISH || 'false' }}
+          RETRY_LAST: ${{ inputs.retry_last }}
+          ENABLE_YOUTUBE_PUBLISH: ${{ (github.event_name == 'workflow_dispatch' && inputs.publish_youtube) || vars.ENABLE_YOUTUBE_PUBLISH || secrets.ENABLE_YOUTUBE_PUBLISH || 'false' }}
+          ENABLE_INSTAGRAM_PUBLISH: ${{ (github.event_name == 'workflow_dispatch' && inputs.publish_instagram) || vars.ENABLE_INSTAGRAM_PUBLISH || secrets.ENABLE_INSTAGRAM_PUBLISH || 'false' }}
           YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
           YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
@@ -70,6 +105,9 @@ jobs:
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
         run: |
           FLAGS=""
+          if [ "${{ inputs.retry_last }}" = "true" ]; then
+            FLAGS="$FLAGS --retry-last"
+          fi
           if [ "${{ inputs.force }}" = "true" ]; then
             FLAGS="$FLAGS --force"
           fi

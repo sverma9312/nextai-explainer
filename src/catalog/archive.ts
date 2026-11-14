@@ -32,10 +32,17 @@ export async function isTopicPosted(topicId: string): Promise<boolean> {
 
 export async function recordPostedExplainer(record: PostedExplainerRecord): Promise<void> {
   const archive = await getExplainerArchive();
-  const exists = archive.some((r) => r.topicId === record.topicId);
-  if (!exists) {
+  const existingIdx = archive.findIndex((r) => r.topicId === record.topicId);
+  if (existingIdx !== -1) {
+    archive[existingIdx] = {
+      ...archive[existingIdx],
+      ...record,
+      youtubeUrl: record.youtubeUrl || archive[existingIdx].youtubeUrl,
+      instagramUrl: record.instagramUrl || archive[existingIdx].instagramUrl,
+    };
+  } else {
     archive.unshift(record); // Prepend so newest is always index 0
-    await fs.writeFile(ARCHIVE_FILE, JSON.stringify(archive, null, 2), 'utf-8');
   }
+  await fs.writeFile(ARCHIVE_FILE, JSON.stringify(archive, null, 2), 'utf-8');
 }
 
