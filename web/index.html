@@ -263,8 +263,17 @@
     .phone-video {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       background: #000000;
+    }
+    .phone-video:fullscreen,
+    .phone-video:-webkit-full-screen,
+    .phone-video:-moz-full-screen,
+    .phone-video:-ms-fullscreen {
+      object-fit: contain !important;
+      background: #000000 !important;
+      width: 100% !important;
+      height: 100% !important;
     }
     .phone-placeholder {
       display: flex;
