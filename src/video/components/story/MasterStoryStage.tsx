@@ -121,38 +121,40 @@ export const MasterStoryStage: React.FC<MasterStoryStageProps> = ({ script }) =>
           justifyContent: 'center',
         }}
       >
-        {isSpatialMatching ? (
-          <>
-            {sceneIndex === 1 && (
-              <Scene1_ContextStage
-                company={script.company}
-                visualEntities={script.visualEntities}
-              />
-            )}
-            {sceneIndex === 2 && (
-              <Scene2_BottleneckStage
-                visualEntities={script.visualEntities}
-              />
-            )}
-            {sceneIndex === 3 && (
-              <HexagonGridStage
-                sceneStep={3}
-                visualEntities={script.visualEntities}
-              />
-            )}
-            {sceneIndex === 4 && (
-              <HexagonGridStage
-                sceneStep={4}
-                visualEntities={script.visualEntities}
-              />
-            )}
-          </>
-        ) : (
-          <>
-            {sceneIndex >= 1 && sceneIndex <= 4 && (
-              <GenericTopicStage script={script} sceneIndex={sceneIndex} />
-            )}
-          </>
+        {/* Scene 1 (0% - 20%): Viral Stick Figure Animated Hook Stage for ALL topics */}
+        {sceneIndex === 1 && (
+          <Scene1_ContextStage
+            company={script.company}
+            visualEntities={script.visualEntities}
+            scaleMetric={script.scaleMetric}
+          />
+        )}
+
+        {/* Scenes 2-4: Spatial Breakdown (Uber) or Free-floating Architecture Diagram (Stripe, etc.) */}
+        {sceneIndex >= 2 && sceneIndex <= 4 && (
+          isSpatialMatching ? (
+            <>
+              {sceneIndex === 2 && (
+                <Scene2_BottleneckStage
+                  visualEntities={script.visualEntities}
+                />
+              )}
+              {sceneIndex === 3 && (
+                <HexagonGridStage
+                  sceneStep={3}
+                  visualEntities={script.visualEntities}
+                />
+              )}
+              {sceneIndex === 4 && (
+                <HexagonGridStage
+                  sceneStep={4}
+                  visualEntities={script.visualEntities}
+                />
+              )}
+            </>
+          ) : (
+            <GenericTopicStage script={script} sceneIndex={sceneIndex} />
+          )
         )}
 
         {sceneIndex === 5 && (

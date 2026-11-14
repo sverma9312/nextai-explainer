@@ -1,7 +1,15 @@
 import React from 'react';
 import { useCurrentFrame } from 'remotion';
 import type { ExplainerScript, ArchitectureNode } from '../../../schema/types';
-import { AutoTechIcon, BrandHubCircle } from '../icons/TechLogos';
+import {
+  AutoTechIcon,
+  BrandHubCircle,
+  PersonVector,
+  RedisLogo,
+  DatabaseCylinderVector,
+  CreditCardVector,
+  ServerRackVector,
+} from '../icons/TechLogos';
 
 interface GenericTopicStageProps {
   script: ExplainerScript;
@@ -143,25 +151,34 @@ export const GenericTopicStage: React.FC<GenericTopicStageProps> = ({ script, sc
                 opacity: isActive ? 1 : 0.45,
               }}
             >
-              {/* Real Authentic SVG Vector Icon */}
+              {/* Clean Floating Vector Icon - Free from Enclosing Card Boxes */}
               <div
                 style={{
-                  padding: 12,
-                  borderRadius: 18,
-                  backgroundColor: isActive ? 'rgba(17, 24, 39, 0.95)' : 'rgba(15, 23, 42, 0.7)',
-                  border: `2px solid ${isActive ? '#22D3EE' : 'rgba(255, 255, 255, 0.12)'}`,
-                  boxShadow: isActive ? '0 0 25px rgba(34, 211, 238, 0.4)' : undefined,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  filter: isActive
+                    ? 'drop-shadow(0 0 18px rgba(34, 211, 238, 0.85))'
+                    : 'drop-shadow(0 0 4px rgba(0, 0, 0, 0.5))',
+                  transition: 'all 0.3s ease',
                 }}
               >
-                <AutoTechIcon
-                  name={`${node.label} ${node.sublabel}`}
-                  size={56}
-                  active={isActive}
-                  svgDataUri={matchedEntity?.svgDataUri}
-                />
+                {node.type === 'client' || node.id === 'user' ? (
+                  <PersonVector size={78} color={isActive ? '#22D3EE' : '#94A3B8'} label="YOU" />
+                ) : node.type === 'cache' || node.label.toLowerCase().includes('redis') ? (
+                  <RedisLogo size={68} glow={isActive} />
+                ) : node.type === 'db' || node.label.toLowerCase().includes('aurora') || node.label.toLowerCase().includes('database') ? (
+                  <DatabaseCylinderVector size={68} color={isActive ? '#38BDF8' : '#64748B'} />
+                ) : node.label.toLowerCase().includes('card') || node.label.toLowerCase().includes('payment') || node.label.toLowerCase().includes('processor') ? (
+                  <CreditCardVector size={74} color={isActive ? '#10B981' : '#64748B'} active={isActive} />
+                ) : (
+                  <AutoTechIcon
+                    name={`${node.label} ${node.sublabel}`}
+                    size={68}
+                    active={isActive}
+                    svgDataUri={matchedEntity?.svgDataUri}
+                  />
+                )}
               </div>
 
               {/* Node Labels */}

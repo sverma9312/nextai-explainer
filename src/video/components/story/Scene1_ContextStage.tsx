@@ -1,6 +1,14 @@
 import React from 'react';
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
-import { BrandHubCircle, CarVector, PersonVector, ServerRackVector } from '../icons/TechLogos';
+import {
+  BrandHubCircle,
+  CarVector,
+  CreditCardVector,
+  ChatBubbleVector,
+  ScreenTvVector,
+  PersonVector,
+  ServerRackVector,
+} from '../icons/TechLogos';
 import { DynamicIcon } from '../icons/DynamicIcon';
 import type { VisualEntity } from '../../../schema/types';
 
@@ -8,15 +16,38 @@ interface Scene1Props {
   company: string;
   category?: string;
   visualEntities?: VisualEntity[];
+  scaleMetric?: string;
 }
 
-export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEntities }) => {
+export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEntities, scaleMetric }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const userEntity = visualEntities?.find((e) => e.id === 'client' || e.iconQuery?.includes('person') || e.iconQuery?.includes('user'));
-  const carEntity = visualEntities?.find((e) => e.id === 'driver' || e.iconQuery?.includes('car') || e.iconQuery?.includes('vehicle'));
-  const gatewayEntity = visualEntities?.find((e) => e.id === 'gateway' || e.iconQuery?.includes('gateway') || e.iconQuery?.includes('proxy'));
+  const isUber = company.toLowerCase().includes('uber');
+  const isStripe = company.toLowerCase().includes('stripe');
+  const isNetflix = company.toLowerCase().includes('netflix');
+  const isWhatsApp = company.toLowerCase().includes('whatsapp');
+  const isUPI = company.toLowerCase().includes('upi');
+
+  const userLabel = isStripe ? 'YOU (PAY)' : isNetflix ? 'YOU (WATCH)' : 'YOU';
+
+  // Gateway descriptions
+  let gatewayTitle = 'STREAMING EDGE GATEWAY';
+  let gatewaySubtitle = '4-Second GPS Telemetry Heartbeats';
+
+  if (isStripe) {
+    gatewayTitle = 'IDEMPOTENCY API GATEWAY';
+    gatewaySubtitle = 'UUID Key Locking & Distributed Redis Lease';
+  } else if (isNetflix) {
+    gatewayTitle = 'OPEN CONNECT APPLIANCE';
+    gatewaySubtitle = 'Zero-Copy FreeBSD Kernel Streaming';
+  } else if (isWhatsApp) {
+    gatewayTitle = 'ERLANG BEAM GATEWAY';
+    gatewaySubtitle = '2M Concurrent Sockets Per Server Node';
+  } else if (isUPI) {
+    gatewayTitle = 'NPCI CENTRAL SWITCH';
+    gatewaySubtitle = 'Distributed Two-Phase Commit Orchestrator';
+  }
 
   const entrance = spring({
     frame,
@@ -24,7 +55,7 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEnti
     config: { damping: 14, stiffness: 120 },
   });
 
-  // Animated packet ping from person -> Uber -> cars
+  // Animated packet ping from person -> Brand -> Target
   const pingProgress = (frame % 35) / 35;
   const pingX = interpolate(pingProgress, [0, 1], [220, 760]);
 
@@ -90,13 +121,9 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEnti
           />
         </svg>
 
-        {/* 1. Left Actor: User Person ("YOU") */}
+        {/* 1. Left Actor: User Stick Figure Person ("YOU") */}
         <div style={{ zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-          {userEntity?.svgDataUri ? (
-            <DynamicIcon svgDataUri={userEntity.svgDataUri} size={110} glowColor="#22D3EE" />
-          ) : (
-            <PersonVector size={130} color="#22D3EE" label="YOU" />
-          )}
+          <PersonVector size={130} color="#22D3EE" label="" />
           <span
             style={{
               fontSize: 22,
@@ -106,55 +133,106 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEnti
               letterSpacing: 2,
             }}
           >
-            YOU
+            {userLabel}
           </span>
         </div>
 
-        {/* 2. Center Hub: Company Brand Circle */}
+        {/* 2. Center Hub: Company Brand Circle with Official Vector Brand Logo */}
         <div style={{ zIndex: 15 }}>
-          <BrandHubCircle name={company} size={140} />
+          <BrandHubCircle name={company} size={150} />
         </div>
 
-        {/* 3. Right Fleet: Moving Vehicles */}
+        {/* 3. Right Destination Fleet / Actors */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: 20,
+            gap: 18,
             alignItems: 'center',
             zIndex: 10,
           }}
         >
-          {carEntity?.svgDataUri ? (
-            <DynamicIcon svgDataUri={carEntity.svgDataUri} size={76} glowColor="#FBBF24" />
+          {isStripe ? (
+            <>
+              <CreditCardVector size={84} color="#10B981" active={true} />
+              <div style={{ display: 'flex', gap: 14 }}>
+                <CreditCardVector size={58} color="#10B981" />
+                <CreditCardVector size={58} color="#10B981" />
+              </div>
+              <span
+                style={{
+                  fontSize: 20,
+                  fontFamily: '"Comic Sans MS", "Chalkboard SE", sans-serif',
+                  fontWeight: 900,
+                  color: '#10B981',
+                  letterSpacing: 1.5,
+                  marginTop: 4,
+                }}
+              >
+                MILLIONS OF CHARGES
+              </span>
+            </>
+          ) : isNetflix ? (
+            <>
+              <ScreenTvVector size={84} color="#E50914" />
+              <div style={{ display: 'flex', gap: 14 }}>
+                <ScreenTvVector size={58} color="#E50914" />
+                <ScreenTvVector size={58} color="#E50914" />
+              </div>
+              <span
+                style={{
+                  fontSize: 20,
+                  fontFamily: '"Comic Sans MS", "Chalkboard SE", sans-serif',
+                  fontWeight: 900,
+                  color: '#E50914',
+                  letterSpacing: 1.5,
+                  marginTop: 4,
+                }}
+              >
+                250M STREAMERS
+              </span>
+            </>
+          ) : isWhatsApp ? (
+            <>
+              <ChatBubbleVector size={80} color="#25D366" />
+              <div style={{ display: 'flex', gap: 14 }}>
+                <ChatBubbleVector size={56} color="#25D366" />
+                <ChatBubbleVector size={56} color="#25D366" />
+              </div>
+              <span
+                style={{
+                  fontSize: 20,
+                  fontFamily: '"Comic Sans MS", "Chalkboard SE", sans-serif',
+                  fontWeight: 900,
+                  color: '#25D366',
+                  letterSpacing: 1.5,
+                  marginTop: 4,
+                }}
+              >
+                100B MSGS / DAY
+              </span>
+            </>
           ) : (
-            <CarVector size={72} color="#FBBF24" active={true} />
+            <>
+              <CarVector size={72} color="#FBBF24" active={true} />
+              <div style={{ display: 'flex', gap: 16 }}>
+                <CarVector size={54} color="#FBBF24" />
+                <CarVector size={54} color="#FBBF24" />
+              </div>
+              <span
+                style={{
+                  fontSize: 20,
+                  fontFamily: '"Comic Sans MS", "Chalkboard SE", sans-serif',
+                  fontWeight: 900,
+                  color: '#FBBF24',
+                  letterSpacing: 1.5,
+                  marginTop: 4,
+                }}
+              >
+                1M+ DRIVERS
+              </span>
+            </>
           )}
-          <div style={{ display: 'flex', gap: 16 }}>
-            {carEntity?.svgDataUri ? (
-              <>
-                <DynamicIcon svgDataUri={carEntity.svgDataUri} size={54} glowColor="#FBBF24" />
-                <DynamicIcon svgDataUri={carEntity.svgDataUri} size={54} glowColor="#FBBF24" />
-              </>
-            ) : (
-              <>
-                <CarVector size={54} color="#FBBF24" />
-                <CarVector size={54} color="#FBBF24" />
-              </>
-            )}
-          </div>
-          <span
-            style={{
-              fontSize: 20,
-              fontFamily: '"Comic Sans MS", "Chalkboard SE", sans-serif',
-              fontWeight: 900,
-              color: '#FBBF24',
-              letterSpacing: 1.5,
-              marginTop: 4,
-            }}
-          >
-            1M+ DRIVERS
-          </span>
         </div>
       </div>
 
@@ -167,17 +245,8 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEnti
           gap: 24,
         }}
       >
-        {gatewayEntity?.svgDataUri ? (
-          <>
-            <DynamicIcon svgDataUri={gatewayEntity.svgDataUri} size={64} glowColor="#22D3EE" />
-            <DynamicIcon svgDataUri={gatewayEntity.svgDataUri} size={64} glowColor="#22D3EE" />
-          </>
-        ) : (
-          <>
-            <ServerRackVector size={80} />
-            <ServerRackVector size={80} />
-          </>
-        )}
+        <ServerRackVector size={80} />
+        <ServerRackVector size={80} />
         <div
           style={{
             padding: '14px 28px',
@@ -195,7 +264,7 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEnti
               fontFamily: '"Comic Sans MS", "Chalkboard SE", sans-serif',
             }}
           >
-            STREAMING EDGE GATEWAY
+            {gatewayTitle}
           </div>
           <div
             style={{
@@ -206,7 +275,7 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEnti
               marginTop: 4,
             }}
           >
-            4-Second GPS Telemetry Heartbeats
+            {gatewaySubtitle}
           </div>
         </div>
         <ServerRackVector size={80} />
