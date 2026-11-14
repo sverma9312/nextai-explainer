@@ -1,6 +1,7 @@
 import React from 'react';
-import { Composition, registerRoot } from 'remotion';
+import { Composition, Still, registerRoot } from 'remotion';
 import { ExplainerComposition } from './Composition';
+import { ExplainerAvatar } from './ExplainerAvatar';
 import { TOPICS } from '../catalog/topics';
 import type { ExplainerCompositionProps } from '../schema/types';
 
@@ -36,15 +37,23 @@ const defaultProps: ExplainerCompositionProps = {
 
 export const Root: React.FC = () => {
   return (
-    <Composition
-      id="ExplainerReel"
-      component={ExplainerComposition}
-      durationInFrames={30 * 60}
-      fps={30}
-      width={1080}
-      height={1920}
-      defaultProps={defaultProps}
-    />
+    <>
+      <Composition
+        id="ExplainerReel"
+        component={ExplainerComposition}
+        durationInFrames={30 * 60}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={defaultProps}
+      />
+      <Still
+        id="ExplainerAvatar"
+        component={ExplainerAvatar}
+        width={1024}
+        height={1024}
+      />
+    </>
   );
 };
 
