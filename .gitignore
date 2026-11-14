@@ -5,6 +5,7 @@ node_modules/
 out/
 build/
 dist/
+cache/
 *.mp4
 !web/videos/*.mp4
 *.mp3

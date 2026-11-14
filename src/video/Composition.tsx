@@ -4,6 +4,7 @@ import type { ExplainerCompositionProps } from '../schema/types';
 import { Background } from './components/Background';
 import { MasterStoryStage } from './components/story/MasterStoryStage';
 import { KineticCaptions } from './components/KineticCaptions';
+import { BrandAppBadge } from './components/icons/TechLogos';
 
 export const ExplainerComposition: React.FC<ExplainerCompositionProps> = ({
   script,
@@ -49,7 +50,7 @@ export const ExplainerComposition: React.FC<ExplainerCompositionProps> = ({
             boxShadow: '0 8px 24px rgba(0, 0, 0, 0.6)',
           }}
         >
-          <span style={{ fontSize: 22 }}>{script.companyLogo || '🚗'}</span>
+          <BrandAppBadge name={script.company} size={28} minimal={true} />
           <span
             style={{
               fontSize: 16,
