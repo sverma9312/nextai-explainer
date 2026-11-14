@@ -62,18 +62,19 @@ export async function uploadToYouTubeShorts(
       : cleanTopic;
     const titleWithShorts = `${titleHeadline} #Shorts`;
 
-    // Format Description / Post Caption with Topic, Source, and App link
-    const sourceLine = request.sourceName ? `\n🏢 Source: ${request.sourceName}` : '';
-    const description = [
-      `📰 Topic: ${cleanTopic}${sourceLine}`,
-      '',
-      request.description,
-      '',
-      '📱 Read the verified 60-word briefing on AIShort:',
-      '👉 https://aishort.nextai-apps.com/',
-      '',
-      request.tags.join(' '),
-    ].join('\n');
+    // Format Description / Post Caption with Topic, Breakdown, and Explainer Interactive link
+    const description = request.description?.includes('https://explainer.nextai-apps.com')
+      ? request.description
+      : [
+          `🏗️ Architecture: ${cleanTopic}`,
+          '',
+          request.description,
+          '',
+          '🌐 Interactive Architecture Diagrams & Case Studies:',
+          '👉 https://explainer.nextai-apps.com/',
+          '',
+          request.tags.join(' '),
+        ].join('\n');
 
     const metadata = {
       snippet: {
@@ -139,7 +140,7 @@ export async function uploadToYouTubeShorts(
     try {
       console.log('💬 [YouTube Upload] Waiting 5s before posting top-level comment...');
       await new Promise((r) => setTimeout(r, 5000));
-      const commentText = `📰 Topic: ${cleanTopic}\n\n📱 Read the full 60-word briefing & sources on AIShort:\n👉 https://aishort.nextai-apps.com/`;
+      const commentText = `🏗️ System Architecture: ${cleanTopic}\n\n🌐 Explore interactive architectural diagrams, latency benchmarks & case studies:\n👉 https://explainer.nextai-apps.com/`;
       const commentRes = await fetch(
         'https://www.googleapis.com/youtube/v3/commentThreads?part=snippet',
         {
@@ -165,9 +166,9 @@ export async function uploadToYouTubeShorts(
       } else {
         const commentErr = await commentRes.text();
         if (commentErr.includes('insufficientPermissions')) {
-          console.warn('ℹ️ [YouTube Upload] Comment skipped: OAuth token requires "https://www.googleapis.com/auth/youtube.force-ssl" scope to insert comments. The video and description with AIShort link were published successfully.');
+          console.warn('ℹ️ [YouTube Upload] Comment skipped: OAuth token requires "https://www.googleapis.com/auth/youtube.force-ssl" scope to insert comments. The video and description with Explainer link were published successfully.');
         } else if (commentErr.includes('commentsDisabled')) {
-          console.warn('ℹ️ [YouTube Upload] Comment skipped: Video comments are temporarily disabled while YouTube finishes video encoding. The video and description with AIShort link were published successfully.');
+          console.warn('ℹ️ [YouTube Upload] Comment skipped: Video comments are temporarily disabled while YouTube finishes video encoding. The video and description with Explainer link were published successfully.');
         } else {
           console.warn('⚠️ [YouTube Upload] Could not post comment (non-fatal):', commentErr);
         }

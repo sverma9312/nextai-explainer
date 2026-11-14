@@ -113,11 +113,11 @@ export async function uploadToInstagramReels(
       caption = request.description;
     } else {
       caption = [
-        `🧠 ${cleanTopic}`,
+        `🏗️ Architecture Deep Dive: ${cleanTopic}`,
         '',
         request.description || cleanTopic,
         '',
-        '🌐 Interactive Architecture Diagram & Case Study:',
+        '🌐 Interactive Architecture Diagrams & Case Studies:',
         '👉 https://explainer.nextai-apps.com/',
         '',
         formattedTags,

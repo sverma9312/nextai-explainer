@@ -156,22 +156,24 @@ export async function runPipeline(): Promise<void> {
       videoPath: videoPathToPublish,
       title: targetRecord.videoTitle || script.videoTitle,
       topic: topic.title,
-      description: `🧠 System Design: ${topic.title}
-🏢 Company: ${topic.company}
-⚡ Scale: ${topic.scaleMetric}
+      description: `🏗️ Architecture Deep Dive: ${topic.title}
+⚡ Production Scale: ${topic.scaleMetric}
+🏢 Core Engine & Stack: ${topic.company}
 
+⚙️ The Engineering Challenge:
 ${script.hook}
 
-${script.steps.map((s) => `• ${s.stepTitle}: ${s.narration}`).join('\n\n')}
+📐 Architectural Blueprint:
+${script.steps.map((s, idx) => `0${idx + 1}. ${s.stepTitle}\n${s.narration}`).join('\n\n')}
 
-📌 Key Takeaway:
+💡 Key Architectural Takeaway:
 ${script.takeaway}
 
-🌐 Interactive Architecture Diagram:
+🌐 Interactive Architecture Diagrams & Case Studies:
 👉 https://explainer.nextai-apps.com/
 
-#SystemDesign #SoftwareArchitecture #${topic.company.replace(/\s+/g, '')} #DistributedSystems #Engineering #TechExplained #Shorts`,
-      tags: ['System Design', 'Software Architecture', topic.company, 'Distributed Systems', 'Engineering', 'Coding'],
+#SystemDesign #SoftwareArchitecture #${topic.company.replace(/\s+/g, '')} #DistributedSystems #HighConcurrency #BackendEngineering #DevCommunity #Shorts`,
+      tags: ['System Design', 'Software Architecture', topic.company, 'Distributed Systems', 'High Concurrency', 'Backend Engineering'],
     };
 
     const publishResults = await publishToAllChannels(
@@ -320,22 +322,24 @@ ${script.takeaway}
     videoPath: outVideoPath,
     title: script.videoTitle,
     topic: topic.title,
-    description: `🧠 System Design: ${topic.title}
-🏢 Company: ${topic.company}
-⚡ Scale: ${topic.scaleMetric}
+    description: `🏗️ Architecture Deep Dive: ${topic.title}
+⚡ Production Scale: ${topic.scaleMetric}
+🏢 Core Engine & Stack: ${topic.company}
 
+⚙️ The Engineering Challenge:
 ${script.hook}
 
-${script.steps.map((s) => `• ${s.stepTitle}: ${s.narration}`).join('\n\n')}
+📐 Architectural Blueprint:
+${script.steps.map((s, idx) => `0${idx + 1}. ${s.stepTitle}\n${s.narration}`).join('\n\n')}
 
-📌 Key Takeaway:
+💡 Key Architectural Takeaway:
 ${script.takeaway}
 
-🌐 Interactive Architecture Diagram:
+🌐 Interactive Architecture Diagrams & Case Studies:
 👉 https://explainer.nextai-apps.com/
 
-#SystemDesign #SoftwareArchitecture #${topic.company.replace(/\s+/g, '')} #DistributedSystems #Engineering #TechExplained #Shorts`,
-    tags: ['System Design', 'Software Architecture', topic.company, 'Distributed Systems', 'Engineering', 'Coding'],
+#SystemDesign #SoftwareArchitecture #${topic.company.replace(/\s+/g, '')} #DistributedSystems #HighConcurrency #BackendEngineering #DevCommunity #Shorts`,
+    tags: ['System Design', 'Software Architecture', topic.company, 'Distributed Systems', 'High Concurrency', 'Backend Engineering'],
   };
 
   const publishResults = await publishToAllChannels(publishRequest);
