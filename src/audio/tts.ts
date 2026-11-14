@@ -66,12 +66,12 @@ async function synthesizeSingleChunk(
         wordBoundaryEnabled: true,
       });
 
-      // 15-second hard timeout to prevent hanging connections
+      // 45-second timeout to accommodate longer chunks without premature cancellation
       let timer: NodeJS.Timeout;
       const timeoutPromise = new Promise<never>((_, reject) => {
         timer = setTimeout(() => {
-          reject(new Error('Edge-TTS synthesis timed out after 15s'));
-        }, 15000);
+          reject(new Error('Edge-TTS synthesis timed out after 45s'));
+        }, 45000);
       });
 
       const res = await Promise.race([

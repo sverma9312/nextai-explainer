@@ -11,10 +11,37 @@ interface GenericTopicStageProps {
 export const GenericTopicStage: React.FC<GenericTopicStageProps> = ({ script, sceneIndex }) => {
   const frame = useCurrentFrame();
 
-  // Active step in script
-  const step = script.steps[sceneIndex - 1] || script.steps[0];
-  const activeNodeIds = new Set(step?.activeNodeIds || []);
-  const activeEdgeIds = new Set(step?.activeEdgeIds || []);
+  // Active step in script:
+  // sceneIndex 1 = Hook / Context Overview (no step yet)
+  // sceneIndex 2 = Step 1 (script.steps[0])
+  // sceneIndex 3 = Step 2 (script.steps[1])
+  // sceneIndex 4 = Step 3 (script.steps[2])
+  const isHookScene = sceneIndex === 1;
+  const stepIndex = sceneIndex - 2;
+  const step = !isHookScene ? (script.steps[stepIndex] || script.steps[0]) : null;
+
+  const activeNodeIds = new Set(
+    isHookScene
+      ? script.nodes.map((n) => n.id)
+      : (step?.activeNodeIds || [])
+  );
+  const activeEdgeIds = new Set(
+    isHookScene
+      ? script.edges.map((e) => e.id)
+      : (step?.activeEdgeIds || [])
+  );
+
+  const cardTitle = isHookScene
+    ? `${script.company.toUpperCase()} ARCHITECTURE OVERVIEW`
+    : (step?.stepTitle || 'SYSTEM ARCHITECTURE BREAKTHROUGH');
+
+  const cardDescription = isHookScene
+    ? (script.problemStatement || script.hook)
+    : (step?.narration || '');
+
+  const cardCallout = isHookScene
+    ? (script.scaleMetric.split('//')[0]?.trim() || 'High Availability')
+    : (step?.calloutMetric || '');
 
   return (
     <div
@@ -194,7 +221,7 @@ export const GenericTopicStage: React.FC<GenericTopicStageProps> = ({ script, sc
               letterSpacing: 1.5,
             }}
           >
-            {step?.stepTitle || 'SYSTEM ARCHITECTURE BREAKTHROUGH'}
+            {cardTitle}
           </span>
           <span
             style={{
@@ -205,11 +232,11 @@ export const GenericTopicStage: React.FC<GenericTopicStageProps> = ({ script, sc
               lineHeight: 1.3,
             }}
           >
-            {step?.narration}
+            {cardDescription}
           </span>
         </div>
 
-        {step?.calloutMetric && (
+        {cardCallout && (
           <div
             style={{
               backgroundColor: 'rgba(34, 211, 238, 0.15)',
@@ -223,7 +250,7 @@ export const GenericTopicStage: React.FC<GenericTopicStageProps> = ({ script, sc
               whiteSpace: 'nowrap',
             }}
           >
-            {step.calloutMetric}
+            {cardCallout}
           </div>
         )}
       </div>
