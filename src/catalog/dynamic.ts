@@ -44,22 +44,46 @@ The system MUST contain:
 
 Return ONLY valid JSON without code fences or extra text.`;
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: [
-      {
-        role: 'user',
-        parts: [{ text: `Topic / Request: ${promptOrTitle}` }],
-      },
-    ],
-    config: {
-      systemInstruction: systemPrompt,
-      responseMimeType: 'application/json',
-      temperature: 0.3,
-    },
-  });
+  const candidateModels = ['gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
+  let response: any = null;
+  let lastError: any = null;
 
-  const rawJson = response.text || '';
+  for (let attempt = 0; attempt < 3 && !response; attempt++) {
+    for (const model of candidateModels) {
+      try {
+        const res = await ai.models.generateContent({
+          model,
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: `Topic / Request: ${promptOrTitle}` }],
+            },
+          ],
+          config: {
+            systemInstruction: systemPrompt,
+            responseMimeType: 'application/json',
+            temperature: 0.3,
+          },
+        });
+        if (res.text) {
+          response = res;
+          console.log(`   [Gemini Synthesis] Successfully generated with ${model} (attempt ${attempt + 1})`);
+          break;
+        }
+      } catch (err: any) {
+        lastError = err;
+      }
+    }
+    if (!response && attempt < 2) {
+      await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+    }
+  }
+
+  if (!response) {
+    throw lastError || new Error('Empty Gemini response during dynamic topic synthesis');
+  }
+
+  const rawJson = response.text || '{}';
   const parsed = JSON.parse(rawJson) as ExplainerTopic;
 
   // Sanitize and ensure proper defaults
