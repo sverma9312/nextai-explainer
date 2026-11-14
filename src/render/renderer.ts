@@ -11,11 +11,17 @@ const __dirname = path.dirname(__filename);
 export interface RenderOptions {
   inputProps: ExplainerCompositionProps;
   outputPath: string;
+  compositionId?: 'ExplainerLandscape' | 'ExplainerReel';
   onProgress?: (progress: number) => void;
 }
 
+export interface DualRenderResult {
+  landscapePath: string;
+  reelPath: string;
+}
+
 export async function renderVideoToDisk(options: RenderOptions): Promise<string> {
-  const { inputProps, outputPath, onProgress } = options;
+  const { inputProps, outputPath, compositionId = 'ExplainerLandscape', onProgress } = options;
 
   await fsp.mkdir(path.dirname(outputPath), { recursive: true });
 
@@ -37,10 +43,10 @@ export async function renderVideoToDisk(options: RenderOptions): Promise<string>
     }),
   });
 
-  console.log('🎬 Selecting composition "ExplainerReel"...');
+  console.log(`🎬 Selecting composition "${compositionId}"...`);
   const composition = await selectComposition({
     serveUrl: bundleLocation,
-    id: 'ExplainerReel',
+    id: compositionId,
     inputProps,
   });
 
@@ -67,16 +73,99 @@ export async function renderVideoToDisk(options: RenderOptions): Promise<string>
       console.warn(`\n⚠️ Destination file "${outputPath}" is locked by another application (e.g. VLC).`);
       console.log(`   Saving output to: ${fallbackPath}`);
       await fsp.copyFile(err.path, fallbackPath);
-      try {
-        await fsp.unlink(err.path);
-      } catch {}
-      console.log(`✅ Explainer MP4 saved successfully: ${fallbackPath}`);
       return fallbackPath;
     }
     throw err;
   }
 
-  console.log(`✅ Explainer MP4 rendered successfully: ${outputPath}`);
   return outputPath;
 }
 
+export async function renderDualAspectVideos(options: {
+  inputProps: ExplainerCompositionProps;
+  topicId: string;
+  outDir?: string;
+  onProgress?: (platform: string, progress: number) => void;
+}): Promise<DualRenderResult> {
+  const { inputProps, topicId, outDir = path.resolve(process.cwd(), 'out'), onProgress } = options;
+  await fsp.mkdir(outDir, { recursive: true });
+
+  const entryPoint = path.resolve(__dirname, '../video/Root.tsx');
+  console.log('📦 Bundling Remotion React composition (shared bundle for 16:9 Landscape & 9:16 Reel)...');
+
+  const bundleLocation = await bundle({
+    entryPoint,
+    webpackOverride: (config) => ({
+      ...config,
+      resolve: {
+        ...config.resolve,
+        extensionAlias: {
+          '.js': ['.ts', '.tsx', '.js', '.jsx'],
+          '.mjs': ['.mts', '.mjs'],
+          '.cjs': ['.cts', '.cjs'],
+        },
+      },
+    }),
+  });
+
+  const landscapePath = path.resolve(outDir, `${topicId}_landscape.mp4`);
+  const defaultPath = path.resolve(outDir, `${topicId}.mp4`);
+  const reelPath = path.resolve(outDir, `${topicId}_reel.mp4`);
+
+  // 1. Render 16:9 Landscape (YouTube & Explainer Website)
+  console.log('\n🎬 [1/2] Rendering 16:9 Landscape Video for YouTube & Website (1920x1080)...');
+  const landscapeComp = await selectComposition({
+    serveUrl: bundleLocation,
+    id: 'ExplainerLandscape',
+    inputProps,
+  });
+
+  await renderMedia({
+    composition: {
+      ...landscapeComp,
+      durationInFrames: inputProps.durationInFrames,
+    },
+    serveUrl: bundleLocation,
+    codec: 'h264',
+    outputLocation: landscapePath,
+    inputProps,
+    onProgress: ({ progress }) => {
+      const pct = Math.round(progress * 100);
+      if (onProgress) onProgress('landscape', pct);
+    },
+  });
+
+  // Mirror landscapePath to defaultPath
+  try {
+    await fsp.copyFile(landscapePath, defaultPath);
+  } catch (e) {}
+
+  // 2. Render 9:16 Portrait Reel (Instagram Reels)
+  console.log('\n🎬 [2/2] Rendering 9:16 Portrait Reel for Instagram (1080x1920)...');
+  const reelComp = await selectComposition({
+    serveUrl: bundleLocation,
+    id: 'ExplainerReel',
+    inputProps,
+  });
+
+  await renderMedia({
+    composition: {
+      ...reelComp,
+      durationInFrames: inputProps.durationInFrames,
+    },
+    serveUrl: bundleLocation,
+    codec: 'h264',
+    outputLocation: reelPath,
+    inputProps,
+    onProgress: ({ progress }) => {
+      const pct = Math.round(progress * 100);
+      if (onProgress) onProgress('reel', pct);
+    },
+  });
+
+  console.log('\n✨ Dual Aspect Renders Complete:');
+  console.log(`   🖥️ 16:9 Landscape: ${landscapePath}`);
+  console.log(`   📱 9:16 Reel:      ${reelPath}\n`);
+
+  return { landscapePath, reelPath };
+}

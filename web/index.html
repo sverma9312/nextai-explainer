@@ -199,73 +199,84 @@
       max-width: 640px;
     }
 
-    /* Showcase Grid */
+    /* Showcase Grid - Responsive Widescreen Split */
     .showcase-grid {
       display: grid;
-      grid-template-columns: 350px 1fr;
-      gap: 36px;
-      align-items: center;
+      grid-template-columns: 1.18fr 1fr;
+      gap: 32px;
+      align-items: start;
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 24px;
-      padding: 32px;
+      padding: 28px;
       backdrop-filter: blur(12px);
       box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.5);
     }
 
-    /* Phone Mockup Frame */
+    /* 16:9 Cinema Blueprint Console Frame */
     .phone-container {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 14px;
+      align-items: stretch;
+      gap: 12px;
+      width: 100%;
     }
     .phone-frame {
       width: 100%;
-      max-width: 320px;
-      aspect-ratio: 9 / 16;
+      aspect-ratio: 16 / 9;
       background: #000000;
-      border-radius: 36px;
-      border: 2px solid rgba(6, 182, 212, 0.4);
-      box-shadow: 0 0 35px rgba(6, 182, 212, 0.25), 0 20px 40px rgba(0, 0, 0, 0.8);
+      border-radius: 16px;
+      border: 1.5px solid rgba(6, 182, 212, 0.4);
+      box-shadow: 0 0 35px rgba(6, 182, 212, 0.22), 0 20px 40px rgba(0, 0, 0, 0.8);
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
-    .phone-notch {
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 18px;
-      background: #111116;
-      border-radius: 12px;
-      z-index: 5;
+    .cinema-topbar {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      background: rgba(8, 11, 20, 0.95);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #94A3B8;
+      z-index: 10;
+    }
+    .cinema-dots {
+      display: flex;
+      align-items: center;
       gap: 6px;
     }
-    .phone-notch-camera {
-      width: 6px;
-      height: 6px;
+    .cinema-dot {
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: #08090C;
-      border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .phone-iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: #050608;
+    .cinema-dot.red { background: #EF4444; }
+    .cinema-dot.yellow { background: #F59E0B; }
+    .cinema-dot.green { background: #10B981; }
+    .cinema-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #38BDF8;
+      background: rgba(56, 189, 248, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      letter-spacing: 0.04em;
     }
     .phone-video {
       width: 100%;
       height: 100%;
       object-fit: contain;
       background: #000000;
+      flex: 1;
     }
     .phone-video:fullscreen,
     .phone-video:-webkit-full-screen,
@@ -281,10 +292,11 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      flex: 1;
       height: 100%;
-      padding: 24px;
+      padding: 20px;
       text-align: center;
-      gap: 10px;
+      gap: 8px;
       background: radial-gradient(circle at center, rgba(6, 182, 212, 0.08), #050608 70%);
     }
 
@@ -583,10 +595,10 @@
     @media (max-width: 860px) {
       .showcase-grid {
         grid-template-columns: 1fr;
-        padding: 20px;
+        padding: 18px;
       }
       .phone-frame {
-        max-width: 280px;
+        max-width: 100%;
       }
       .stay-tuned-banner {
         flex-direction: column;
@@ -914,14 +926,20 @@
 
     <!-- Showcase Grid -->
     <section class="showcase-grid">
-      <!-- Phone Mockup Frame -->
+      <!-- 16:9 Architecture Cinema Console Frame -->
       <div class="phone-container">
         <div class="phone-frame">
-          <div class="phone-notch">
-            <div class="phone-notch-camera"></div>
+          <div class="cinema-topbar">
+            <div class="cinema-dots">
+              <span class="cinema-dot red"></span>
+              <span class="cinema-dot yellow"></span>
+              <span class="cinema-dot green"></span>
+            </div>
+            <span class="cinema-badge">16:9 BLUEPRINT • 1080P WIDESCREEN</span>
+            <span style="font-size: 10px; color: #64748B;">60s DEEP DIVE</span>
           </div>
 
-          <!-- Native 1080p Video Player for Rendered Architecture Reels -->
+          <!-- Native 1080p Video Player for Rendered Architecture Videos -->
           <video
             id="phone-video"
             class="phone-video"
@@ -934,35 +952,42 @@
 
           <!-- Interactive Studio Blueprint & Pipeline Console -->
           <div class="phone-placeholder" id="player-placeholder">
-            <div style="font-size: 38px;" id="featured-logo">🚗</div>
-            <h3 style="font-size: 16px; font-weight: 800; color: #FFFFFF;" id="featured-phone-title">Uber Architecture</h3>
-            <p style="font-size: 11.5px; color: #9CA3AF; line-height: 1.4; padding: 0 10px;" id="featured-phone-subtitle">
-              H3 Hexagonal Spatial Indexing + Redis Clusters in 60 Seconds
-            </p>
-            <div style="font-size: 11px; font-family: monospace; color: #34D399; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 999px;" id="featured-phone-metric">
+            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 2px;">
+              <div style="font-size: 34px;" id="featured-logo">🚗</div>
+              <div style="text-align: left;">
+                <h3 style="font-size: 16px; font-weight: 800; color: #FFFFFF;" id="featured-phone-title">Uber Architecture</h3>
+                <p style="font-size: 11.5px; color: #9CA3AF; line-height: 1.35;" id="featured-phone-subtitle">
+                  H3 Hexagonal Spatial Indexing + Redis Clusters in 60 Seconds
+                </p>
+              </div>
+            </div>
+            <div style="font-size: 11px; font-family: monospace; color: #34D399; background: rgba(16, 185, 129, 0.1); padding: 3px 12px; border-radius: 999px;" id="featured-phone-metric">
               ⚡ 100ms Driver Match
             </div>
 
-            <div id="phone-pipeline-box" style="margin-top: 8px; width: 88%; padding: 10px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); font-size: 11px; text-align: left; display: flex; flex-direction: column; gap: 5px;">
+            <div id="phone-pipeline-box" style="margin-top: 6px; width: 92%; max-width: 480px; padding: 10px 14px; border-radius: 12px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); font-size: 11px; text-align: left; display: flex; flex-direction: column; gap: 4px;">
               <div style="display: flex; align-items: center; justify-content: space-between; font-weight: 700; color: #94A3B8; font-size: 10px; text-transform: uppercase;">
                 <span>Autonomous Studio</span>
                 <span id="pipeline-status-badge" style="color: #38BDF8;">Queued</span>
               </div>
-              <div id="sim-step-1" style="color: #10B981;">✓ 1. Scripting (Gemini 2.5)</div>
+              <div id="sim-step-1" style="color: #10B981;">✓ 1. Scripting (Gemini 3.5 Flash)</div>
               <div id="sim-step-2" style="color: #10B981;">✓ 2. Vector Synthesis (Iconify)</div>
-              <div id="sim-step-3" style="color: #38BDF8;">⏳ 3. Neural Voice (Edge-TTS)</div>
-              <div id="sim-step-4" style="color: #64748B;">○ 4. Remotion Render (1080p)</div>
+              <div id="sim-step-3" style="color: #38BDF8;">⏳ 3. Neural Voice (Andrew Edge-TTS)</div>
+              <div id="sim-step-4" style="color: #64748B;">○ 4. Dual-Aspect Remotion Render (16:9 + 9:16)</div>
             </div>
 
-            <button id="sim-btn" onclick="runPipelineSimulation()" style="margin-top: 8px; font-size: 11px; font-weight: 700; padding: 7px 14px; border-radius: 999px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); color: #38BDF8; cursor: pointer; transition: all 0.2s;">
+            <button id="sim-btn" onclick="runPipelineSimulation()" style="margin-top: 6px; font-size: 11px; font-weight: 700; padding: 6px 16px; border-radius: 999px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); color: #38BDF8; cursor: pointer; transition: all 0.2s;">
               ⚡ Simulate Pipeline
             </button>
           </div>
         </div>
 
-        <div style="margin-top: 6px; font-size: 12px; color: #9CA3AF; display: flex; align-items: center; gap: 8px; text-align: center;">
-          <span style="color: #6B7280;">Selected:</span>
-          <strong id="active-playing-title" style="color: #FFFFFF;">Uber Architecture</strong>
+        <div style="margin-top: 4px; font-size: 12px; color: #9CA3AF; display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 4px;">
+          <div>
+            <span style="color: #6B7280;">Selected:</span>
+            <strong id="active-playing-title" style="color: #FFFFFF; margin-left: 6px;">Uber Architecture</strong>
+          </div>
+          <span style="font-size: 11px; color: #38BDF8; font-family: monospace;">🖥️ 16:9 Cinema Blueprint</span>
         </div>
       </div>
 
@@ -1265,7 +1290,7 @@
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
               <span class="video-pill ${item.hasVideo ? 'live' : 'queued'}">
-                ${item.hasVideo ? '▶ Watch Reel' : '🗓️ Queued'}
+                ${item.hasVideo ? '▶ Watch 16:9 Video' : '🗓️ Queued'}
               </span>
               <span class="topic-card-metric">${item.scaleMetric}</span>
             </div>

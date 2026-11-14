@@ -54,13 +54,14 @@ export async function uploadToYouTubeShorts(
     const stat = await fsp.stat(request.videoPath);
     const fileSize = stat.size;
 
-    // Format Title using the News Topic Headline (max 100 chars for YouTube API)
+    // Format Title using the Architecture Headline (max 100 chars for YouTube API)
     const cleanTopic = (request.topic || request.title).replace(/#Shorts/gi, '').trim();
-    const maxTopicLen = 100 - ' #Shorts'.length;
+    const titleSuffix = ' | System Design';
+    const maxTopicLen = 100 - titleSuffix.length;
     const titleHeadline = cleanTopic.length > maxTopicLen
       ? `${cleanTopic.slice(0, maxTopicLen - 1)}…`
       : cleanTopic;
-    const titleWithShorts = `${titleHeadline} #Shorts`;
+    const finalYouTubeTitle = `${titleHeadline}${titleSuffix}`;
 
     // Format Description / Post Caption with Topic, Breakdown, and Explainer Interactive link
     const description = request.description?.includes('https://explainer.nextai-apps.com')
@@ -78,7 +79,7 @@ export async function uploadToYouTubeShorts(
 
     const metadata = {
       snippet: {
-        title: titleWithShorts,
+        title: finalYouTubeTitle,
         description,
         tags: request.tags.map((t) => t.replace(/^#/, '')),
         categoryId: '28', // Science & Technology
@@ -133,7 +134,7 @@ export async function uploadToYouTubeShorts(
     }
 
     const videoData = (await uploadRes.json()) as { id: string };
-    const publishedUrl = `https://youtube.com/shorts/${videoData.id}`;
+    const publishedUrl = `https://youtu.be/${videoData.id}`;
     console.log(`🎉 [YouTube Upload] Video successfully published: ${publishedUrl}`);
 
     // Auto-post top-level comment with app link

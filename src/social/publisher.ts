@@ -14,6 +14,7 @@ export async function publishToAllChannels(
 ): Promise<AggregatePublishResult> {
   console.log('\n📣 [Social Publisher] Starting distribution across platforms...');
 
+  // YouTube receives the 16:9 Landscape Video (standard YouTube video format)
   const ytPromise: Promise<PlatformPublishResult> = options?.skipYouTube
     ? Promise.resolve({
         platform: 'youtube' as const,
@@ -23,6 +24,11 @@ export async function publishToAllChannels(
       })
     : uploadToYouTubeShorts(request);
 
+  // Instagram receives the 9:16 Portrait Reel Video
+  const igRequest = request.reelVideoPath
+    ? { ...request, videoPath: request.reelVideoPath }
+    : request;
+
   const igPromise: Promise<PlatformPublishResult> = options?.skipInstagram
     ? Promise.resolve({
         platform: 'instagram' as const,
@@ -30,7 +36,7 @@ export async function publishToAllChannels(
         skipped: true,
         error: 'Skipped (already published or not requested).',
       })
-    : uploadToInstagramReels(request, publicHostedVideoUrl);
+    : uploadToInstagramReels(igRequest, publicHostedVideoUrl);
 
   const [ytResult, igResult] = await Promise.all([ytPromise, igPromise]);
 
@@ -39,4 +45,3 @@ export async function publishToAllChannels(
     instagram: igResult,
   };
 }
-

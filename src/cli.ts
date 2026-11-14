@@ -5,7 +5,7 @@ import fsp from 'node:fs/promises';
 import { selectTopicForVideo } from './catalog/selector.js';
 import { generateExplainerScript } from './script/generator.js';
 import { synthesizeVoiceover } from './audio/tts.js';
-import { renderVideoToDisk } from './render/renderer.js';
+import { renderVideoToDisk, renderDualAspectVideos } from './render/renderer.js';
 import { getExplainerArchive, recordPostedExplainer } from './catalog/archive.js';
 import { publishToAllChannels } from './social/publisher.js';
 import type { ExplainerCompositionProps } from './schema/types.js';
@@ -293,34 +293,48 @@ ${script.takeaway}
     }
   }
 
-  console.log('🎬 [4/5] Rendering 1080x1920 30FPS MP4 via Remotion headless engine...');
+  console.log('🎬 [4/5] Rendering Dual Aspect MP4s (16:9 Landscape for YouTube/Web & 9:16 Reel for Instagram)...');
   let lastPct = 0;
-  await renderVideoToDisk({
+  const dualResult = await renderDualAspectVideos({
     inputProps,
-    outputPath: outVideoPath,
-    onProgress: (pct) => {
-      if (pct >= lastPct + 10 || pct === 100) {
-        console.log(`   Rendering Progress: ${pct}%`);
+    topicId: topic.id,
+    outDir,
+    onProgress: (platform, pct) => {
+      if (pct >= lastPct + 25 || pct === 100) {
+        console.log(`   [${platform.toUpperCase()}] Progress: ${pct}%`);
         lastPct = pct;
       }
     },
   });
 
-  // Step 5: Multi-Platform Publishing (YouTube Shorts & Instagram Reels)
+  outVideoPath = dualResult.landscapePath;
+
+  // Mirror 16:9 Landscape video to web/videos so website serves full widescreen video
+  try {
+    const webVideoDir = path.resolve(process.cwd(), 'web/videos');
+    await fsp.mkdir(webVideoDir, { recursive: true });
+    await fsp.copyFile(dualResult.landscapePath, path.resolve(webVideoDir, `${topic.id}.mp4`));
+  } catch (webErr) {
+    console.warn('Could not mirror landscape video to web/videos:', webErr);
+  }
+
+  // Step 5: Multi-Platform Publishing (YouTube Landscape & Instagram Reels)
   if (isNoPublish) {
     console.log('⏩ [5/5] Skipping social distribution (--no-publish passed).');
     console.log('\n====================================================');
-    console.log('🎉 Explainer Video Rendered Successfully!');
-    console.log(`   MP4 Video: ${outVideoPath}`);
-    console.log(`   Title:     ${script.videoTitle}`);
+    console.log('🎉 Dual Aspect Explainer Videos Rendered Successfully!');
+    console.log(`   🖥️ 16:9 Landscape (YouTube/Web): ${dualResult.landscapePath}`);
+    console.log(`   📱 9:16 Reel (Instagram):         ${dualResult.reelPath}`);
+    console.log(`   Title: ${script.videoTitle}`);
     console.log('====================================================\n');
     return;
   }
 
   console.log('🚀 [5/5] Multi-platform social publishing...');
   const publishRequest = {
-    videoPath: outVideoPath,
-    title: script.videoTitle,
+    videoPath: dualResult.landscapePath, // 16:9 Landscape for standard YouTube video
+    reelVideoPath: dualResult.reelPath,  // 9:16 Portrait for Instagram Reels
+    title: script.videoTitle.replace(/#Shorts/gi, '').trim(),
     topic: topic.title,
     description: `🏗️ Architecture Deep Dive: ${topic.title}
 ⚡ Production Scale: ${topic.scaleMetric}
@@ -338,7 +352,7 @@ ${script.takeaway}
 🌐 Interactive Architecture Diagrams & Case Studies:
 👉 https://explainer.nextai-apps.com/
 
-#SystemDesign #SoftwareArchitecture #${topic.company.replace(/\s+/g, '')} #DistributedSystems #HighConcurrency #BackendEngineering #DevCommunity #Shorts`,
+#SystemDesign #SoftwareArchitecture #${topic.company.replace(/\s+/g, '')} #DistributedSystems #HighConcurrency #BackendEngineering #DevCommunity`,
     tags: ['System Design', 'Software Architecture', topic.company, 'Distributed Systems', 'High Concurrency', 'Backend Engineering'],
   };
 

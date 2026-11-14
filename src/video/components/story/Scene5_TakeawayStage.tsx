@@ -10,7 +10,8 @@ interface Scene5Props {
 
 export const Scene5_TakeawayStage: React.FC<Scene5Props> = ({ rule, company, topicId = '' }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, width } = useVideoConfig();
+  const isLandscape = width > 1200;
 
   const isUber = company.toLowerCase().includes('uber') || topicId.includes('uber');
   const isStripe = company.toLowerCase().includes('stripe') || topicId.includes('stripe');
@@ -33,8 +34,8 @@ export const Scene5_TakeawayStage: React.FC<Scene5Props> = ({ rule, company, top
     <div
       style={{
         position: 'relative',
-        width: 920,
-        height: 980,
+        width: isLandscape ? 1720 : 920,
+        height: isLandscape ? 720 : 980,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -46,17 +47,17 @@ export const Scene5_TakeawayStage: React.FC<Scene5Props> = ({ rule, company, top
       {/* Golden Architectural Law Card */}
       <div
         style={{
-          width: 880,
+          width: isLandscape ? 1400 : 880,
           backgroundColor: '#0C0E17',
           border: '3px solid #FBBF24',
           borderRadius: 36,
-          padding: '48px 40px',
+          padding: isLandscape ? '32px 48px' : '48px 40px',
           boxShadow: '0 0 60px rgba(251, 191, 36, 0.35), 0 30px 60px rgba(0, 0, 0, 0.9)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           textAlign: 'center',
-          gap: 28,
+          gap: isLandscape ? 18 : 28,
         }}
       >
         {/* Top Trophy/Law Badge */}

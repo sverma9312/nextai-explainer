@@ -68,7 +68,8 @@ const CELLS: CellDef[] = [
 
 export const HexagonGridStage: React.FC<HexagonGridStageProps> = ({ sceneStep, visualEntities }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, width } = useVideoConfig();
+  const isLandscape = width > 1200;
 
   const redisEntity = visualEntities?.find(
     (e) => e.id === 'redis' || e.iconQuery?.includes('redis') || e.label?.toLowerCase().includes('redis')
@@ -83,8 +84,8 @@ export const HexagonGridStage: React.FC<HexagonGridStageProps> = ({ sceneStep, v
     config: { damping: 14, stiffness: 120 },
   });
 
-  const originX = 490;
-  const originY = 320;
+  const originX = isLandscape ? 840 : 490;
+  const originY = isLandscape ? 240 : 320;
 
   // Radar wave pulse for Scene 4
   const pulseScale = (frame % 45) / 45;
@@ -94,8 +95,8 @@ export const HexagonGridStage: React.FC<HexagonGridStageProps> = ({ sceneStep, v
     <div
       style={{
         position: 'relative',
-        width: 980,
-        height: 1100,
+        width: isLandscape ? 1720 : 980,
+        height: isLandscape ? 720 : 1100,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -104,8 +105,8 @@ export const HexagonGridStage: React.FC<HexagonGridStageProps> = ({ sceneStep, v
       }}
     >
       {/* 1. Honeycomb SVG Canvas */}
-      <div style={{ position: 'relative', width: 980, height: 640 }}>
-        <svg width="980" height="640" style={{ position: 'absolute', top: 0, left: 0 }}>
+      <div style={{ position: 'relative', width: isLandscape ? 1680 : 980, height: isLandscape ? 480 : 640 }}>
+        <svg width={isLandscape ? 1680 : 980} height={isLandscape ? 480 : 640} style={{ position: 'absolute', top: 0, left: 0 }}>
           {/* Radar Scan Wave on Scene 4 */}
           {sceneStep === 4 && (
             <circle
@@ -231,16 +232,16 @@ export const HexagonGridStage: React.FC<HexagonGridStageProps> = ({ sceneStep, v
         /* SCENE 3: In-Memory Storage with DYNAMIC REAL REDIS LOGO & Key-Value Table */
         <div
           style={{
-            width: 860,
+            width: isLandscape ? 1680 : 860,
             marginTop: 10,
             backgroundColor: '#0D0F17',
             border: '2px solid rgba(220, 56, 45, 0.5)',
             borderRadius: 24,
-            padding: '20px 28px',
+            padding: isLandscape ? '14px 28px' : '20px 28px',
             boxShadow: '0 0 40px rgba(220, 56, 45, 0.25), 0 20px 40px rgba(0,0,0,0.8)',
             display: 'flex',
             flexDirection: 'column',
-            gap: 14,
+            gap: isLandscape ? 10 : 14,
           }}
         >
           {/* Header row: Real Redis Logo + Storage Title + Microsecond Badge */}
@@ -354,16 +355,16 @@ export const HexagonGridStage: React.FC<HexagonGridStageProps> = ({ sceneStep, v
         /* SCENE 4: Intelligent Neighbor Search & Dispatch Comparison */
         <div
           style={{
-            width: 860,
+            width: isLandscape ? 1680 : 860,
             marginTop: 10,
             backgroundColor: '#0D0F17',
             border: '2px solid rgba(34, 211, 238, 0.5)',
             borderRadius: 24,
-            padding: '22px 30px',
+            padding: isLandscape ? '14px 28px' : '22px 30px',
             boxShadow: '0 0 40px rgba(34, 211, 238, 0.2), 0 20px 40px rgba(0,0,0,0.8)',
             display: 'flex',
             flexDirection: 'column',
-            gap: 16,
+            gap: isLandscape ? 10 : 16,
           }}
         >
           <div

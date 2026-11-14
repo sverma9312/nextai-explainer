@@ -26,7 +26,8 @@ const CAR_LOCATIONS = [
 
 export const Scene2_BottleneckStage: React.FC<Scene2Props> = ({ visualEntities }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, width } = useVideoConfig();
+  const isLandscape = width > 1200;
 
   const carEntity = visualEntities?.find((e) => e.id === 'driver' || e.iconQuery?.includes('car') || e.iconQuery?.includes('vehicle'));
 
@@ -36,8 +37,8 @@ export const Scene2_BottleneckStage: React.FC<Scene2Props> = ({ visualEntities }
     config: { damping: 14, stiffness: 120 },
   });
 
-  const centerPinX = 460;
-  const centerPinY = 270;
+  const centerPinX = isLandscape ? 840 : 460;
+  const centerPinY = isLandscape ? 240 : 270;
 
   // Pulse flash for overload warning
   const flash = (frame % 20) < 10;
@@ -46,8 +47,8 @@ export const Scene2_BottleneckStage: React.FC<Scene2Props> = ({ visualEntities }
     <div
       style={{
         position: 'relative',
-        width: 980,
-        height: 1040,
+        width: isLandscape ? 1720 : 980,
+        height: isLandscape ? 720 : 1040,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -59,8 +60,8 @@ export const Scene2_BottleneckStage: React.FC<Scene2Props> = ({ visualEntities }
       <div
         style={{
           position: 'relative',
-          width: 920,
-          height: 620,
+          width: isLandscape ? 1680 : 920,
+          height: isLandscape ? 480 : 620,
           backgroundColor: '#0A0C14',
           border: '2px solid rgba(244, 63, 94, 0.4)',
           borderRadius: 32,
@@ -137,12 +138,12 @@ export const Scene2_BottleneckStage: React.FC<Scene2Props> = ({ visualEntities }
       {/* Bottleneck Alert Callout */}
       <div
         style={{
-          width: 860,
-          marginTop: 28,
+          width: isLandscape ? 1680 : 860,
+          marginTop: isLandscape ? 16 : 28,
           backgroundColor: '#160B12',
           border: `2px solid ${flash ? '#F43F5E' : 'rgba(244, 63, 94, 0.4)'}`,
           borderRadius: 22,
-          padding: '20px 28px',
+          padding: isLandscape ? '14px 28px' : '20px 28px',
           boxShadow: '0 0 35px rgba(244, 63, 94, 0.3)',
           display: 'flex',
           alignItems: 'center',

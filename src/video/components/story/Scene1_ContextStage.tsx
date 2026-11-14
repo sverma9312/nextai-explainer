@@ -21,7 +21,8 @@ interface Scene1Props {
 
 export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEntities, scaleMetric }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, width } = useVideoConfig();
+  const isLandscape = width > 1200;
 
   const isUber = company.toLowerCase().includes('uber');
   const isStripe = company.toLowerCase().includes('stripe');
@@ -57,18 +58,28 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEnti
 
   // Animated packet ping from person -> Brand -> Target
   const pingProgress = (frame % 35) / 35;
-  const pingX = interpolate(pingProgress, [0, 1], [220, 760]);
+  const pingX = interpolate(pingProgress, [0, 1], [220, isLandscape ? 1460 : 760]);
+
+  const targetEntity = visualEntities?.find(
+    (e) =>
+      e.id === 'driver' ||
+      e.id === 'db' ||
+      e.role === 'database' ||
+      e.iconQuery?.includes('car') ||
+      e.iconQuery?.includes('database')
+  );
 
   return (
     <div
       style={{
         position: 'relative',
-        width: 980,
-        height: 1040,
+        width: isLandscape ? 1720 : 980,
+        height: isLandscape ? 720 : 1040,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        gap: isLandscape ? 20 : 0,
         transform: `scale(${entrance})`,
         opacity: entrance,
       }}
@@ -77,8 +88,8 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEnti
       <div
         style={{
           position: 'relative',
-          width: 920,
-          height: 600,
+          width: isLandscape ? 1680 : 920,
+          height: isLandscape ? 440 : 600,
           backgroundColor: '#0A0C14',
           border: '2px solid rgba(255, 255, 255, 0.08)',
           borderRadius: 32,
@@ -86,7 +97,7 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEnti
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 60px',
+          padding: isLandscape ? '0 140px' : '0 60px',
           boxShadow: '0 20px 60px rgba(0, 0, 0, 0.8)',
         }}
       >
@@ -105,7 +116,7 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEnti
           <line
             x1="180"
             y1="20"
-            x2="780"
+            x2={isLandscape ? "1500" : "780"}
             y2="20"
             stroke="rgba(255, 255, 255, 0.25)"
             strokeWidth="4"
@@ -121,167 +132,140 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEnti
           />
         </svg>
 
-        {/* 1. Left Actor: User Stick Figure Person ("YOU") */}
-        <div style={{ zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-          <PersonVector size={130} color="#22D3EE" label="" />
-          <span
+        {/* 1. Rider / User Entity */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, zIndex: 10 }}>
+          <PersonVector size={isLandscape ? 110 : 120} color="#FFFFFF" label={userLabel} />
+          <div
             style={{
-              fontSize: 22,
-              fontFamily: '"Comic Sans MS", "Chalkboard SE", sans-serif',
-              fontWeight: 900,
-              color: '#22D3EE',
-              letterSpacing: 2,
+              backgroundColor: '#1E293B',
+              border: '1px solid #334155',
+              borderRadius: 8,
+              padding: '6px 14px',
+              fontSize: 13,
+              fontWeight: 800,
+              color: '#38BDF8',
+              letterSpacing: 1,
+              fontFamily: 'monospace',
             }}
           >
-            {userLabel}
-          </span>
+            CLIENT APP
+          </div>
         </div>
 
-        {/* 2. Center Hub: Company Brand Circle with Official Vector Brand Logo */}
-        <div style={{ zIndex: 15 }}>
-          <BrandHubCircle name={company} size={150} />
+        {/* 2. Central Brand Hub Node */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, zIndex: 10 }}>
+          <BrandHubCircle name={company} size={isLandscape ? 120 : 130} />
+          <div
+            style={{
+              backgroundColor: '#1E293B',
+              border: '1px solid #334155',
+              borderRadius: 8,
+              padding: '6px 14px',
+              fontSize: 13,
+              fontWeight: 800,
+              color: '#FBBF24',
+              letterSpacing: 1,
+              fontFamily: 'monospace',
+            }}
+          >
+            {company.toUpperCase()} CLOUD
+          </div>
         </div>
 
-        {/* 3. Right Destination Fleet / Actors */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 18,
-            alignItems: 'center',
-            zIndex: 10,
-          }}
-        >
-          {isStripe ? (
-            <>
-              <CreditCardVector size={84} color="#10B981" active={true} />
-              <div style={{ display: 'flex', gap: 14 }}>
-                <CreditCardVector size={58} color="#10B981" />
-                <CreditCardVector size={58} color="#10B981" />
-              </div>
-              <span
-                style={{
-                  fontSize: 20,
-                  fontFamily: '"Comic Sans MS", "Chalkboard SE", sans-serif',
-                  fontWeight: 900,
-                  color: '#10B981',
-                  letterSpacing: 1.5,
-                  marginTop: 4,
-                }}
-              >
-                MILLIONS OF CHARGES
-              </span>
-            </>
+        {/* 3. Target Actor / Resource Entity */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, zIndex: 10 }}>
+          {targetEntity?.svgDataUri ? (
+            <DynamicIcon
+              svgDataUri={targetEntity.svgDataUri}
+              size={isLandscape ? 110 : 120}
+              glowColor="#10B981"
+            />
+          ) : isUber ? (
+            <CarVector size={isLandscape ? 110 : 120} color="#10B981" active={true} />
+          ) : isStripe ? (
+            <CreditCardVector size={isLandscape ? 110 : 120} color="#635BFF" active={true} />
           ) : isNetflix ? (
-            <>
-              <ScreenTvVector size={84} color="#E50914" />
-              <div style={{ display: 'flex', gap: 14 }}>
-                <ScreenTvVector size={58} color="#E50914" />
-                <ScreenTvVector size={58} color="#E50914" />
-              </div>
-              <span
-                style={{
-                  fontSize: 20,
-                  fontFamily: '"Comic Sans MS", "Chalkboard SE", sans-serif',
-                  fontWeight: 900,
-                  color: '#E50914',
-                  letterSpacing: 1.5,
-                  marginTop: 4,
-                }}
-              >
-                250M STREAMERS
-              </span>
-            </>
+            <ScreenTvVector size={isLandscape ? 110 : 120} color="#E50914" />
           ) : isWhatsApp ? (
-            <>
-              <ChatBubbleVector size={80} color="#25D366" />
-              <div style={{ display: 'flex', gap: 14 }}>
-                <ChatBubbleVector size={56} color="#25D366" />
-                <ChatBubbleVector size={56} color="#25D366" />
-              </div>
-              <span
-                style={{
-                  fontSize: 20,
-                  fontFamily: '"Comic Sans MS", "Chalkboard SE", sans-serif',
-                  fontWeight: 900,
-                  color: '#25D366',
-                  letterSpacing: 1.5,
-                  marginTop: 4,
-                }}
-              >
-                100B MSGS / DAY
-              </span>
-            </>
+            <ChatBubbleVector size={isLandscape ? 110 : 120} color="#25D366" />
           ) : (
-            <>
-              <CarVector size={72} color="#FBBF24" active={true} />
-              <div style={{ display: 'flex', gap: 16 }}>
-                <CarVector size={54} color="#FBBF24" />
-                <CarVector size={54} color="#FBBF24" />
-              </div>
-              <span
-                style={{
-                  fontSize: 20,
-                  fontFamily: '"Comic Sans MS", "Chalkboard SE", sans-serif',
-                  fontWeight: 900,
-                  color: '#FBBF24',
-                  letterSpacing: 1.5,
-                  marginTop: 4,
-                }}
-              >
-                1M+ DRIVERS
-              </span>
-            </>
+            <ServerRackVector size={isLandscape ? 110 : 120} />
           )}
+          <div
+            style={{
+              backgroundColor: '#1E293B',
+              border: '1px solid #334155',
+              borderRadius: 8,
+              padding: '6px 14px',
+              fontSize: 13,
+              fontWeight: 800,
+              color: '#34D399',
+              letterSpacing: 1,
+              fontFamily: 'monospace',
+            }}
+          >
+            GLOBAL SCALE
+          </div>
         </div>
       </div>
 
-      {/* Bottom Infrastructure: Server Gateway Cluster */}
+      {/* Gateway Telemetry Box */}
       <div
         style={{
-          marginTop: 40,
+          width: isLandscape ? 1680 : 920,
+          marginTop: isLandscape ? 16 : 28,
+          backgroundColor: '#0E131F',
+          border: '1.5px solid rgba(34, 211, 238, 0.35)',
+          borderRadius: 24,
+          padding: isLandscape ? '16px 36px' : '22px 28px',
           display: 'flex',
           alignItems: 'center',
-          gap: 24,
+          justifyContent: 'space-between',
+          boxShadow: '0 12px 36px rgba(0, 0, 0, 0.6)',
         }}
       >
-        <ServerRackVector size={80} />
-        <ServerRackVector size={80} />
-        <div
-          style={{
-            padding: '14px 28px',
-            backgroundColor: '#111422',
-            border: '2px solid rgba(34, 211, 238, 0.4)',
-            borderRadius: 18,
-            boxShadow: '0 0 25px rgba(34, 211, 238, 0.2)',
-          }}
-        >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <div
             style={{
+              width: 44,
+              height: 44,
+              borderRadius: 12,
+              backgroundColor: 'rgba(34, 211, 238, 0.15)',
+              border: '1px solid #22D3EE',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               fontSize: 22,
-              fontWeight: 900,
-              color: '#FFFFFF',
-              fontFamily: '"Comic Sans MS", "Chalkboard SE", sans-serif',
             }}
           >
-            {gatewayTitle}
+            ⚡
           </div>
-          <div
-            style={{
-              fontSize: 15,
-              fontFamily: 'monospace',
-              color: '#22D3EE',
-              fontWeight: 700,
-              marginTop: 4,
-            }}
-          >
-            {gatewaySubtitle}
+          <div>
+            <div style={{ fontSize: 16, fontWeight: 900, color: '#FFFFFF', letterSpacing: 1 }}>
+              {gatewayTitle}
+            </div>
+            <div style={{ fontSize: 13, color: '#94A3B8', marginTop: 3 }}>
+              {gatewaySubtitle}
+            </div>
           </div>
         </div>
-        <ServerRackVector size={80} />
-        <ServerRackVector size={80} />
+
+        <div
+          style={{
+            backgroundColor: 'rgba(16, 185, 129, 0.15)',
+            border: '1.5px solid #10B981',
+            borderRadius: 12,
+            padding: '8px 18px',
+            fontSize: 14,
+            fontWeight: 800,
+            color: '#10B981',
+            fontFamily: 'monospace',
+            letterSpacing: 1,
+          }}
+        >
+          {scaleMetric || '< 100ms P99'}
+        </div>
       </div>
     </div>
   );
 };
-

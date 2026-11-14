@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCurrentFrame } from 'remotion';
+import { useCurrentFrame, useVideoConfig } from 'remotion';
 import type { ExplainerScript, ArchitectureNode } from '../../../schema/types';
 import {
   AutoTechIcon,
@@ -51,17 +51,20 @@ export const GenericTopicStage: React.FC<GenericTopicStageProps> = ({ script, sc
     ? (script.scaleMetric.split('//')[0]?.trim() || 'High Availability')
     : (step?.calloutMetric || '');
 
+  const { width } = useVideoConfig();
+  const isLandscape = width > 1200;
+
   return (
     <div
       style={{
         position: 'relative',
-        width: 900,
-        height: 1000,
+        width: isLandscape ? 1720 : 900,
+        height: isLandscape ? 720 : 1000,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '20px 0',
+        padding: isLandscape ? '10px 0' : '20px 0',
       }}
     >
       {/* Visual Canvas Area with Nodes & Connected Real Vectors */}
@@ -69,7 +72,7 @@ export const GenericTopicStage: React.FC<GenericTopicStageProps> = ({ script, sc
         style={{
           position: 'relative',
           width: '100%',
-          height: 720,
+          height: isLandscape ? 500 : 720,
           backgroundColor: '#07090E',
           borderRadius: 28,
           border: '2px solid rgba(255, 255, 255, 0.08)',

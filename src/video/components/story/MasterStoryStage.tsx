@@ -13,7 +13,8 @@ interface MasterStoryStageProps {
 
 export const MasterStoryStage: React.FC<MasterStoryStageProps> = ({ script }) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps, durationInFrames, width } = useVideoConfig();
+  const isLandscape = width > 1200;
 
   const totalDuration = durationInFrames / fps;
   const currentTime = frame / fps;
@@ -27,12 +28,6 @@ export const MasterStoryStage: React.FC<MasterStoryStageProps> = ({ script }) =>
       script.company.toLowerCase().includes('uber') ||
       script.steps.some((s: ArchitectureStep) => s.narration.toLowerCase().includes('hexagon')));
 
-  // Dynamic Scene Time Windows:
-  // Scene 1 (Hook & Actors): 0% - 20% (~0-12s)
-  // Scene 2 (Naive Bottleneck): 20% - 40% (~12-24s)
-  // Scene 3 (Breakthrough / Redis KV & Hexagons): 40% - 68% (~24-41s)
-  // Scene 4 (Neighbor Search & Dispatch): 68% - 88% (~41-53s)
-  // Scene 5 (Architecture Law): 88% - 100% (~53-60s)
   let sceneIndex = 1;
   let sceneHeader = '';
   let headerColor = '#FFFFFF';
@@ -71,20 +66,20 @@ export const MasterStoryStage: React.FC<MasterStoryStageProps> = ({ script }) =>
     <div
       style={{
         position: 'absolute',
-        top: 130,
-        left: 50,
-        width: 980,
-        height: 1280,
+        top: isLandscape ? 100 : 130,
+        left: isLandscape ? 60 : 50,
+        width: isLandscape ? 1800 : 980,
+        height: isLandscape ? 820 : 1280,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         zIndex: 10,
       }}
     >
-      {/* 1. Large Hand-drawn Casual/Chalk Header matching reference video */}
+      {/* 1. Large Chalk / Technical Header matching style */}
       <div
         style={{
-          height: 110,
+          height: isLandscape ? 70 : 110,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -94,7 +89,9 @@ export const MasterStoryStage: React.FC<MasterStoryStageProps> = ({ script }) =>
       >
         <span
           style={{
-            fontSize: sceneIndex === 1 ? (isStudio ? 36 : 40) : (isStudio ? 42 : 48),
+            fontSize: isLandscape
+              ? (sceneIndex === 1 ? (isStudio ? 30 : 34) : (isStudio ? 34 : 38))
+              : (sceneIndex === 1 ? (isStudio ? 36 : 40) : (isStudio ? 42 : 48)),
             fontFamily: isStudio
               ? '"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
               : '"Comic Sans MS", "Chalkboard SE", "Caveat", cursive, sans-serif',
@@ -110,7 +107,7 @@ export const MasterStoryStage: React.FC<MasterStoryStageProps> = ({ script }) =>
         </span>
       </div>
 
-      {/* 2. Interactive Stage Visuals */}
+      {/* 2. Interactive Stage Visuals (Fills remaining height) */}
       <div
         style={{
           position: 'relative',
@@ -121,7 +118,7 @@ export const MasterStoryStage: React.FC<MasterStoryStageProps> = ({ script }) =>
           justifyContent: 'center',
         }}
       >
-        {/* Scene 1 (0% - 20%): Viral Stick Figure Animated Hook Stage for ALL topics */}
+        {/* Scene 1 (0% - 20%): Viral Context Stage */}
         {sceneIndex === 1 && (
           <Scene1_ContextStage
             company={script.company}
@@ -153,10 +150,14 @@ export const MasterStoryStage: React.FC<MasterStoryStageProps> = ({ script }) =>
               )}
             </>
           ) : (
-            <GenericTopicStage script={script} sceneIndex={sceneIndex} />
+            <GenericTopicStage
+              script={script}
+              sceneIndex={sceneIndex}
+            />
           )
         )}
 
+        {/* Scene 5 (88% - 100%): Golden Engineering Rule */}
         {sceneIndex === 5 && (
           <Scene5_TakeawayStage
             rule={script.takeaway}

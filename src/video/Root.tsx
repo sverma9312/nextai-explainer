@@ -12,7 +12,7 @@ const defaultProps: ExplainerCompositionProps = {
     topicId: sampleTopic.id,
     company: sampleTopic.company,
     companyLogo: sampleTopic.companyLogo,
-    videoTitle: `${sampleTopic.title} #Shorts`,
+    videoTitle: `${sampleTopic.title} | Software Architecture`,
     hook: sampleTopic.problemStatement,
     scaleMetric: sampleTopic.scaleMetric,
     nodes: sampleTopic.nodes,
@@ -38,6 +38,18 @@ const defaultProps: ExplainerCompositionProps = {
 export const Root: React.FC = () => {
   return (
     <>
+      {/* 1. Full 16:9 Landscape Video for YouTube & Explainer Website */}
+      <Composition
+        id="ExplainerLandscape"
+        component={ExplainerComposition}
+        durationInFrames={30 * 60}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={defaultProps}
+      />
+
+      {/* 2. Full 9:16 Portrait Reel for Instagram Reels */}
       <Composition
         id="ExplainerReel"
         component={ExplainerComposition}
@@ -47,6 +59,8 @@ export const Root: React.FC = () => {
         height={1920}
         defaultProps={defaultProps}
       />
+
+      {/* 3. High-Resolution Channel & App Avatar */}
       <Still
         id="ExplainerAvatar"
         component={ExplainerAvatar}
@@ -58,5 +72,3 @@ export const Root: React.FC = () => {
 };
 
 registerRoot(Root);
-
-

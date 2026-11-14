@@ -1,0 +1,145 @@
+[
+  {
+    "id": "linkedin-kafka-7t-messages",
+    "company": "LinkedIn",
+    "companyLogo": "💼",
+    "title": "How LinkedIn Streams 7 Trillion Messages Daily",
+    "category": "High-Throughput Streaming",
+    "scaleMetric": "7+ Trillion Msgs/Day // 1.4 PB Daily Ingress",
+    "problemStatement": "LinkedIn's legacy point-to-point architecture created an O(N²) integration complexity between data producers and consumers, overwhelming traditional message brokers and causing severe latency spikes.",
+    "tags": [
+      "#Kafka",
+      "#DistributedSystems",
+      "#HighThroughput",
+      "#LinkedIn"
+    ],
+    "nodes": [
+      {
+        "id": "producers",
+        "label": "App Event Producers",
+        "type": "service",
+        "x": 15,
+        "y": 30,
+        "stepRevealed": 1
+      },
+      {
+        "id": "kafka-producers",
+        "label": "Ingestion Gateway",
+        "type": "gateway",
+        "x": 40,
+        "y": 30,
+        "stepRevealed": 1
+      },
+      {
+        "id": "kafka-broker",
+        "label": "Kafka Broker Cluster",
+        "type": "queue",
+        "x": 65,
+        "y": 30,
+        "stepRevealed": 1
+      },
+      {
+        "id": "disk-storage",
+        "label": "PageCache & OS Disk",
+        "type": "storage",
+        "x": 90,
+        "y": 30,
+        "stepRevealed": 2
+      },
+      {
+        "id": "zookeeper",
+        "label": "Metadata / Controller",
+        "type": "service",
+        "x": 65,
+        "y": 70,
+        "stepRevealed": 2
+      },
+      {
+        "id": "consumers",
+        "label": "Stream Consumers",
+        "type": "service",
+        "x": 40,
+        "y": 70,
+        "stepRevealed": 3
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "producers",
+        "target": "kafka-producers",
+        "protocol": "TCP / Avro"
+      },
+      {
+        "id": "e2",
+        "source": "kafka-producers",
+        "target": "kafka-broker",
+        "protocol": "Kafka Producer API"
+      },
+      {
+        "id": "e3",
+        "source": "kafka-broker",
+        "target": "zookeeper",
+        "protocol": "ZK Consensus Protocol"
+      },
+      {
+        "id": "e4",
+        "source": "kafka-broker",
+        "target": "disk-storage",
+        "protocol": "Zero-Copy sendfile()"
+      },
+      {
+        "id": "e5",
+        "source": "kafka-broker",
+        "target": "consumers",
+        "protocol": "Kafka Consumer API"
+      }
+    ],
+    "steps": [
+      {
+        "stepNumber": 1,
+        "stepTitle": "01 // DECOUPLED EVENT INGESTION",
+        "narration": "Heterogeneous application producers publish structured events using high-throughput binary protocols to edge ingestion pipelines. This decouples data producers from downstream consumers and eliminates point-to-point integration bottlenecks.",
+        "activeNodeIds": [
+          "producers",
+          "kafka-producers",
+          "kafka-broker"
+        ],
+        "activeEdgeIds": [
+          "e1",
+          "e2"
+        ],
+        "calloutMetric": "7 Million Msgs/Sec Peak"
+      },
+      {
+        "stepNumber": 2,
+        "stepTitle": "02 // DISTRIBUTED COMMIT LOG & ZERO-COPY",
+        "narration": "Kafka brokers append events to sequential disk partitions while ZooKeeper manages broker consensus, topic metadata, and partition leadership. By leveraging OS PageCache and Linux zero-copy sendfile(), disk I/O and CPU overhead are minimized.",
+        "activeNodeIds": [
+          "kafka-broker",
+          "zookeeper",
+          "disk-storage"
+        ],
+        "activeEdgeIds": [
+          "e3",
+          "e4"
+        ],
+        "calloutMetric": "< 5ms Sequential Write Latency"
+      },
+      {
+        "stepNumber": 3,
+        "stepTitle": "03 // REAL-TIME CONSUMPTION AT SCALE",
+        "narration": "Consumer groups pull events independently from partition offsets, supporting real-time stream processing, search indexing, and offline data warehouses simultaneously. Scalability is achieved by parallelizing offset tracking across partition replicas without broker lock contention.",
+        "activeNodeIds": [
+          "kafka-broker",
+          "consumers"
+        ],
+        "activeEdgeIds": [
+          "e5"
+        ],
+        "calloutMetric": "1.4 PB/Day End-to-End Throughput"
+      }
+    ],
+    "takeaway": "Transforming message queues into immutable, sequential distributed commit logs powered by OS page cache and zero-copy operations eliminates scaling bottlenecks."
+  }
+]
