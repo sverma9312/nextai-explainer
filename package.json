@@ -8,6 +8,7 @@
     "generate:dry-run": "tsx src/cli.ts --dry-run",
     "generate:latest": "tsx src/cli.ts",
     "generate:topic": "tsx src/cli.ts --topic",
+    "auth:youtube": "tsx src/social/get-youtube-token.ts",
     "remotion:preview": "remotion preview src/video/Root.tsx",
     "test:catalog": "tsx src/catalog/list-topics.ts"
   },
