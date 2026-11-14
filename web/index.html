@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NextAI Explainer — 60-Second Animated System Design Breakdowns</title>
+  <title>Explainer — Software Architecture in 60s</title>
   <meta
     name="description"
     content="60-second animated software architecture and distributed system design breakdowns. Deconstructing Uber, Netflix, WhatsApp, Stripe, and UPI."
@@ -12,12 +12,12 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://explainer.nextai-apps.com/" />
-  <meta property="og:title" content="NextAI Explainer — Animated System Design Breakdowns" />
+  <meta property="og:title" content="Explainer — Software Architecture in 60s" />
   <meta property="og:description" content="60-second animated system design breakdowns. Deconstructing Uber, Netflix, WhatsApp, and Stripe architectures." />
   <meta property="og:image" content="https://nextai-apps.com/icon.png" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111118'/%3E%3Cpath d='M10 52V12h9l14 22v18l-14-22v22z' fill='%237466f5'/%3E%3Cpath d='M38 12 56 32 38 52V41l8-9-8-9z' fill='%23fff'/%3E%3C/svg%3E" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111118'/%3E%3Cpath d='M10 52V12h9l14 22v18l-14-22v22z' fill='%2300D9F5'/%3E%3Cpath d='M38 12 56 32 38 52V41l8-9-8-9z' fill='%2300F5A0'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -58,7 +58,7 @@
       position: absolute;
       width: 650px;
       height: 650px;
-      background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 65%);
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.10) 0%, transparent 65%);
       bottom: -100px;
       right: 5%;
       filter: blur(90px);
@@ -181,15 +181,16 @@
       100% { opacity: 1; transform: scale(1); }
     }
     h1 {
-      font-size: clamp(32px, 4.5vw, 48px);
+      font-size: clamp(34px, 4.8vw, 52px);
       font-weight: 800;
       line-height: 1.15;
       letter-spacing: -0.03em;
     }
     .text-gradient {
-      background: linear-gradient(135deg, #22D3EE 0%, #818CF8 50%, #C084FC 100%);
+      background: linear-gradient(135deg, #00F5A0 0%, #00D9F5 45%, #38BDF8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 35px rgba(0, 245, 160, 0.22));
     }
     .hero-desc {
       font-size: 14.5px;
@@ -490,6 +491,73 @@
       color: #C7D2FE;
     }
 
+    /* Stay Tuned Banner */
+    .stay-tuned-banner {
+      margin-top: 24px;
+      padding: 24px 28px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.06) 0%, rgba(16, 185, 129, 0.05) 100%);
+      border: 1px dashed rgba(6, 182, 212, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .stay-tuned-content {
+      max-width: 620px;
+    }
+    .stay-tuned-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #34D399;
+      margin-bottom: 8px;
+    }
+    .stay-tuned-pulse {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 10px #10B981;
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .stay-tuned-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+    .stay-tuned-desc {
+      font-size: 13px;
+      color: #94A3B8;
+      line-height: 1.5;
+    }
+    .stay-tuned-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .stay-tuned-chip {
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #E2E8F0;
+    }
+
     /* Footer */
     footer {
       width: 100%;
@@ -520,6 +588,12 @@
       .phone-frame {
         max-width: 280px;
       }
+      .stay-tuned-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+        gap: 16px;
+      }
     }
   </style>
 </head>
@@ -529,15 +603,15 @@
 
   <!-- Top Navigation -->
   <header>
-    <a href="https://nextai-apps.com/" class="brand-link">
+    <a href="https://explainer.nextai-apps.com/" class="brand-link">
       <div class="brand-logo-badge">
         <svg viewBox="0 0 64 64" style="width: 18px; height: 18px; border-radius: 4px;">
           <rect width="64" height="64" rx="14" fill="#111118"/>
-          <path d="M10 52V12h9l14 22v18l-14-22v22z" fill="#7466f5"/>
-          <path d="M38 12 56 32 38 52V41l8-9-8-9z" fill="#fff"/>
+          <path d="M10 52V12h9l14 22v18l-14-22v22z" fill="#00D9F5"/>
+          <path d="M38 12 56 32 38 52V41l8-9-8-9z" fill="#00F5A0"/>
         </svg>
       </div>
-      <span>NextAI Explainer</span>
+      <span>Explainer</span>
       <span class="brand-pill">System Design</span>
     </a>
 
@@ -557,7 +631,6 @@
       </div>
 
       <h1>
-        NextAI Explainer<br />
         <span class="text-gradient">Software Architecture in 60s</span>
       </h1>
 
@@ -655,13 +728,32 @@
       <div class="catalog-grid" id="catalog-grid">
         <!-- Dynamically populated from TOPICS catalog -->
       </div>
+
+      <!-- Stay Tuned Banner -->
+      <div class="stay-tuned-banner">
+        <div class="stay-tuned-content">
+          <div class="stay-tuned-badge">
+            <span class="stay-tuned-pulse"></span>
+            IN THE LAB
+          </div>
+          <h4 class="stay-tuned-title">Stay tuned for the next architecture explained</h4>
+          <p class="stay-tuned-desc">
+            Deconstructing distributed protocols, consensus algorithms, and ultra-high-scale engineering every week. Follow along as we break down the next real-world software system in 60 seconds.
+          </p>
+        </div>
+        <div class="stay-tuned-tags">
+          <span class="stay-tuned-chip">⚡ Kafka Streams</span>
+          <span class="stay-tuned-chip">⚡ DynamoDB Paxos</span>
+          <span class="stay-tuned-chip">⚡ Redis Raft</span>
+        </div>
+      </div>
     </section>
   </main>
 
   <!-- Footer -->
   <footer>
     <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
-      <span>NextAI Apps Studio · NextAI Explainer</span>
+      <span>NextAI Apps Studio · Explainer</span>
       <span>·</span>
       <a href="https://nextai-apps.com/">Studio Hub</a>
       <span>·</span>
