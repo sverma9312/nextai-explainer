@@ -159,6 +159,7 @@ export const MasterStoryStage: React.FC<MasterStoryStageProps> = ({ script }) =>
           <Scene5_TakeawayStage
             rule={script.takeaway}
             company={script.company}
+            topicId={script.topicId}
           />
         )}
       </div>

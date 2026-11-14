@@ -117,9 +117,13 @@ async function synthesizeSingleChunk(
       }
 
       // Calculate sample-accurate duration
+      // Edge-TTS metadata word boundaries report approximate token timing.
+      // The actual audio stream contains acoustic decay, trailing consonants, and MP3 frame buffers.
+      // For 96kbps mono MP3 (OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3), 96000 bits/sec = 12000 bytes/sec.
+      const durationFromBytes = audioBuffer.length / 12000;
       const duration = words.length > 0 && maxEndSec > 0
-        ? maxEndSec + 0.15
-        : audioBuffer.length / 12000;
+        ? Math.max(maxEndSec + 0.35, durationFromBytes)
+        : durationFromBytes;
 
       // Clean up chunk temporary directory
       try {
@@ -224,10 +228,21 @@ export async function synthesizeVoiceover(
     const subtitlesPath = outAudioPath.replace(/\.mp3$/i, '_subtitles.json');
     await fsp.writeFile(subtitlesPath, JSON.stringify(allWords, null, 2), 'utf-8');
 
+    // Calculate exact acoustic duration from merged buffer (12,000 bytes/sec at 96kbps CBR)
+    const exactAudioDuration = mergedBuffer.length / 12000;
+
+    // Outro cushion (1.5s): allows the final word/syllable (e.g. "boundary") to finish speaking
+    // completely with full acoustic decay, prevents video players from clipping audio at EOF,
+    // and holds the final "Engineering Rule" takeaway card for 1.5s so viewers can read it.
+    const OUTRO_PAD_SECONDS = 1.5;
+    const finalDurationSeconds = Number((Math.max(exactAudioDuration, currentTimeOffset) + OUTRO_PAD_SECONDS).toFixed(2));
+
+    console.log(`🎙️ [TTS] Voiceover complete: Audio=${exactAudioDuration.toFixed(2)}s, Composition Duration=${finalDurationSeconds}s (+${OUTRO_PAD_SECONDS}s outro hold)`);
+
     return {
       audioPath: outAudioPath,
       subtitlesPath,
-      durationSeconds: Number(currentTimeOffset.toFixed(2)),
+      durationSeconds: finalDurationSeconds,
       subtitles: allWords,
     };
   } finally {

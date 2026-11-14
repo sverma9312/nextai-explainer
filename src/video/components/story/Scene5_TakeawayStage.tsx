@@ -5,11 +5,23 @@ import { RedisLogo } from '../icons/TechLogos';
 interface Scene5Props {
   rule: string;
   company: string;
+  topicId?: string;
 }
 
-export const Scene5_TakeawayStage: React.FC<Scene5Props> = ({ rule, company }) => {
+export const Scene5_TakeawayStage: React.FC<Scene5Props> = ({ rule, company, topicId = '' }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+
+  const isUber = company.toLowerCase().includes('uber') || topicId.includes('uber');
+  const isStripe = company.toLowerCase().includes('stripe') || topicId.includes('stripe');
+  const isNetflix = company.toLowerCase().includes('netflix') || topicId.includes('netflix');
+
+  const pill1Label = isStripe ? 'LOCK' : isNetflix ? 'EDGE' : 'STORAGE';
+  const pill1Value = isStripe ? 'Redis SETNX' : isNetflix ? 'Open Connect' : 'Redis Cluster';
+
+  const pill2Label = isStripe ? 'CONSISTENCY' : isNetflix ? 'STREAMING' : 'INDEX';
+  const pill2Value = isStripe ? 'Idempotency Key' : isNetflix ? 'FreeBSD Kernel' : 'Uber H3 Spatial';
+  const pill2Icon = isStripe ? '🔑' : isNetflix ? '🍿' : '⬡';
 
   const entrance = spring({
     frame,
@@ -113,8 +125,8 @@ export const Scene5_TakeawayStage: React.FC<Scene5Props> = ({ rule, company }) =
           >
             <RedisLogo size={44} glow={false} />
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: 13, color: '#9CA3AF', fontFamily: 'monospace' }}>STORAGE</div>
-              <div style={{ fontSize: 18, color: '#FFFFFF', fontWeight: 800 }}>Redis Cluster</div>
+              <div style={{ fontSize: 13, color: '#9CA3AF', fontFamily: 'monospace' }}>{pill1Label}</div>
+              <div style={{ fontSize: 18, color: '#FFFFFF', fontWeight: 800 }}>{pill1Value}</div>
             </div>
           </div>
 
@@ -129,10 +141,10 @@ export const Scene5_TakeawayStage: React.FC<Scene5Props> = ({ rule, company }) =
               border: '1px solid rgba(34, 211, 238, 0.4)',
             }}
           >
-            <span style={{ fontSize: 36 }}>⬡</span>
+            <span style={{ fontSize: 32 }}>{pill2Icon}</span>
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: 13, color: '#9CA3AF', fontFamily: 'monospace' }}>INDEX</div>
-              <div style={{ fontSize: 18, color: '#FFFFFF', fontWeight: 800 }}>Uber H3 Spatial</div>
+              <div style={{ fontSize: 13, color: '#9CA3AF', fontFamily: 'monospace' }}>{pill2Label}</div>
+              <div style={{ fontSize: 18, color: '#FFFFFF', fontWeight: 800 }}>{pill2Value}</div>
             </div>
           </div>
         </div>
