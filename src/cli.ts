@@ -221,6 +221,23 @@ ${script.takeaway}
       console.log(`   Instagram: FAILED (${publishResults.instagram.error})`);
     }
     console.log('====================================================\n');
+
+    const failedUploads: string[] = [];
+    if (needYouTube && !publishResults.youtube?.publishedUrl && !publishResults.youtube?.skipped) {
+      failedUploads.push(`YouTube: ${publishResults.youtube?.error || 'Failed to upload video'}`);
+    }
+    if (needInstagram && !publishResults.instagram?.publishedUrl && !publishResults.instagram?.id && !publishResults.instagram?.skipped) {
+      failedUploads.push(`Instagram: ${publishResults.instagram?.error || 'Failed to upload reel'}`);
+    }
+
+    if (failedUploads.length > 0) {
+      console.error('\n====================================================');
+      console.error('🚨 [PIPELINE FAILURE] Social distribution failed for:');
+      failedUploads.forEach((err) => console.error(`   ❌ ${err}`));
+      console.error('====================================================\n');
+      throw new Error(`Social publishing failed: ${failedUploads.join('; ')}`);
+    }
+
     return;
   }
 
@@ -377,15 +394,45 @@ ${script.takeaway}
   }
 
   console.log('\n====================================================');
-  console.log('🎉 Explainer Video Pipeline Completed Successfully!');
+  console.log('🎉 Explainer Video Pipeline Completed!');
   console.log(`   Topic:     ${topic.title}`);
   if (publishResults.youtube?.publishedUrl) {
-    console.log(`   YouTube:   ${publishResults.youtube.publishedUrl}`);
+    console.log(`   YouTube:   PUBLISHED -> ${publishResults.youtube.publishedUrl}`);
+  } else if (publishResults.youtube?.skipped) {
+    console.log(`   YouTube:   SKIPPED (${publishResults.youtube.error || 'Paused'})`);
+  } else if (publishResults.youtube?.error) {
+    console.log(`   YouTube:   FAILED (${publishResults.youtube.error})`);
   }
+
   if (publishResults.instagram?.publishedUrl) {
-    console.log(`   Instagram: ${publishResults.instagram.publishedUrl}`);
+    console.log(`   Instagram: PUBLISHED -> ${publishResults.instagram.publishedUrl}`);
+  } else if (publishResults.instagram?.id) {
+    console.log(`   Instagram: PUBLISHED -> Reel ID ${publishResults.instagram.id}`);
+  } else if (publishResults.instagram?.skipped) {
+    console.log(`   Instagram: SKIPPED (${publishResults.instagram.error || 'Paused'})`);
+  } else if (publishResults.instagram?.error) {
+    console.log(`   Instagram: FAILED (${publishResults.instagram.error})`);
   }
   console.log('====================================================\n');
+
+  const isYtEnabled = process.env.ENABLE_YOUTUBE_PUBLISH === 'true';
+  const isIgEnabled = process.env.ENABLE_INSTAGRAM_PUBLISH === 'true';
+
+  const failedUploads: string[] = [];
+  if (isYtEnabled && !publishResults.youtube?.publishedUrl && !publishResults.youtube?.skipped) {
+    failedUploads.push(`YouTube: ${publishResults.youtube?.error || 'Failed to upload video'}`);
+  }
+  if (isIgEnabled && !publishResults.instagram?.publishedUrl && !publishResults.instagram?.id && !publishResults.instagram?.skipped) {
+    failedUploads.push(`Instagram: ${publishResults.instagram?.error || 'Failed to upload reel'}`);
+  }
+
+  if (failedUploads.length > 0) {
+    console.error('\n====================================================');
+    console.error('🚨 [PIPELINE FAILURE] Social distribution failed for:');
+    failedUploads.forEach((err) => console.error(`   ❌ ${err}`));
+    console.error('====================================================\n');
+    throw new Error(`Social publishing failed: ${failedUploads.join('; ')}`);
+  }
 }
 
 runPipeline().catch((err) => {
