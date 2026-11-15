@@ -3,1347 +3,1253 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Explainer — Software Architecture in 60s</title>
+  <title>Explainer — Software Architecture in Sixty Seconds</title>
   <meta
     name="description"
-    content="60-second animated software architecture and distributed system design breakdowns. Deconstructing Uber, Netflix, WhatsApp, Stripe, and UPI."
+    content="60-second animated software architecture and distributed system design breakdowns. Deconstructing Uber, Netflix, WhatsApp, Stripe, UPI, and Discord."
   />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://explainer.nextai-apps.com/" />
-  <meta property="og:title" content="Explainer — Software Architecture in 60s" />
-  <meta property="og:description" content="60-second animated system design breakdowns. Deconstructing Uber, Netflix, WhatsApp, and Stripe architectures." />
+  <meta property="og:title" content="Explainer — Software Architecture in Sixty Seconds" />
+  <meta property="og:description" content="Distributed systems from Uber, Stripe and Netflix, taken apart into one-minute animated diagrams. Built for engineers who want the idea, not the lecture." />
   <meta property="og:image" content="https://nextai-apps.com/icon.png" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111118'/%3E%3Cpath d='M10 52V12h9l14 22v18l-14-22v22z' fill='%2300D9F5'/%3E%3Cpath d='M38 12 56 32 38 52V41l8-9-8-9z' fill='%2300F5A0'/%3E%3C/svg%3E" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2308090B'/%3E%3Ccircle cx='32' cy='32' r='14' fill='%23FF4820'/%3E%3C/svg%3E" />
+
+  <!-- Google Fonts: Instrument Serif + Playfair Display + Plus Jakarta Sans + JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
+    :root {
+      --bg-canvas: #08090B;
+      --bg-surface: #0E1015;
+      --bg-surface-elevated: #14171E;
+      --border-subtle: #1C1F28;
+      --border-active: #2E3342;
+      --border-focus: #3A4052;
+      --text-primary: #F4F4F6;
+      --text-secondary: #9CA1B0;
+      --text-muted: #626775;
+      --accent-vermilion: #FF4820;
+      --accent-vermilion-hover: #FF5E3A;
+      --accent-vermilion-subtle: rgba(255, 72, 32, 0.12);
+      --font-serif: 'Instrument Serif', 'Playfair Display', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
+
     body {
-      background-color: #07080C;
-      color: #F3F4F6;
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
       min-height: 100vh;
       min-height: 100dvh;
       overflow-x: hidden;
-      position: relative;
       -webkit-font-smoothing: antialiased;
       display: flex;
       flex-direction: column;
     }
 
-    /* Ambient Glow */
-    .ambient-glow-top {
-      position: absolute;
-      width: 750px;
-      height: 750px;
-      background: radial-gradient(circle, rgba(6, 182, 212, 0.14) 0%, rgba(99, 102, 241, 0.08) 40%, transparent 70%);
-      top: -160px;
-      left: 50%;
-      transform: translateX(-50%);
-      filter: blur(80px);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .ambient-glow-bottom {
-      position: absolute;
-      width: 650px;
-      height: 650px;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.10) 0%, transparent 65%);
-      bottom: -100px;
-      right: 5%;
-      filter: blur(90px);
-      pointer-events: none;
-      z-index: 0;
+    /* Top Navigation */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      width: 100%;
+      background: rgba(8, 9, 11, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-subtle);
     }
 
-    /* Header */
-    header {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-      max-width: 1160px;
+    .header-inner {
+      max-width: 1220px;
       margin: 0 auto;
-      padding: 20px 24px;
+      padding: 16px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
+
     .brand-link {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 10px;
       text-decoration: none;
-      color: #FFFFFF;
+      color: var(--text-primary);
+    }
+
+    .brand-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-vermilion);
+      box-shadow: 0 0 10px rgba(255, 72, 32, 0.6);
+    }
+
+    .brand-name {
+      font-size: 15px;
       font-weight: 700;
-      font-size: 14.5px;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
     }
-    .brand-logo-badge {
-      width: 34px;
-      height: 34px;
-      border-radius: 9px;
-      background: #111118;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+
+    .brand-slash {
+      color: var(--text-muted);
+      font-size: 13px;
+      font-family: var(--font-mono);
     }
-    .brand-pill {
+
+    .brand-sub {
+      font-family: var(--font-mono);
       font-size: 11px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: rgba(6, 182, 212, 0.14);
-      color: #67E8F9;
-      border: 1px solid rgba(6, 182, 212, 0.35);
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      text-transform: uppercase;
     }
+
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 22px;
     }
-    .nav-btn {
-      font-size: 12px;
-      font-weight: 600;
-      color: #9CA3AF;
+
+    .nav-link {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
       text-decoration: none;
-      padding: 6px 12px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: all 0.2s ease;
+      transition: color 0.2s ease;
     }
-    .nav-btn:hover {
-      color: #FFFFFF;
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.2);
+
+    .nav-link:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-link.active {
+      color: var(--text-primary);
+    }
+
+    .nav-link-hub {
+      color: var(--accent-vermilion);
+      font-weight: 600;
+    }
+
+    .nav-link-hub:hover {
+      color: var(--accent-vermilion-hover);
     }
 
     /* Main Container */
     main {
-      position: relative;
-      z-index: 1;
       width: 100%;
-      max-width: 1160px;
+      max-width: 1220px;
       margin: 0 auto;
-      padding: 10px 24px 60px;
+      padding: 40px 24px 80px;
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 38px;
+      gap: 60px;
     }
 
-    /* Hero */
-    .hero-header {
-      text-align: center;
-      max-width: 780px;
-      margin: 0 auto;
+    /* Hero Section */
+    .hero-section {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
-    .pipeline-badge {
+
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(38px, 5.2vw, 68px);
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .hero-title .cursive-accent {
+      font-style: italic;
+      color: var(--accent-vermilion);
+      display: inline-block;
+    }
+
+    /* Main 3-Panel Console Showcase */
+    .showcase-console {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 260px 1fr 310px;
+      align-items: stretch;
+      box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Panel 1: Left Intro & Action */
+    .console-intro-panel {
+      padding: 30px 24px;
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 24px;
+      background: rgba(14, 16, 21, 0.6);
+    }
+
+    .intro-paragraph {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    .intro-action-link {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 5px 14px;
-      background: rgba(6, 182, 212, 0.1);
-      border: 1px solid rgba(6, 182, 212, 0.28);
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 700;
-      color: #A5F3FC;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      backdrop-filter: blur(10px);
-    }
-    .live-pulse {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #06B6D4;
-      box-shadow: 0 0 10px #06B6D4;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-    h1 {
-      font-size: clamp(34px, 4.8vw, 52px);
-      font-weight: 800;
-      line-height: 1.15;
-      letter-spacing: -0.03em;
-    }
-    .text-gradient {
-      background: linear-gradient(135deg, #00F5A0 0%, #00D9F5 45%, #38BDF8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 0 35px rgba(0, 245, 160, 0.22));
-    }
-    .hero-desc {
-      font-size: 14.5px;
-      color: #9CA3AF;
-      line-height: 1.55;
-      max-width: 640px;
-    }
-
-    /* Showcase Container */
-    .showcase-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 22px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 24px;
-      padding: 28px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.5);
-    }
-
-    /* Topic Header Box (Above Video & 3 Steps) */
-    .topic-header-box {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding-bottom: 16px;
-      width: 100%;
-    }
-    .topic-eyebrow {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #22D3EE;
-      display: flex;
-      align-items: center;
       gap: 6px;
-      margin-bottom: 6px;
-    }
-    .topic-title {
-      font-size: clamp(24px, 2.8vw, 32px);
-      font-weight: 800;
-      color: #FFFFFF;
-      line-height: 1.25;
-      letter-spacing: -0.01em;
-    }
-    .topic-desc {
-      font-size: 14px;
-      color: #9CA3AF;
-      margin-top: 6px;
-      line-height: 1.5;
-      max-width: 960px;
+      color: var(--accent-vermilion);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: gap 0.2s ease, color 0.2s ease;
     }
 
-    /* Showcase Body Split: Video + Takeaway on Left, 3 Steps on Right */
-    .showcase-body {
-      display: grid;
-      grid-template-columns: 1.18fr 1fr;
-      gap: 28px;
-      align-items: start;
-      width: 100%;
+    .intro-action-link:hover {
+      gap: 10px;
+      color: var(--accent-vermilion-hover);
     }
 
-    /* Left Column: Player + Takeaway */
-    .player-column {
+    /* Panel 2: Center Director's Monitor Video Player */
+    .console-monitor-panel {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      width: 100%;
-    }
-
-    /* Cinema Console Frame */
-    .phone-frame {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      min-height: 250px;
       background: #000000;
-      border-radius: 16px;
-      border: 1.5px solid rgba(6, 182, 212, 0.4);
-      box-shadow: 0 0 35px rgba(6, 182, 212, 0.22), 0 20px 40px rgba(0, 0, 0, 0.8);
       position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
     }
-    .cinema-topbar {
+
+    .slate-topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 9px 14px;
-      background: rgba(8, 11, 20, 0.95);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 10px 16px;
+      background: #0A0C10;
+      border-bottom: 1px solid var(--border-subtle);
+      font-family: var(--font-mono);
       font-size: 11px;
-      font-family: 'JetBrains Mono', monospace;
-      color: #94A3B8;
-      z-index: 10;
     }
-    .cinema-dots {
+
+    .slate-rec {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
+      color: #F43F5E;
+      font-weight: 600;
+      letter-spacing: 0.04em;
     }
-    .cinema-dot {
-      width: 8px;
-      height: 8px;
+
+    .tally-dot {
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
+      background: #EF4444;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
+      animation: pulseTally 2s infinite ease-in-out;
     }
-    .cinema-dot.red { background: #EF4444; }
-    .cinema-dot.yellow { background: #F59E0B; }
-    .cinema-dot.green { background: #10B981; }
-    .cinema-title {
-      font-size: 10.5px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: #38BDF8;
+
+    @keyframes pulseTally {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .slate-time {
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-left: 4px;
+    }
+
+    .slate-badge {
+      font-size: 9.5px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+      padding: 2px 7px;
+      border-radius: 4px;
       text-transform: uppercase;
     }
-    .phone-video {
+
+    .monitor-screen-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .monitor-video {
       width: 100%;
       height: 100%;
       object-fit: contain;
       background: #000000;
-      flex: 1;
-    }
-    .phone-video:fullscreen,
-    .phone-video:-webkit-full-screen,
-    .phone-video:-moz-full-screen,
-    .phone-video:-ms-fullscreen {
-      object-fit: contain !important;
-      background: #000000 !important;
-      width: 100% !important;
-      height: 100% !important;
+      display: block;
     }
 
-    /* Responsive Non-Cropping Studio Placeholder */
-    .phone-placeholder {
+    /* Studio Placeholder for Queued Topics (e.g. Netflix, WhatsApp, UPI, Discord) */
+    .studio-placeholder {
+      width: 100%;
+      height: 100%;
+      padding: 24px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      flex: 1;
-      height: 100%;
-      padding: 14px 18px;
-      text-align: center;
-      gap: 10px;
-      background: radial-gradient(circle at center, rgba(6, 182, 212, 0.08), #050608 70%);
-      box-sizing: border-box;
+      justify-content: space-between;
+      background: radial-gradient(circle at center, #12151D 0%, #060709 100%);
+      font-family: var(--font-sans);
     }
-    .placeholder-top-row {
+
+    .placeholder-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      width: 100%;
-      max-width: 520px;
       gap: 12px;
     }
-    .placeholder-brand {
+
+    .placeholder-badge-group {
       display: flex;
       align-items: center;
       gap: 12px;
-      text-align: left;
     }
+
     .placeholder-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: #FFFFFF;
-      margin: 0;
+      font-family: var(--font-serif);
+      font-size: 20px;
+      color: var(--text-primary);
+      font-weight: 400;
     }
+
     .placeholder-subtitle {
-      font-size: 11px;
-      color: #9CA3AF;
-      margin: 2px 0 0;
-      line-height: 1.35;
-      max-width: 320px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
     }
+
     .placeholder-metric {
+      font-family: var(--font-mono);
       font-size: 11px;
-      font-family: monospace;
-      color: #34D399;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(52, 211, 153, 0.25);
-      padding: 3px 10px;
-      border-radius: 999px;
+      color: var(--accent-vermilion);
+      border: 1px solid rgba(255, 72, 32, 0.3);
+      background: var(--accent-vermilion-subtle);
+      padding: 4px 10px;
+      border-radius: 6px;
       white-space: nowrap;
-      flex-shrink: 0;
     }
-    .placeholder-pipeline-box {
-      width: 100%;
-      max-width: 520px;
-      padding: 8px 12px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      font-size: 11px;
-      text-align: left;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      box-sizing: border-box;
-    }
+
     .pipeline-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 3px 12px;
-      font-size: 10.5px;
-    }
-    .sim-btn {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 5px 16px;
-      border-radius: 999px;
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      color: #38BDF8;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .sim-btn:hover {
-      background: rgba(56, 189, 248, 0.22);
-      border-color: #38BDF8;
-    }
-
-    /* Key Architecture Takeaway Card (Directly Below Video Console) */
-    .takeaway-card {
-      background: rgba(16, 185, 129, 0.08);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      border-radius: 12px;
-      padding: 14px 18px;
-      font-size: 13px;
-      color: #D1FAE5;
-      line-height: 1.5;
-    }
-
-    /* Right Column: Steps */
-    .steps-column {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      width: 100%;
-    }
-
-    /* Interactive Steps */
-    .steps-box {
-      display: flex;
-      flex-direction: column;
       gap: 10px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: var(--font-mono);
+      font-size: 11px;
     }
-    .step-item {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 12px;
-      padding: 12px 16px;
+
+    .pipeline-item {
       display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      font-size: 13px;
-      line-height: 1.45;
+      align-items: center;
+      gap: 6px;
     }
-    .step-badge {
-      width: 24px;
-      height: 24px;
+
+    .sim-btn {
+      width: 100%;
+      padding: 10px 14px;
       border-radius: 6px;
-      background: rgba(6, 182, 212, 0.15);
-      border: 1px solid rgba(6, 182, 212, 0.35);
-      color: #67E8F9;
-      font-size: 11.5px;
-      font-weight: 800;
+      background: var(--border-subtle);
+      border: 1px solid var(--border-active);
+      color: var(--text-primary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-    .step-content strong {
-      color: #FFFFFF;
-      display: block;
-      margin-bottom: 2px;
-    }
-    .step-content span {
-      color: #9CA3AF;
-      font-size: 12px;
+      gap: 6px;
     }
 
-    /* Key Takeaway Card */
-    .takeaway-card {
-      background: rgba(16, 185, 129, 0.08);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      border-radius: 12px;
-      padding: 12px 16px;
+    .sim-btn:hover {
+      background: var(--border-active);
+      border-color: var(--text-muted);
+    }
+
+    .monitor-footer-strip {
+      padding: 9px 16px;
+      background: #0A0C10;
+      border-top: 1px solid var(--border-subtle);
+      font-family: var(--font-serif);
+      font-size: 13.5px;
+      font-style: italic;
+      color: var(--text-secondary);
+      text-align: center;
+      letter-spacing: 0.01em;
+    }
+
+    /* Panel 3: Right Case Study Steps */
+    .console-steps-panel {
+      padding: 28px 22px;
+      border-left: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      background: rgba(14, 16, 21, 0.6);
+    }
+
+    .steps-meta-box {
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 14px;
+    }
+
+    .steps-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--accent-vermilion);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .steps-main-title {
+      font-family: var(--font-serif);
+      font-size: 21px;
+      line-height: 1.25;
+      color: var(--text-primary);
+      font-weight: 400;
+    }
+
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex: 1;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .step-num {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-vermilion);
+      line-height: 1.4;
+      flex-shrink: 0;
+    }
+
+    .step-body {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .step-title {
       font-size: 12.5px;
-      color: #D1FAE5;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.35;
+    }
+
+    .step-desc {
+      font-size: 11.5px;
+      color: var(--text-secondary);
       line-height: 1.45;
     }
 
-    /* Topics Catalog Grid */
+    .takeaway-box {
+      margin-top: auto;
+      padding: 12px 14px;
+      background: rgba(255, 72, 32, 0.05);
+      border: 1px solid rgba(255, 72, 32, 0.22);
+      border-radius: 8px;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .takeaway-box strong {
+      color: var(--text-primary);
+    }
+
+    /* Case Studies Catalog Section */
     .catalog-section {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 22px;
     }
+
     .catalog-header {
       display: flex;
-      align-items: center;
+      align-items: baseline;
       justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
     }
-    .catalog-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: #FFFFFF;
+
+    .catalog-heading {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
     }
+
+    .catalog-counter {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* 3-Column x 2-Row Grid (All 6 Cards visible!) */
     .catalog-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
     }
+
     .topic-card {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 16px 18px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 20px 22px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.22s ease;
+      position: relative;
     }
+
     .topic-card:hover {
-      background: rgba(6, 182, 212, 0.04);
-      border-color: rgba(6, 182, 212, 0.45);
+      border-color: var(--border-active);
+      background: rgba(20, 23, 30, 0.8);
       transform: translateY(-2px);
-      box-shadow: 0 10px 28px -8px rgba(6, 182, 212, 0.25);
     }
+
     .topic-card.active {
-      background: rgba(6, 182, 212, 0.08);
-      border-color: #06B6D4;
+      border-color: var(--accent-vermilion);
+      background: rgba(255, 72, 32, 0.04);
     }
+
     .topic-card-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
+      gap: 8px;
     }
-    .topic-card-company {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      font-size: 13px;
-      font-weight: 800;
-      color: #FFFFFF;
-      flex-shrink: 0;
-    }
-    .topic-card-metric {
+
+    .topic-badge-status {
+      font-family: var(--font-mono);
       font-size: 10.5px;
-      font-family: 'JetBrains Mono', monospace;
-      color: #34D399;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      padding: 2px 7px;
-      border-radius: 6px;
-      white-space: nowrap;
-    }
-    .video-pill {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2.5px 8px;
-      border-radius: 999px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      white-space: nowrap;
-      flex-shrink: 0;
+      gap: 5px;
     }
-    .video-pill.live {
-      background: rgba(34, 197, 94, 0.15);
-      color: #4ADE80;
-      border: 1px solid rgba(74, 222, 128, 0.4);
-      box-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
+
+    .topic-badge-status.watch {
+      color: var(--accent-vermilion);
     }
-    .video-pill.queued {
-      background: rgba(148, 163, 184, 0.1);
-      color: #94A3B8;
-      border: 1px solid rgba(148, 163, 184, 0.25);
+
+    .topic-badge-status.queued {
+      color: var(--text-muted);
     }
+
+    .topic-scale-metric {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
     .topic-card-title {
-      font-size: 14.5px;
-      font-weight: 700;
-      color: #FFFFFF;
-      line-height: 1.35;
+      font-family: var(--font-serif);
+      font-size: 20px;
+      line-height: 1.3;
+      color: var(--text-primary);
+      font-weight: 400;
+      letter-spacing: -0.01em;
     }
+
     .topic-card-desc {
       font-size: 12px;
-      color: #9CA3AF;
-      line-height: 1.45;
+      color: var(--text-secondary);
+      line-height: 1.5;
     }
+
     .topic-card-tags {
       display: flex;
       gap: 6px;
       flex-wrap: wrap;
-      margin-top: 4px;
-    }
-    .tag-pill {
-      font-size: 10px;
-      font-family: 'JetBrains Mono', monospace;
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: #C7D2FE;
+      margin-top: auto;
+      padding-top: 6px;
     }
 
-    /* Stay Tuned Banner */
-    .stay-tuned-banner {
-      margin-top: 24px;
-      padding: 24px 28px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, rgba(6, 182, 212, 0.06) 0%, rgba(16, 185, 129, 0.05) 100%);
-      border: 1px dashed rgba(6, 182, 212, 0.35);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      flex-wrap: wrap;
-    }
-    .stay-tuned-content {
-      max-width: 620px;
-    }
-    .stay-tuned-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 10.5px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
+    .tag-chip {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      color: #34D399;
-      margin-bottom: 8px;
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+      padding: 2px 7px;
+      border-radius: 4px;
     }
-    .stay-tuned-pulse {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #10B981;
-      box-shadow: 0 0 10px #10B981;
-      animation: pulse-dot 2s infinite;
+
+    /* Mobile "View all 6" button (hidden on desktop) */
+    .catalog-toggle-btn {
+      display: none;
+      width: 100%;
+      padding: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
     }
-    @keyframes pulse-dot {
-      0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
-      100% { opacity: 1; transform: scale(1); }
+
+    .catalog-toggle-btn:hover {
+      border-color: var(--border-active);
+      color: var(--text-primary);
     }
-    .stay-tuned-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: #FFFFFF;
-      margin-bottom: 6px;
+
+    /* Community Wishlist & Idea Submission Section */
+    .community-section {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 50px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .community-header-box {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .community-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .community-title {
+      font-family: var(--font-serif);
+      font-size: 34px;
+      font-weight: 400;
+      color: var(--text-primary);
       letter-spacing: -0.01em;
     }
-    .stay-tuned-desc {
-      font-size: 13px;
-      color: #94A3B8;
-      line-height: 1.5;
-    }
-    .stay-tuned-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .stay-tuned-chip {
-      font-size: 11px;
-      font-family: 'JetBrains Mono', monospace;
-      padding: 6px 12px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: #E2E8F0;
-    }
 
-    /* Footer */
-    footer {
-      width: 100%;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 24px;
-      text-align: center;
-      font-size: 12px;
-      color: #6B7280;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    footer a {
-      color: #9CA3AF;
-      text-decoration: none;
-    }
-    footer a:hover {
-      color: #FFFFFF;
-    }
-
-    @media (max-width: 860px) {
-      .showcase-grid {
-        padding: 18px;
-        gap: 18px;
-      }
-      .showcase-body {
-        grid-template-columns: 1fr;
-        gap: 18px;
-      }
-      .phone-frame {
-        aspect-ratio: auto;
-        min-height: 240px;
-      }
-      .placeholder-top-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-      }
-      .placeholder-brand {
-        gap: 8px;
-      }
-      .placeholder-subtitle {
-        font-size: 10.5px;
-        line-height: 1.25;
-      }
-      .pipeline-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 3px 8px;
-        font-size: 9.5px;
-      }
-      .stay-tuned-banner {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 20px;
-        gap: 16px;
-      }
-      .request-actions-bar {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .request-submit-btn {
-        width: 100%;
-        justify-content: center;
-      }
-    }
-
-    /* Community Architecture Requests Section */
-    .community-section {
-      margin-top: 48px;
-      padding-top: 36px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      position: relative;
-    }
-    .community-header {
-      text-align: center;
-      max-width: 680px;
-      margin: 0 auto 32px;
-    }
-    .community-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #00F5A0;
-      background: rgba(0, 245, 160, 0.08);
-      border: 1px solid rgba(0, 245, 160, 0.25);
-      padding: 5px 12px;
-      border-radius: 999px;
-      margin-bottom: 12px;
-    }
-    .community-title {
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      color: #FFFFFF;
-      margin-bottom: 8px;
-    }
-    .community-subtitle {
-      font-size: 14px;
-      color: #94A3B8;
-      line-height: 1.6;
-    }
-
-    /* Request Input Card */
-    .request-card {
-      background: linear-gradient(180deg, rgba(17, 24, 39, 0.75) 0%, rgba(10, 14, 22, 0.9) 100%);
-      border: 1px solid rgba(0, 217, 245, 0.25);
-      border-radius: 20px;
-      padding: 28px;
-      max-width: 820px;
-      margin: 0 auto 40px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-      position: relative;
-    }
-    .request-textarea-label {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #38BDF8;
-      margin-bottom: 8px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .request-textarea {
-      width: 100%;
-      background: rgba(3, 7, 18, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      color: #F8FAFC;
-      font-family: inherit;
-      font-size: 14px;
-      line-height: 1.5;
-      padding: 14px 16px;
-      resize: vertical;
-      min-height: 80px;
-      outline: none;
-      transition: all 0.2s ease;
-      box-sizing: border-box;
-    }
-    .request-textarea:focus {
-      border-color: #00D9F5;
-      box-shadow: 0 0 0 3px rgba(0, 217, 245, 0.15);
-      background: rgba(3, 7, 18, 0.9);
-    }
-    .request-actions-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-top: 14px;
-      flex-wrap: wrap;
-    }
-    .request-author-input {
-      background: rgba(3, 7, 18, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 10px;
-      color: #F8FAFC;
-      font-family: inherit;
-      font-size: 13px;
-      padding: 10px 14px;
-      outline: none;
-      flex: 1;
-      min-width: 220px;
-      transition: all 0.2s ease;
-      box-sizing: border-box;
-    }
-    .request-author-input:focus {
-      border-color: #00D9F5;
-    }
-    .request-submit-btn {
-      background: linear-gradient(135deg, #00F5A0 0%, #00D9F5 100%);
-      color: #020617;
-      border: none;
-      border-radius: 10px;
-      font-weight: 700;
+    .community-desc {
       font-size: 13.5px;
-      padding: 11px 22px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      max-width: 720px;
+    }
+
+    /* Input Submission Bar */
+    .request-input-bar {
+      display: flex;
+      gap: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 8px;
+      transition: border-color 0.2s ease;
+    }
+
+    .request-input-bar:focus-within {
+      border-color: var(--border-focus);
+    }
+
+    .request-input-field {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 10px 16px;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+    }
+
+    .request-input-field::placeholder {
+      color: var(--text-muted);
+    }
+
+    .request-submit-btn {
+      background: var(--accent-vermilion);
+      color: #FFFFFF;
+      border: none;
+      outline: none;
+      border-radius: 6px;
+      padding: 10px 22px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 16px rgba(0, 245, 160, 0.25);
+      transition: background 0.2s ease;
+      white-space: nowrap;
     }
+
     .request-submit-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(0, 245, 160, 0.4);
+      background: var(--accent-vermilion-hover);
     }
-    .request-submit-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
+
+    .request-author-input {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      width: 170px;
+      outline: none;
     }
+
+    .request-author-input:focus {
+      border-color: var(--border-active);
+    }
+
     .request-feedback-msg {
-      margin-top: 12px;
-      font-size: 12.5px;
+      font-size: 12px;
+      padding: 4px 6px;
+      border-radius: 4px;
       display: none;
-      align-items: center;
-      gap: 6px;
     }
+
     .request-feedback-msg.success {
-      display: flex;
-      color: #34D399;
+      display: block;
+      color: #4ADE80;
     }
+
     .request-feedback-msg.error {
-      display: flex;
+      display: block;
       color: #F87171;
     }
 
-    /* Wishlist List Grid */
+    /* Wishlist Grid of Submitted Ideas */
     .wishlist-meta-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      max-width: 820px;
-      margin: 0 auto 16px;
-      font-size: 12px;
-      color: #94A3B8;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 8px;
+      margin-top: 10px;
     }
+
     .wishlist-grid {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      max-width: 820px;
-      margin: 0 auto;
+      gap: 10px;
     }
+
     .wishlist-card {
-      background: rgba(17, 24, 39, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      padding: 16px 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 14px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      transition: all 0.2s ease;
+      transition: border-color 0.2s ease;
     }
+
     .wishlist-card:hover {
-      border-color: rgba(0, 217, 245, 0.3);
-      background: rgba(17, 24, 39, 0.7);
+      border-color: var(--border-active);
     }
+
     .wishlist-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
       flex: 1;
-      min-width: 0;
     }
+
     .wishlist-card-title {
-      font-size: 14.5px;
+      font-size: 13.5px;
       font-weight: 600;
-      color: #F1F5F9;
+      color: var(--text-primary);
       line-height: 1.4;
-      margin-bottom: 4px;
     }
+
     .wishlist-card-sub {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 11.5px;
-      color: #64748B;
-      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
     }
-    .wishlist-author {
-      color: #94A3B8;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .wishlist-status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-size: 10.5px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-    }
-    .status-requested {
-      background: rgba(56, 189, 248, 0.12);
-      color: #38BDF8;
-      border: 1px solid rgba(56, 189, 248, 0.25);
-    }
-    .status-planned {
-      background: rgba(245, 158, 11, 0.12);
-      color: #F59E0B;
-      border: 1px solid rgba(245, 158, 11, 0.25);
-    }
-    .status-released {
-      background: rgba(16, 185, 129, 0.12);
-      color: #10B981;
-      border: 1px solid rgba(16, 185, 129, 0.25);
-    }
+
     .wishlist-upvote-btn {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      padding: 8px 14px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 2px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 6px 12px;
+      color: var(--text-secondary);
       cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 11px;
       transition: all 0.2s ease;
-      min-width: 58px;
-      color: #94A3B8;
-      font-family: inherit;
+      min-width: 48px;
     }
+
     .wishlist-upvote-btn:hover {
-      border-color: #00F5A0;
-      color: #00F5A0;
-      background: rgba(0, 245, 160, 0.08);
-      transform: translateY(-2px);
+      border-color: var(--accent-vermilion);
+      color: var(--accent-vermilion);
     }
+
     .wishlist-upvote-btn.voted {
-      border-color: #00F5A0;
-      color: #00F5A0;
-      background: rgba(0, 245, 160, 0.14);
+      background: var(--accent-vermilion-subtle);
+      border-color: var(--accent-vermilion);
+      color: var(--accent-vermilion);
     }
-    .wishlist-vote-icon {
-      font-size: 14px;
-      line-height: 1;
-    }
-    .wishlist-vote-count {
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 30px 24px 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
       font-size: 12px;
-      font-weight: 800;
-      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-vermilion);
+    }
+
+    /* =======================================================
+       MOBILE & RESPONSIVE ARCHITECTURE
+       ======================================================= */
+    @media (max-width: 960px) {
+      main {
+        padding: 24px 16px 60px;
+        gap: 40px;
+      }
+
+      /* Showcase collapses to clean vertical stack */
+      .showcase-console {
+        grid-template-columns: 1fr;
+        border-radius: 12px;
+      }
+
+      .console-intro-panel {
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+        padding: 20px 18px;
+      }
+
+      .console-steps-panel {
+        border-left: none;
+        border-top: 1px solid var(--border-subtle);
+        padding: 20px 18px;
+      }
+
+      .catalog-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .header-inner {
+        padding: 14px 16px;
+      }
+
+      .nav-actions {
+        gap: 14px;
+      }
+
+      .nav-link {
+        font-size: 12px;
+      }
+
+      .hero-title {
+        font-size: 34px;
+      }
+
+      .hero-eyebrow {
+        font-size: 10px;
+      }
+
+      /* Case study cards: single column on mobile */
+      .catalog-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .catalog-toggle-btn {
+        display: block;
+      }
+
+      /* Hidden extra cards on mobile by default until toggled */
+      .catalog-grid.collapsed .topic-card:nth-child(n+4) {
+        display: none;
+      }
+
+      /* Community wishlist input: stack vertically */
+      .request-input-bar {
+        flex-direction: column;
+        padding: 12px;
+        gap: 10px;
+      }
+
+      .request-author-input {
+        width: 100%;
+      }
+
+      .request-submit-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 14px;
+      }
+
+      .wishlist-card {
+        padding: 12px 14px;
+      }
     }
   </style>
 </head>
-<body>
-  <div class="ambient-glow-top"></div>
-  <div class="ambient-glow-bottom"></div>
 
+<body>
   <!-- Top Navigation -->
   <header>
-    <a href="https://explainer.nextai-apps.com/" class="brand-link">
-      <div class="brand-logo-badge">
-        <svg viewBox="0 0 64 64" style="width: 18px; height: 18px; border-radius: 4px;">
-          <rect width="64" height="64" rx="14" fill="#111118"/>
-          <path d="M10 52V12h9l14 22v18l-14-22v22z" fill="#00D9F5"/>
-          <path d="M38 12 56 32 38 52V41l8-9-8-9z" fill="#00F5A0"/>
-        </svg>
-      </div>
-      <span>Explainer</span>
-      <span class="brand-pill">System Design</span>
-    </a>
+    <div class="header-inner">
+      <a href="https://explainer.nextai-apps.com/" class="brand-link">
+        <span class="brand-dot"></span>
+        <span class="brand-name">Explainer</span>
+        <span class="brand-slash">/</span>
+        <span class="brand-sub">System Design</span>
+      </a>
 
-    <div class="nav-actions">
-      <a href="https://ainewsvideo.nextai-apps.com/" class="nav-btn">AI Tech Videos ↗</a>
-      <a href="https://aishort.nextai-apps.com/" class="nav-btn">AIShort ↗</a>
-      <a href="https://nextai-apps.com/" class="nav-btn">Studio Hub ↗</a>
+      <nav class="nav-actions">
+        <a href="#case-studies" class="nav-link">Case studies</a>
+        <a href="#community-requests" class="nav-link">Request idea</a>
+        <a href="https://nextai-apps.com/" class="nav-link nav-link-hub" target="_blank" rel="noopener">Studio Hub ↗</a>
+      </nav>
     </div>
   </header>
 
   <main>
     <!-- Hero Header -->
-    <section class="hero-header">
-      <div class="pipeline-badge">
-        <span class="live-pulse"></span>
-        60-Second Animated System Design
-      </div>
-
-      <h1>
-        <span class="text-gradient">Software Architecture in 60s</span>
+    <section class="hero-section">
+      <div class="hero-eyebrow">VOL. 01 — ANIMATED SYSTEM DESIGN</div>
+      <h1 class="hero-title">
+        Software architecture,<br>
+        <span class="cursive-accent">in sixty seconds.</span>
       </h1>
-
-      <p class="hero-desc">
-        Deconstructing distributed systems, real-time protocols, and high-concurrency engineering from Uber, Netflix, WhatsApp, Stripe, and UPI into cinematic 60-second animated diagrams.
-      </p>
     </section>
 
-    <!-- Showcase Grid -->
-    <section class="showcase-grid">
-      <!-- Topic Header (Moved directly ABOVE the video playback screen) -->
-      <div class="topic-header-box">
-        <div class="topic-eyebrow">
-          <span>●</span>
-          <span id="active-category">DISTRIBUTED SYSTEMS CASE STUDY</span>
+    <!-- Main Showcase Console (3-Panel Grid on Desktop, Vertical Stack on Mobile) -->
+    <section class="showcase-console">
+      <!-- Panel 1: Left Editorial Intro & Action -->
+      <div class="console-intro-panel">
+        <p class="intro-paragraph">
+          Distributed systems from Uber, Stripe and Netflix, taken apart into one-minute animated diagrams. Built for engineers who want the idea, not the lecture.
+        </p>
+        <a href="#case-studies" class="intro-action-link">
+          <span>Browse case studies</span>
+          <span>→</span>
+        </a>
+      </div>
+
+      <!-- Panel 2: Center Director's Monitor Video Player -->
+      <div class="console-monitor-panel">
+        <!-- Slate Top Bar with Live Timecode Ticker -->
+        <div class="slate-topbar">
+          <div class="slate-rec">
+            <span class="tally-dot"></span>
+            <span>REC</span>
+            <span class="slate-time" id="slate-timecode">00:00 / 00:59</span>
+          </div>
+          <div class="slate-badge">MASTER 1080P</div>
         </div>
-        <h2 class="topic-title" id="active-title">
-          How Uber Matches 1M Drivers in 100ms
-        </h2>
-        <p class="topic-desc" id="active-desc">
-          How does Uber pinpoint the closest driver to your exact location in under 100 milliseconds among 1 million moving vehicles?
+
+        <!-- Video & Studio Simulation Screen -->
+        <div class="monitor-screen-wrapper">
+          <!-- Live 1080p Landscape Video Player -->
+          <video
+            id="phone-video"
+            class="monitor-video"
+            playsinline
+            loop
+            controls
+            preload="auto"
+          ></video>
+
+          <!-- Studio Simulation Placeholder for Queued Topics -->
+          <div class="studio-placeholder" id="player-placeholder" style="display: none;">
+            <div class="placeholder-head">
+              <div class="placeholder-badge-group">
+                <div style="font-size: 26px;" id="featured-logo">🚗</div>
+                <div>
+                  <h3 class="placeholder-title" id="featured-phone-title">Uber Architecture</h3>
+                  <p class="placeholder-subtitle" id="featured-phone-subtitle">H3 Hexagonal Spatial Indexing in 60s</p>
+                </div>
+              </div>
+              <div class="placeholder-metric" id="featured-phone-metric">100ms Match</div>
+            </div>
+
+            <div class="pipeline-grid">
+              <div class="pipeline-item" id="sim-step-1" style="color: #4ADE80;">✓ 1. Scripting (Gemini 2.5)</div>
+              <div class="pipeline-item" id="sim-step-2" style="color: #4ADE80;">✓ 2. Vector Synthesis (Iconify)</div>
+              <div class="pipeline-item" id="sim-step-3" style="color: #38BDF8;">⏳ 3. Neural Voice (Edge-TTS)</div>
+              <div class="pipeline-item" id="sim-step-4" style="color: #64748B;">○ 4. Remotion Render (1080p)</div>
+            </div>
+
+            <button id="sim-btn" onclick="runPipelineSimulation()" class="sim-btn">
+              ⚡ Simulate Studio Pipeline
+            </button>
+          </div>
+        </div>
+
+        <!-- Subtitle / Takeaway Banner Strip -->
+        <div class="monitor-footer-strip" id="monitor-footer-text">
+          The obvious approach fails.
+        </div>
+      </div>
+
+      <!-- Panel 3: Right Case Study Steps & Key Takeaway -->
+      <div class="console-steps-panel">
+        <div class="steps-meta-box">
+          <div class="steps-eyebrow" id="active-case-study-num">CASE STUDY 01</div>
+          <h2 class="steps-main-title" id="active-title">How Uber matches 1M drivers in 100ms</h2>
+        </div>
+
+        <div class="steps-list" id="active-steps-box">
+          <!-- Dynamically populated -->
+        </div>
+
+        <div class="takeaway-box" id="active-takeaway">
+          💡 <strong>Key Architecture Takeaway:</strong> By replacing geometric distance calculations with integer hexagon lookups in Redis, Uber searches 1M vehicles in microseconds.
+        </div>
+      </div>
+    </section>
+
+    <!-- Case Studies Catalog (3x2 Grid on Desktop, Vertical Stack on Mobile) -->
+    <section class="catalog-section" id="case-studies">
+      <div class="catalog-header">
+        <h3 class="catalog-heading">Case studies</h3>
+        <span class="catalog-counter" id="catalog-count">06 CURATED</span>
+      </div>
+
+      <div class="catalog-grid collapsed" id="catalog-grid">
+        <!-- Dynamically populated from CATALOG -->
+      </div>
+
+      <button class="catalog-toggle-btn" id="catalog-toggle-btn" onclick="toggleCatalogCollapse()">
+        View all 6 case studies ↓
+      </button>
+    </section>
+
+    <!-- Community Wishlist & Request Section -->
+    <section class="community-section" id="community-requests">
+      <div class="community-header-box">
+        <div class="community-eyebrow">COMMUNITY WISHLIST</div>
+        <h3 class="community-title">What should we take apart next?</h3>
+        <p class="community-desc">
+          Suggest a distributed system, consensus protocol, or ultra-high scale engine you'd like to see deconstructed in 60 seconds.
         </p>
       </div>
 
-      <!-- Main Showcase Split: Left = Video + Takeaway Card, Right = 3 Architecture Steps -->
-      <div class="showcase-body">
-        <!-- Left Column: Video Console + Key Architecture Takeaway directly underneath -->
-        <div class="player-column">
-          <div class="phone-frame">
-            <div class="cinema-topbar">
-              <div class="cinema-dots">
-                <span class="cinema-dot red"></span>
-                <span class="cinema-dot yellow"></span>
-                <span class="cinema-dot green"></span>
-              </div>
-              <span class="cinema-title">SYSTEM ARCHITECTURE BLUEPRINT</span>
-              <span style="font-size: 10px; color: #64748B;">60s DEEP DIVE</span>
-            </div>
-
-            <!-- Native 1080p Video Player for Rendered Architecture Videos -->
-            <video
-              id="phone-video"
-              class="phone-video"
-              playsinline
-              loop
-              controls
-              preload="auto"
-              style="display: none;"
-            ></video>
-
-            <!-- Interactive Studio Blueprint & Pipeline Console -->
-            <div class="phone-placeholder" id="player-placeholder">
-              <div class="placeholder-top-row">
-                <div class="placeholder-brand">
-                  <div style="font-size: 32px;" id="featured-logo">🚗</div>
-                  <div style="text-align: left;">
-                    <h3 class="placeholder-title" id="featured-phone-title">Uber Architecture</h3>
-                    <p class="placeholder-subtitle" id="featured-phone-subtitle">
-                      H3 Hexagonal Spatial Indexing + Redis Clusters in 60 Seconds
-                    </p>
-                  </div>
-                </div>
-                <div class="placeholder-metric" id="featured-phone-metric">
-                  ⚡ 100ms Driver Match
-                </div>
-              </div>
-
-              <div id="phone-pipeline-box" class="placeholder-pipeline-box">
-                <div style="display: flex; align-items: center; justify-content: space-between; font-weight: 700; color: #94A3B8; font-size: 10px; text-transform: uppercase;">
-                  <span>Autonomous Studio Pipeline</span>
-                  <span id="pipeline-status-badge" style="color: #38BDF8;">Queued</span>
-                </div>
-                <div class="pipeline-grid">
-                  <div id="sim-step-1" style="color: #10B981;">✓ 1. Scripting (Gemini 3.5 Flash)</div>
-                  <div id="sim-step-2" style="color: #10B981;">✓ 2. Vector Synthesis (Iconify)</div>
-                  <div id="sim-step-3" style="color: #38BDF8;">⏳ 3. Neural Voice (Andrew Edge-TTS)</div>
-                  <div id="sim-step-4" style="color: #64748B;">○ 4. Remotion Render (16:9 + 9:16)</div>
-                </div>
-              </div>
-
-              <button id="sim-btn" onclick="runPipelineSimulation()" class="sim-btn">
-                ⚡ Simulate Studio Pipeline
-              </button>
-            </div>
-          </div>
-
-          <!-- Key Architecture Takeaway: Fills the empty space below the video! -->
-          <div class="takeaway-card" id="active-takeaway">
-            💡 <strong>Key Architecture Takeaway:</strong> By replacing geometric distance calculations with integer hexagon lookups in Redis, Uber searches 1M vehicles in microseconds.
-          </div>
-        </div>
-
-        <!-- Right Column: Interactive 3 Steps -->
-        <div class="steps-column">
-          <div class="steps-box" id="active-steps-box">
-            <!-- Populated dynamically -->
-          </div>
-        </div>
+      <!-- Clean Input Submission Bar -->
+      <div class="request-input-bar">
+        <input
+          type="text"
+          id="request-text"
+          class="request-input-field"
+          placeholder="Suggest an architecture to deconstruct (e.g. Kafka at LinkedIn, Zoom WebRTC, Figma CRDT)..."
+          maxlength="250"
+        />
+        <input
+          type="text"
+          id="request-author"
+          class="request-author-input"
+          placeholder="@handle (optional)"
+          maxlength="40"
+        />
+        <button id="submit-request-btn" class="request-submit-btn" onclick="submitArchitectureRequest()">
+          Submit idea
+        </button>
       </div>
-    </section>
+      <div id="request-feedback" class="request-feedback-msg"></div>
 
-    <!-- Topics Catalog -->
-    <section class="catalog-section">
-      <div class="catalog-header">
-        <h3 class="catalog-title">Architecture Case Studies</h3>
-        <span style="font-size: 12px; color: #9CA3AF; font-family: monospace;" id="catalog-count">6 Curated Case Studies</span>
+      <!-- Wishlist List of Community Requests -->
+      <div class="wishlist-meta-header">
+        <div><strong id="wishlist-total-count" style="color: var(--accent-vermilion);">5</strong> ARCHITECTURE REQUESTS</div>
+        <div>Sorted by Upvotes ▲</div>
       </div>
 
-      <div class="catalog-grid" id="catalog-grid">
-        <!-- Dynamically populated from TOPICS catalog -->
-      </div>
-
-      <!-- Stay Tuned Banner -->
-      <div class="stay-tuned-banner">
-        <div class="stay-tuned-content">
-          <div class="stay-tuned-badge">
-            <span class="stay-tuned-pulse"></span>
-            IN THE LAB
-          </div>
-          <h4 class="stay-tuned-title">Stay tuned for the next architecture explained</h4>
-          <p class="stay-tuned-desc">
-            Deconstructing distributed protocols, consensus algorithms, and ultra-high-scale engineering every week. Follow along as we break down the next real-world software system in 60 seconds.
-          </p>
-        </div>
-        <div class="stay-tuned-tags">
-          <span class="stay-tuned-chip">⚡ Kafka Streams</span>
-          <span class="stay-tuned-chip">⚡ DynamoDB Paxos</span>
-          <span class="stay-tuned-chip">⚡ Redis Raft</span>
-        </div>
-      </div>
-
-      <!-- Community Architecture Request & Wishlist Section -->
-      <div class="community-section" id="community-requests">
-        <div class="community-header">
-          <div class="community-badge">
-            <span class="stay-tuned-pulse"></span>
-            COMMUNITY WISHLIST
-          </div>
-          <h3 class="community-title">Suggest the Next Architecture Breakdown</h3>
-          <p class="community-subtitle">
-            What distributed system, consensus protocol, or high-concurrency engine should we deconstruct next? Submit your idea or vote on community requests below.
-          </p>
-        </div>
-
-        <!-- Big Submission Box -->
-        <div class="request-card">
-          <label for="request-text" class="request-textarea-label">SYSTEM OR COMPANY ARCHITECTURE</label>
-          <textarea
-            id="request-text"
-            class="request-textarea"
-            rows="3"
-            placeholder="e.g. How Kafka handles 7 Trillion messages daily at LinkedIn, or How Zoom WebRTC SFU routes 1,000 video streams..."
-            maxlength="300"
-          ></textarea>
-          <div class="request-actions-bar">
-            <input
-              type="text"
-              id="request-author"
-              class="request-author-input"
-              placeholder="@your_handle or name (optional)"
-              maxlength="50"
-            />
-            <button id="submit-request-btn" class="request-submit-btn" onclick="submitArchitectureRequest()">
-              <span>⚡</span>
-              <span>Submit Architecture Request</span>
-            </button>
-          </div>
-          <div id="request-feedback" class="request-feedback-msg"></div>
-        </div>
-
-        <!-- Wishlist List Grid -->
-        <div class="wishlist-meta-header">
-          <div><strong id="wishlist-total-count" style="color: #00F5A0;">5</strong> COMMUNITY ARCHITECTURE REQUESTS</div>
-          <div>Sorted by Most Upvoted 🗳️</div>
-        </div>
-
-        <div class="wishlist-grid" id="wishlist-grid">
-          <!-- Populated from API / Initial State -->
-        </div>
+      <div class="wishlist-grid" id="wishlist-grid">
+        <!-- Populated dynamically -->
       </div>
     </section>
   </main>
 
   <!-- Footer -->
   <footer>
-    <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
+    <div class="footer-links">
       <span>NextAI Apps Studio · Explainer</span>
       <span>·</span>
-      <a href="https://nextai-apps.com/">Studio Hub</a>
+      <a href="https://nextai-apps.com/" target="_blank" rel="noopener">Studio Hub</a>
       <span>·</span>
-      <a href="https://ainewsvideo.nextai-apps.com/">AI Tech Videos</a>
+      <a href="https://ainewsvideo.nextai-apps.com/" target="_blank" rel="noopener">AI Tech Videos</a>
       <span>·</span>
-      <a href="https://aishort.nextai-apps.com/">AIShort</a>
+      <a href="https://aishort.nextai-apps.com/" target="_blank" rel="noopener">AIShort</a>
     </div>
-    <div style="font-size: 11px; color: #64748B; margin-top: 8px; max-width: 680px; text-align: center; line-height: 1.5;">
-      All registered trademarks, service marks, and company logos (Uber, Stripe, Netflix, WhatsApp, Discord, UPI) are property of their respective owners and referenced under Nominative Fair Use for educational system design and architectural analysis.
+    <div style="font-size: 11px; max-width: 680px; text-align: center; line-height: 1.5; color: #4B5162;">
+      All registered trademarks, company logos and brand names (Uber, Stripe, Netflix, WhatsApp, UPI, Discord) belong to their respective owners and are referenced under Nominative Fair Use for educational architectural analysis.
     </div>
   </footer>
 
   <script>
-    function getCompanyBadgeSvg(company, size = 20) {
-      const norm = (company || '').toLowerCase().trim();
-      const radius = Math.round(size * 0.24);
-
-      if (norm.includes('uber')) {
-        return `<div style="width: ${size}px; height: ${size}px; border-radius: ${radius}px; background: #000000; border: 1px solid rgba(255,255,255,0.22); display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.5); flex-shrink: 0;">
-          <svg width="${size * 0.85}" height="${size * 0.35}" viewBox="0 7 24 10" fill="none"><path fill="#FFFFFF" d="M0 7.97v4.958c0 1.867 1.302 3.101 3 3.101.826 0 1.562-.316 2.094-.87v.736H6.27V7.97H5.082v4.888c0 1.257-.85 2.106-1.947 2.106-1.11 0-1.946-.827-1.946-2.106V7.971H0zm7.44 0v7.925h1.13v-.725c.521.532 1.257.86 2.06.86a3.006 3.006 0 0 0 3.034-3.01 3.01 3.01 0 0 0-3.033-3.024 2.86 2.86 0 0 0-2.049.861V7.971H7.439zm9.869 2.038c-1.687 0-2.965 1.37-2.965 3 0 1.72 1.334 3.01 3.066 3.01 1.053 0 1.913-.463 2.49-1.233l-.826-.611c-.43.577-.996.847-1.664.847-.973 0-1.753-.7-1.912-1.64h4.697v-.373c0-1.72-1.222-3-2.886-3zm6.295.068c-.634 0-1.098.294-1.381.758v-.713h-1.131v5.774h1.142V12.61c0-.894.544-1.47 1.291-1.47H24v-1.065h-.396zm-6.319.928c.85 0 1.564.588 1.756 1.47H15.52c.203-.882.916-1.47 1.765-1.47zm-6.732.012c1.086 0 1.98.883 1.98 2.004a1.993 1.993 0 0 1-1.98 2.001A1.989 1.989 0 0 1 8.56 13.02a1.99 1.99 0 0 1 1.992-2.004z"/></svg>
-        </div>`;
-      }
-      if (norm.includes('stripe')) {
-        return `<div style="width: ${size}px; height: ${size}px; border-radius: ${radius}px; background: linear-gradient(135deg, #635BFF 0%, #4338CA 100%); border: 1px solid rgba(255,255,255,0.3); display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(99,91,255,0.4); flex-shrink: 0;">
-          <svg width="${size * 0.88}" height="${size * 0.38}" viewBox="0 0 512 214" fill="none"><path fill="#FFFFFF" d="M512 110.08c0-36.409-17.636-65.138-51.342-65.138c-33.85 0-54.33 28.73-54.33 64.854c0 42.808 24.179 64.426 58.88 64.426c16.925 0 29.725-3.84 39.396-9.244v-28.445c-9.67 4.836-20.764 7.823-34.844 7.823c-13.796 0-26.027-4.836-27.591-21.618h69.547c0-1.85.284-9.245.284-12.658m-70.258-13.511c0-16.071 9.814-22.756 18.774-22.756c8.675 0 17.92 6.685 17.92 22.756zm-90.31-51.627c-13.939 0-22.899 6.542-27.876 11.094l-1.85-8.818h-31.288v165.83l35.555-7.537l.143-40.249c5.12 3.698 12.657 8.96 25.173 8.96c25.458 0 48.64-20.48 48.64-65.564c-.142-41.245-23.609-63.716-48.498-63.716m-8.534 97.991c-8.391 0-13.37-2.986-16.782-6.684l-.143-52.765c3.698-4.124 8.818-6.968 16.925-6.968c12.942 0 21.902 14.506 21.902 33.137c0 19.058-8.818 33.28-21.902 33.28M241.493 36.551l35.698-7.68V0l-35.698 7.538zm0 10.809h35.698v124.444h-35.698zm-38.257 10.524L200.96 47.36h-30.72v124.444h35.556V87.467c8.39-10.951 22.613-8.96 27.022-7.396V47.36c-4.551-1.707-21.191-4.836-29.582 10.524m-71.112-41.386l-34.702 7.395l-.142 113.92c0 21.05 15.787 36.551 36.836 36.551c11.662 0 20.195-2.133 24.888-4.693V140.8c-4.55 1.849-27.022 8.391-27.022-12.658V77.653h27.022V47.36h-27.022zM35.982 83.484c0-5.546 4.551-7.68 12.09-7.68c10.808 0 24.461 3.272 35.27 9.103V51.484c-11.804-4.693-23.466-6.542-35.27-6.542C19.2 44.942 0 60.018 0 85.192c0 39.252 54.044 32.995 54.044 49.92c0 6.541-5.688 8.675-13.653 8.675c-11.804 0-26.88-4.836-38.827-11.378v33.849c13.227 5.689 26.596 8.106 38.827 8.106c29.582 0 49.92-14.648 49.92-40.106c-.142-42.382-54.329-34.845-54.329-50.774"/></svg>
-        </div>`;
-      }
-      if (norm.includes('netflix')) {
-        return `<div style="width: ${size}px; height: ${size}px; border-radius: ${radius}px; background: #000000; border: 1px solid rgba(229,9,20,0.4); display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(229,9,20,0.4); flex-shrink: 0;">
-          <svg width="${size * 0.7}" height="${size * 0.85}" viewBox="0 0 256 256"><path fill="#b1060f" d="m141.676 41.275l-.067 38.361l-.068 38.361l-3.156-8.905l-4.078 85.402c4.01 11.324 6.158 17.369 6.182 17.393c8.366.417 19.345 1.54 24.398 2.502l.608-.328V41.275z"/><path fill="#e50914" d="m89.379 41.275l.135 172.789c6.402-.962 17.381-2.085 24.398-2.502l.608.328l-.068-170.615z"/><path fill="#e50914" d="m141.676 41.275l-52.297 172.789c6.402-.962 17.381-2.085 24.398-2.502l52.297-170.287z" opacity="0.9"/></svg>
-        </div>`;
-      }
-      if (norm.includes('whatsapp')) {
-        return `<div style="width: ${size}px; height: ${size}px; border-radius: ${radius}px; background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); border: 1px solid rgba(255,255,255,0.3); display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(37,211,102,0.4); flex-shrink: 0;">
-          <svg width="${size * 0.75}" height="${size * 0.75}" viewBox="0 0 256 258"><path fill="#FFF" d="M178.688 152.012c-2.732-1.368-16.16-7.974-18.665-8.887c-2.507-.91-4.329-1.368-6.151 1.368c-1.823 2.734-7.062 8.887-8.658 10.71c-1.595 1.823-3.189 2.05-5.922.684c-2.733-1.368-11.537-4.254-21.977-13.56c-8.125-7.243-13.612-16.19-15.207-18.925c-1.595-2.734-.171-4.212 1.198-5.574c1.233-1.228 2.733-3.189 4.101-4.783c1.368-1.595 1.823-2.734 2.734-4.558c.911-1.823.456-3.418-.228-4.786c-.684-1.368-6.151-14.814-8.429-20.285c-2.217-5.328-4.47-4.606-6.151-4.693c-1.595-.081-3.418-.098-5.241-.098c-1.823 0-4.785.684-7.292 3.418c-2.507 2.734-9.569 9.342-9.569 22.784c0 13.442 9.797 26.43 11.164 28.254c1.368 1.823 19.28 29.439 46.708 41.291c6.523 2.82 11.617 4.504 15.589 5.766c6.551 2.08 12.513 1.787 17.227 1.082c5.255-.785 16.16-6.608 18.438-12.988c2.279-6.38 2.279-11.848 1.595-12.988c-.683-1.139-2.506-1.823-5.239-3.19"/></svg>
-        </div>`;
-      }
-      if (norm.includes('discord')) {
-        return `<div style="width: ${size}px; height: ${size}px; border-radius: ${radius}px; background: #5865F2; border: 1px solid rgba(255,255,255,0.3); display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(88,101,242,0.4); flex-shrink: 0;">
-          <svg width="${size * 0.78}" height="${size * 0.6}" viewBox="0 0 256 199"><path fill="#FFFFFF" d="M216.85 16.596A208.502 208.502 0 0 0 164.042 0c-2.275 4.113-4.933 9.72-6.764 14.108c-22.18-3.348-44.183-3.348-66.027 0c-1.87-4.444-4.573-10.051-6.883-14.108A208.71 208.71 0 0 0 31.496 16.652C-9.35 77.854-.863 137.49 1.189 196.223c27.18 20.217 53.486 32.553 79.255 40.548c6.438-8.832 12.194-18.232 17.185-28.163c-9.489-3.595-18.529-8.233-27.027-13.82c2.316-1.688 4.57-3.463 6.726-5.293c51.98 24.168 108.354 24.168 159.582 0c2.186 1.848 4.44 3.623 6.756 5.293c-8.527 5.618-17.596 10.256-27.116 13.84c5.02 9.911 10.776 19.311 17.185 28.143c25.828-8.015 52.194-20.351 79.404-40.568c2.428-67.922 17.433-127.03-36.29-179.627ZM85.474 135.095c-12.656 0-23.056-11.66-23.056-25.96c0-14.3 10.16-26.015 23.056-26.015c13.016 0 23.416 11.77 23.056 26.015c0 14.3-10.16 25.96-23.056 25.96Zm85.051 0c-12.656 0-23.056-11.66-23.056-25.96c0-14.3 10.16-26.015 23.056-26.015c13.016 0 23.416 11.77 23.056 26.015c0 14.3-10.16 25.96-23.056 25.96Z"/></svg>
-        </div>`;
-      }
-      if (norm.includes('upi')) {
-        return `<div style="width: ${size}px; height: ${size}px; border-radius: ${radius}px; background: #0B132B; border: 1px solid rgba(9,121,57,0.5); display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(9,121,57,0.4); flex-shrink: 0;">
-          <svg width="${size * 0.9}" height="${size * 0.5}" viewBox="0 0 256 128"><path fill="#097939" d="M140 18l-30 92h28l30-92h-28z"/><path fill="#ED752E" d="M175 18l-30 92h28l30-92h-28z"/><text x="10" y="80" fontFamily="sans-serif" fontWeight="900" fontSize="56" fill="#FFFFFF">UPI</text></svg>
-        </div>`;
-      }
-
-      return `<div style="width: ${size}px; height: ${size}px; border-radius: ${radius}px; background: #1E293B; display: inline-flex; align-items: center; justify-content: center; font-size: ${Math.round(size * 0.6)}px;">⚙️</div>`;
-    }
-
+    // ==========================================
+    // 6 Curated Topics Catalog
+    // ==========================================
     const CATALOG = [
       {
         id: 'uber-h3-matching',
+        caseNum: 'CASE STUDY 01',
         company: 'Uber',
-        companyLogo: '🚗',
-        title: 'How Uber Matches 1M Drivers in 100ms',
+        title: 'How Uber matches 1M drivers in 100ms',
         category: 'Distributed Systems',
         scaleMetric: '1M+ Drivers // <100ms P99',
-        phoneSubtitle: 'H3 Hexagonal Spatial Indexing + Redis Clusters in 60s',
-        phoneMetric: '⚡ 100ms Driver Match',
-        videoSrc: '/videos/uber-h3-matching.mp4?v=landscape_fast',
+        phoneSubtitle: 'H3 Hexagonal Spatial Indexing in 60s',
+        phoneMetric: '⚡ 100ms Match',
+        videoSrc: 'https://explainer.nextai-apps.com/videos/uber-h3-matching.mp4?v=landscape_fast',
         hasVideo: true,
         desc: 'How does Uber pinpoint the closest driver to your exact location in under 100 milliseconds among 1 million moving vehicles?',
-        tags: ['H3 Geospatial', 'Redis Cluster', 'Ringpop'],
+        tags: ['H3', 'REDIS', 'RINGPOP'],
+        footerSubtitle: 'The obvious approach fails.',
         steps: [
-          { num: '01', title: 'INGESTION & GPS STREAMING', desc: '1M drivers stream raw GPS coordinates through Envoy edge gateways every 4s.' },
-          { num: '02', title: 'H3 HEXAGONAL SPATIAL INDEX', desc: 'Maps the globe into hierarchical hexagons stored in Redis clusters for <5ms lookups.' },
-          { num: '03', title: 'DISPATCH & STATE COMMIT', desc: 'Queries neighboring cells in parallel, ranks candidates via ETA ML, and locks state in DocStore.' }
+          { num: '01', title: 'Ingestion & GPS streaming', desc: '1M drivers stream raw GPS coordinates through Envoy edge gateways every 4s.' },
+          { num: '02', title: 'H3 hexagonal spatial index', desc: 'The globe is mapped into hierarchical hexagons stored in Redis clusters.' },
+          { num: '03', title: 'Dispatch & state commit', desc: 'Parallel cell queries, ETA ML ranking, and atomic lock state in DocStore.' }
         ],
         takeaway: 'By replacing geometric distance calculations with integer hexagon lookups in Redis, Uber searches 1M vehicles in microseconds.'
       },
       {
         id: 'stripe-idempotency-engine',
+        caseNum: 'CASE STUDY 02',
         company: 'Stripe',
-        companyLogo: '💳',
-        title: 'How Stripe Never Double-Charges You',
+        title: 'How Stripe never double-charges you',
         category: 'FinTech & Payments',
         scaleMetric: '99.999% Consistency // Millions TPS',
-        phoneSubtitle: 'Client Idempotency Keys + Redis Mutex Lock in 60s',
-        phoneMetric: '🔐 99.999% ACID Consistency',
-        videoSrc: '/videos/stripe-idempotency-engine.mp4?v=landscape',
+        phoneSubtitle: 'Client Idempotency Keys + Redis Mutex in 60s',
+        phoneMetric: '🔒 Zero Double Charges',
+        videoSrc: 'https://explainer.nextai-apps.com/videos/stripe-idempotency-engine.mp4?v=landscape',
         hasVideo: true,
         desc: 'When internet connections drop right after clicking Pay, how does Stripe ensure network retries never charge you twice?',
-        tags: ['Idempotency Keys', 'Redis Locks', 'Distributed ACID'],
+        tags: ['IDEMPOTENCY', 'REDIS LOCKS', 'ACID'],
+        footerSubtitle: 'Idempotency keys turn dangerous retries into safe reads.',
         steps: [
-          { num: '01', title: 'CLIENT IDEMPOTENCY KEYS', desc: 'Every payment injects a unique client UUID inside the HTTP header before leaving the browser.' },
-          { num: '02', title: 'DISTRIBUTED REDIS MUTEX', desc: 'Stripe gateway acquires an atomic SETNX lock in Redis. In-flight duplicates are held safely.' },
-          { num: '03', title: 'RESPONSE CACHING & REPLAY', desc: 'Successful payloads are stored for 24h. Repeated retries simply receive cached responses.' }
+          { num: '01', title: 'Client Idempotency Keys', desc: 'Every payment injects a unique client UUID inside the HTTP header before leaving the browser.' },
+          { num: '02', title: 'Distributed Redis Mutex', desc: 'Stripe gateway acquires an atomic SETNX lock in Redis. In-flight duplicates are held safely.' },
+          { num: '03', title: 'Response Caching & Replay', desc: 'Successful payloads are stored for 24h. Repeated retries simply receive cached responses.' }
         ],
         takeaway: 'By storing client idempotency keys in Redis locks and tables, Stripe turns dangerous retries into safe idempotent reads.'
       },
       {
-        id: 'netflix-openconnect-cdn',
+        id: 'netflix-open-connect-cdn',
+        caseNum: 'CASE STUDY 03',
         company: 'Netflix',
-        companyLogo: '🍿',
-        title: 'How Netflix Streams 4K to 250M Users',
+        title: 'How Netflix streams 4K to 250M users',
         category: 'High-Throughput Streaming',
         scaleMetric: '250M Users // 15% Web Traffic',
-        phoneSubtitle: 'Open Connect CDN + Zero-Copy FreeBSD Kernel in 60s',
-        phoneMetric: '🍿 15% Global Web Traffic',
+        phoneSubtitle: 'Open Connect CDN + Zero-Copy FreeBSD in 60s',
+        phoneMetric: '🎬 15% Global Traffic',
         videoSrc: null,
         hasVideo: false,
         desc: 'Netflix accounts for 15% of all internet traffic. How do they stream 4K globally without buffering or commercial CDNs?',
-        tags: ['Open Connect CDN', 'FreeBSD Kernel', 'Zero-Copy'],
+        tags: ['OPEN CONNECT', 'FREEBSD', 'ZERO-COPY'],
+        footerSubtitle: 'Zero-copy kernel streaming from NVMe flash directly to 100GbE NICs.',
         steps: [
-          { num: '01', title: 'AWS CONTROL PLANE DISPATCH', desc: 'AWS handles UI and user auth, then points your player to your local internet provider.' },
-          { num: '02', title: 'OPEN CONNECT APPLIANCES', desc: 'Custom hardware appliances installed directly inside 1000+ ISP data centers globally.' },
-          { num: '03', title: 'ZERO-COPY KERNEL STREAMING', desc: 'Custom FreeBSD kernel TLS flows bytes directly from NVMe flash to 100Gbps network cards.' }
+          { num: '01', title: 'AWS Control Plane Dispatch', desc: 'AWS handles UI and user auth, then points your player to your local internet provider.' },
+          { num: '02', title: 'Open Connect Appliances', desc: 'Custom hardware appliances installed directly inside 1000+ ISP data centers globally.' },
+          { num: '03', title: 'Zero-Copy Kernel Streaming', desc: 'Custom FreeBSD kernel TLS flows bytes directly from NVMe flash to 100Gbps network cards.' }
         ],
         takeaway: 'Netflix avoids CDN bandwidth costs by installing custom zero-copy FreeBSD appliances directly inside internet service providers.'
       },
       {
         id: 'whatsapp-erlang-concurrency',
+        caseNum: 'CASE STUDY 04',
         company: 'WhatsApp',
-        companyLogo: '💬',
-        title: 'How WhatsApp Handles 100B Messages Daily',
+        title: 'How WhatsApp handles 100B messages daily',
         category: 'Real-Time Messaging',
         scaleMetric: '100B Msgs/Day // 50 Engineers',
         phoneSubtitle: 'Erlang BEAM 2M Sockets/Node + Mnesia in 60s',
@@ -1351,51 +1257,54 @@
         videoSrc: null,
         hasVideo: false,
         desc: 'How does WhatsApp handle 100 billion daily messages across 2 billion users with a tiny engineering team?',
-        tags: ['Erlang BEAM', 'Actor Model', 'FreeBSD Sockets'],
+        tags: ['ERLANG BEAM', 'ACTOR MODEL'],
+        footerSubtitle: 'Erlang actor model gives each socket independent microsecond scheduling.',
         steps: [
-          { num: '01', title: 'LIGHTWEIGHT PROCESSES', desc: 'Erlang actors consume just 300 bytes of RAM, allowing 2M concurrent TCP connections per server.' },
-          { num: '02', title: 'THE ACTOR MODEL', desc: 'Each user is represented by an actor. Messages pass directly without thread locks or shared state.' },
-          { num: '03', title: 'MNESIA ROUTING & PUSH', desc: 'Mnesia in-memory routing delivers packets in sub-milliseconds or diverts to APNS if offline.' }
+          { num: '01', title: 'Lightweight Processes', desc: 'Erlang actors consume just 300 bytes of RAM, allowing 2M concurrent TCP connections per server.' },
+          { num: '02', title: 'The Actor Model', desc: 'Each user is represented by an actor. Messages pass directly without thread locks or shared state.' },
+          { num: '03', title: 'Mnesia Routing & Push', desc: 'Mnesia in-memory routing delivers packets in sub-milliseconds or diverts to APNS if offline.' }
         ],
         takeaway: 'Erlang actor model lets one physical server maintain millions of live sockets with near-zero memory footprint.'
       },
       {
         id: 'upi-instant-payments',
+        caseNum: 'CASE STUDY 05',
         company: 'UPI',
-        companyLogo: '💳',
-        title: 'How UPI Handles 50,000 TPS with 0 Downtime',
+        title: 'How UPI handles 50,000 TPS with zero downtime',
         category: 'FinTech & Payments',
         scaleMetric: '14B Monthly Txns // 50k TPS',
         phoneSubtitle: 'NPCI Central Switch + Distributed 2PC in 60s',
-        phoneMetric: '💳 50,000 TPS · Zero Money Loss',
+        phoneMetric: '💳 50,000 TPS · Zero Loss',
         videoSrc: null,
         hasVideo: false,
         desc: 'How does India UPI process over 14 billion monthly transactions across hundreds of banks with zero money loss?',
-        tags: ['NPCI Central Switch', 'Distributed 2PC', 'HSM Encryption'],
+        tags: ['NPCI SWITCH', '2PC COMMIT'],
+        footerSubtitle: 'Atomic transaction coordination across independent legacy bank cores.',
         steps: [
-          { num: '01', title: 'NPCI SWITCH ORCHESTRATION', desc: 'Encrypted MPIN payloads route through the high-speed NPCI central switch.' },
-          { num: '02', title: 'ATOMIC DEBIT & CREDIT', desc: 'Fires dual ISO 8583 banking streams to verify remitter balance and trigger instant credit.' },
-          { num: '03', title: 'TWO-PHASE DISTRIBUTED COMMIT', desc: 'Automated distributed reversal rollbacks state if either bank times out, ensuring zero money loss.' }
+          { num: '01', title: 'NPCI Switch Orchestration', desc: 'Encrypted MPIN payloads route through the high-speed NPCI central switch.' },
+          { num: '02', title: 'Atomic Debit & Credit', desc: 'Fires dual ISO 8583 banking streams to verify remitter balance and trigger instant credit.' },
+          { num: '03', title: 'Two-Phase Distributed Commit', desc: 'Automated distributed reversal rollbacks state if either bank times out, ensuring zero money loss.' }
         ],
         takeaway: 'NPCI acts as an atomic transaction coordinator ensuring distributed ACID consistency across independent legacy banks.'
       },
       {
         id: 'discord-scylladb-migration',
+        caseNum: 'CASE STUDY 06',
         company: 'Discord',
-        companyLogo: '🎮',
-        title: 'Why Discord Moved to ScyllaDB for Trillions of Messages',
+        title: 'Why Discord moved to ScyllaDB for trillions of messages',
         category: 'Distributed Systems',
         scaleMetric: 'Trillions of Msgs // 5ms P99',
         phoneSubtitle: 'ScyllaDB C++ Thread-per-Core Zero-GC in 60s',
-        phoneMetric: '🎮 5ms P99 Message Read',
+        phoneMetric: '🎮 5ms P99 Read',
         videoSrc: null,
         hasVideo: false,
         desc: 'Why did Discord abandon Apache Cassandra for C++ ScyllaDB to store trillions of chat messages?',
-        tags: ['ScyllaDB', 'C++ Thread-per-Core', 'Zero GC Lag'],
+        tags: ['SCYLLADB', 'THREAD-PER-CORE'],
+        footerSubtitle: 'Eliminating JVM garbage collection stalls slashed P99 latency by 400x.',
         steps: [
-          { num: '01', title: 'THE JAVA GC LATENCY PROBLEM', desc: 'On Cassandra, JVM garbage collection pauses stalled reading nodes, causing P99 spikes above 2000ms.' },
-          { num: '02', title: 'RUST BATCHING SERVICES', desc: 'Rust message aggregators coalesce hot-channel chats before touching disk storage.' },
-          { num: '03', title: 'THREAD-PER-CORE ARCHITECTURE', desc: 'ScyllaDB pins one C++ thread per CPU core with zero garbage collection, slashing P99 to 5ms flat.' }
+          { num: '01', title: 'The Java GC Latency Problem', desc: 'On Cassandra, JVM garbage collection pauses stalled reading nodes, causing P99 spikes above 2000ms.' },
+          { num: '02', title: 'Rust Batching Services', desc: 'Rust message aggregators coalesce hot-channel chats before touching disk storage.' },
+          { num: '03', title: 'Thread-Per-Core Architecture', desc: 'ScyllaDB pins one C++ thread per CPU core with zero garbage collection, slashing P99 to 5ms flat.' }
         ],
         takeaway: 'Eliminating JVM garbage collection with C++ thread-per-core architecture reduced Discord message latency by 400x.'
       }
@@ -1404,117 +1313,40 @@
     let currentSelectedId = CATALOG[0].id;
     let simTimer = null;
 
-    function renderCatalog() {
-      const grid = document.getElementById('catalog-grid');
-      grid.innerHTML = CATALOG.map(item => `
-        <div class="topic-card ${item.id === currentSelectedId ? 'active' : ''}" onclick="selectTopic('${item.id}')">
-          <div class="topic-card-top">
-            <div class="topic-card-company">
-              ${getCompanyBadgeSvg(item.company, 22)}
-              <span style="font-weight: 800; color: #FFFFFF; font-size: 13px;">${item.company}</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span class="video-pill ${item.hasVideo ? 'live' : 'queued'}">
-                ${item.hasVideo ? '▶ Watch Video' : '🗓️ Queued'}
-              </span>
-              <span class="topic-card-metric">${item.scaleMetric}</span>
-            </div>
-          </div>
-          <div class="topic-card-title">${item.title}</div>
-          <div class="topic-card-desc">${item.desc}</div>
-          <div class="topic-card-tags">
-            ${item.tags.map(t => `<span class="tag-pill">#${t}</span>`).join('')}
-          </div>
-        </div>
-      `).join('');
+    function formatTime(seconds) {
+      if (!seconds || isNaN(seconds)) return '00:00';
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
     }
 
-    function resetSimulationState(topic) {
-      if (simTimer) clearTimeout(simTimer);
-      const btn = document.getElementById('sim-btn');
-      const badge = document.getElementById('pipeline-status-badge');
-      if (btn) {
-        btn.textContent = '⚡ Simulate Studio Pipeline';
-        btn.disabled = false;
-      }
-      if (badge) {
-        badge.textContent = 'Queued';
-        badge.style.color = '#38BDF8';
-      }
-      const s1 = document.getElementById('sim-step-1');
-      const s2 = document.getElementById('sim-step-2');
-      const s3 = document.getElementById('sim-step-3');
-      const s4 = document.getElementById('sim-step-4');
-      if (s1) { s1.innerHTML = '✓ 1. Scripting (Gemini 3.5)'; s1.style.color = '#10B981'; }
-      if (s2) { s2.innerHTML = '✓ 2. Vector Synthesis (Iconify)'; s2.style.color = '#10B981'; }
-      if (s3) { s3.innerHTML = '⏳ 3. Neural Voice (Andrew TTS)'; s3.style.color = '#38BDF8'; }
-      if (s4) { s4.innerHTML = '○ 4. Remotion Render (16:9 + 9:16)'; s4.style.color = '#64748B'; }
-    }
+    // Video Player & Slate Sync
+    const videoEl = document.getElementById('phone-video');
+    const timecodeEl = document.getElementById('slate-timecode');
 
-    function runPipelineSimulation() {
-      const btn = document.getElementById('sim-btn');
-      const badge = document.getElementById('pipeline-status-badge');
-      if (!btn || btn.disabled) return;
-
-      btn.disabled = true;
-      btn.textContent = '⚙️ Simulating Pipeline...';
-      badge.textContent = 'Synthesizing Voice...';
-
-      const s3 = document.getElementById('sim-step-3');
-      const s4 = document.getElementById('sim-step-4');
-      if (s3) {
-        s3.innerHTML = '🔄 3. Neural Voice (Edge-TTS) — Generating...';
-        s3.style.color = '#F59E0B';
-      }
-
-      simTimer = setTimeout(() => {
-        if (s3) {
-          s3.innerHTML = '✓ 3. Neural Voice (Edge-TTS) — 128 words';
-          s3.style.color = '#10B981';
-        }
-        badge.textContent = 'Headless Render...';
-
-        if (s4) {
-          s4.innerHTML = '🔄 4. Remotion Render — Encoding 1,775 frames...';
-          s4.style.color = '#22D3EE';
-        }
-
-        simTimer = setTimeout(() => {
-          if (s4) {
-            s4.innerHTML = '✓ 4. Remotion Render — Blueprint Ready!';
-            s4.style.color = '#10B981';
-          }
-          badge.textContent = 'Autonomous Ready';
-          badge.style.color = '#10B981';
-          btn.textContent = '✨ Release Scheduled in Catalog';
-        }, 1300);
-      }, 1100);
-    }
+    videoEl.addEventListener('timeupdate', () => {
+      const cur = formatTime(videoEl.currentTime);
+      const dur = formatTime(videoEl.duration || 59);
+      timecodeEl.textContent = `${cur} / ${dur}`;
+    });
 
     function selectTopic(id) {
       currentSelectedId = id;
-      const topic = CATALOG.find(t => t.id === id);
-      if (!topic) return;
+      const topic = CATALOG.find(t => t.id === id) || CATALOG[0];
 
-      const videoEl = document.getElementById('phone-video');
       const placeholderEl = document.getElementById('player-placeholder');
-      const playingTitleEl = document.getElementById('active-playing-title');
+      const footerStrip = document.getElementById('monitor-footer-text');
 
-      const featuredLogo = document.getElementById('featured-logo');
-      if (featuredLogo) {
-        featuredLogo.innerHTML = getCompanyBadgeSvg(topic.company, 54);
+      document.getElementById('active-case-study-num').textContent = topic.caseNum;
+      document.getElementById('active-title').textContent = topic.title;
+      document.getElementById('active-takeaway').innerHTML = '💡 <strong>Key Architecture Takeaway:</strong> ' + topic.takeaway;
+      if (footerStrip) {
+        footerStrip.textContent = topic.footerSubtitle || topic.takeaway;
       }
+
       document.getElementById('featured-phone-title').textContent = topic.company + ' Architecture';
       document.getElementById('featured-phone-subtitle').textContent = topic.phoneSubtitle || topic.desc;
       document.getElementById('featured-phone-metric').textContent = topic.phoneMetric || topic.scaleMetric;
-      if (playingTitleEl) {
-        playingTitleEl.textContent = topic.title;
-      }
-
-      document.getElementById('active-title').textContent = topic.title;
-      document.getElementById('active-desc').textContent = topic.desc;
-      document.getElementById('active-category').textContent = topic.category.toUpperCase() + ' CASE STUDY';
-      document.getElementById('active-takeaway').innerHTML = '💡 <strong>Key Architecture Takeaway:</strong> ' + topic.takeaway;
 
       if (topic.videoSrc) {
         placeholderEl.style.display = 'none';
@@ -1535,10 +1367,10 @@
       const stepsBox = document.getElementById('active-steps-box');
       stepsBox.innerHTML = topic.steps.map(s => `
         <div class="step-item">
-          <div class="step-badge">${s.num}</div>
-          <div class="step-content">
-            <strong>${s.title}</strong>
-            <span>${s.desc}</span>
+          <div class="step-num">${s.num}</div>
+          <div class="step-body">
+            <span class="step-title">${s.title}</span>
+            <span class="step-desc">${s.desc}</span>
           </div>
         </div>
       `).join('');
@@ -1546,11 +1378,80 @@
       renderCatalog();
 
       if (window.innerWidth < 860) {
-        document.querySelector('.showcase-grid').scrollIntoView({ behavior: 'smooth' });
+        document.querySelector('.showcase-console').scrollIntoView({ behavior: 'smooth' });
       }
     }
 
-    // Initialize with first topic
+    function renderCatalog() {
+      const grid = document.getElementById('catalog-grid');
+      grid.innerHTML = CATALOG.map(item => `
+        <div class="topic-card ${item.id === currentSelectedId ? 'active' : ''}" onclick="selectTopic('${item.id}')">
+          <div class="topic-card-top">
+            <span class="topic-badge-status ${item.hasVideo ? 'watch' : 'queued'}">
+              ${item.company} · ${item.hasVideo ? 'Watch' : 'Queued'}
+            </span>
+            <span class="topic-scale-metric">${item.scaleMetric}</span>
+          </div>
+          <div class="topic-card-title">${item.title}</div>
+          <div class="topic-card-desc">${item.desc}</div>
+          <div class="topic-card-tags">
+            ${item.tags.map(t => `<span class="tag-chip">#${t}</span>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleCatalogCollapse() {
+      const grid = document.getElementById('catalog-grid');
+      const btn = document.getElementById('catalog-toggle-btn');
+      if (grid.classList.contains('collapsed')) {
+        grid.classList.remove('collapsed');
+        btn.textContent = 'Collapse list ↑';
+      } else {
+        grid.classList.add('collapsed');
+        btn.textContent = 'View all 6 case studies ↓';
+      }
+    }
+
+    function resetSimulationState(topic) {
+      if (simTimer) clearTimeout(simTimer);
+      const btn = document.getElementById('sim-btn');
+      if (btn) {
+        btn.textContent = '⚡ Simulate Studio Pipeline';
+        btn.disabled = false;
+      }
+      const s1 = document.getElementById('sim-step-1');
+      const s2 = document.getElementById('sim-step-2');
+      const s3 = document.getElementById('sim-step-3');
+      const s4 = document.getElementById('sim-step-4');
+      if (s1) { s1.innerHTML = '✓ 1. Scripting (Gemini 2.5)'; s1.style.color = '#4ADE80'; }
+      if (s2) { s2.innerHTML = '✓ 2. Vector Synthesis (Iconify)'; s2.style.color = '#4ADE80'; }
+      if (s3) { s3.innerHTML = '⏳ 3. Neural Voice (Edge-TTS)'; s3.style.color = '#38BDF8'; }
+      if (s4) { s4.innerHTML = '○ 4. Remotion Render (1080p)'; s4.style.color = '#64748B'; }
+    }
+
+    function runPipelineSimulation() {
+      const btn = document.getElementById('sim-btn');
+      if (!btn || btn.disabled) return;
+
+      btn.disabled = true;
+      btn.textContent = '⚙️ Simulating Pipeline...';
+
+      const s3 = document.getElementById('sim-step-3');
+      const s4 = document.getElementById('sim-step-4');
+
+      simTimer = setTimeout(() => {
+        if (s3) { s3.innerHTML = '✓ 3. Neural Voice Synthesized'; s3.style.color = '#4ADE80'; }
+        if (s4) { s4.innerHTML = '⚡ 4. Rendering 16:9 1080p...'; s4.style.color = '#FF4820'; }
+
+        simTimer = setTimeout(() => {
+          if (s4) { s4.innerHTML = '✓ 4. Remotion 1080p Ready'; s4.style.color = '#4ADE80'; }
+          btn.textContent = '✓ Pipeline Simulation Complete';
+        }, 1200);
+      }, 1000);
+    }
+
+    // Initialize with first topic (Uber)
     selectTopic(CATALOG[0].id);
 
     // ==========================================
@@ -1628,7 +1529,7 @@
           }
         }
       } catch (err) {
-        // Fallback gracefully to default items
+        // Fallback to defaults
       }
     }
 
@@ -1646,8 +1547,6 @@
 
       grid.innerHTML = communityWishlist.map(item => {
         const isVoted = votedIds.includes(item.id);
-        const statusClass = item.status === 'Released' ? 'status-released' : item.status === 'Planned' ? 'status-planned' : 'status-requested';
-        const statusText = item.status === 'Released' ? '✅ Released' : item.status === 'Planned' ? '⚡ Planned' : '💡 Requested';
         const timeDisplay = item.createdAt ? (item.createdAt.includes('ago') || item.createdAt.includes('now') || item.createdAt.includes('yesterday') ? item.createdAt : new Date(item.createdAt).toLocaleDateString()) : 'Recently';
 
         return `
@@ -1655,16 +1554,16 @@
             <div class="wishlist-info">
               <div class="wishlist-card-title">${item.title}</div>
               <div class="wishlist-card-sub">
-                <span class="wishlist-author">by @${item.author || 'Anonymous'}</span>
+                <span>by @${item.author || 'Anonymous'}</span>
                 <span>·</span>
-                <span class="wishlist-status-badge ${statusClass}">${statusText}</span>
+                <span>${item.status === 'Planned' ? '⚡ Planned' : '💡 Requested'}</span>
                 <span>·</span>
                 <span>${timeDisplay}</span>
               </div>
             </div>
             <button class="wishlist-upvote-btn ${isVoted ? 'voted' : ''}" onclick="upvoteRequest('${item.id}')" title="${isVoted ? 'Upvoted' : 'Upvote this architecture'}">
-              <span class="wishlist-vote-icon">▲</span>
-              <span class="wishlist-vote-count" id="votes-${item.id}">${item.upvotes || 1}</span>
+              <span style="font-size: 10px;">▲</span>
+              <span id="votes-${item.id}">${item.upvotes || 1}</span>
             </button>
           </div>
         `;
@@ -1698,48 +1597,60 @@
 
       if (!text || text.length < 5) {
         feedback.className = 'request-feedback-msg error';
-        feedback.textContent = 'Please describe the architecture or system you would like explained (at least 5 characters).';
-        feedback.style.display = 'flex';
+        feedback.textContent = 'Please enter an architecture topic (minimum 5 characters).';
+        textEl.focus();
         return;
       }
 
       btn.disabled = true;
       btn.textContent = 'Submitting...';
 
-      const newReq = {
-        id: 'req_' + Date.now(),
+      const newId = 'req_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 4);
+      const newEntry = {
+        id: newId,
         title: text,
-        author: author || 'Anonymous Engineer',
+        author: author || 'Engineer',
         upvotes: 1,
         status: 'Requested',
-        createdAt: 'Just now'
+        createdAt: 'just now'
       };
 
-      communityWishlist.unshift(newReq);
-      saveVotedId(newReq.id);
+      try {
+        const res = await fetch('/api/requests', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newEntry)
+        });
+
+        if (res.ok) {
+          const savedData = await res.json();
+          communityWishlist.unshift(savedData || newEntry);
+        } else {
+          communityWishlist.unshift(newEntry);
+        }
+      } catch (err) {
+        communityWishlist.unshift(newEntry);
+      }
+
+      saveVotedId(newId);
       renderCommunityWishlist();
 
       textEl.value = '';
-      feedback.className = 'request-feedback-msg success';
-      feedback.textContent = '✓ Architecture request added to community wishlist below! Thank you for the suggestion.';
-      feedback.style.display = 'flex';
-
+      if (authorEl) authorEl.value = '';
       btn.disabled = false;
-      btn.innerHTML = '<span>⚡</span><span>Submit Architecture Request</span>';
+      btn.textContent = 'Submit idea';
 
-      try {
-        await fetch('/api/requests', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title: text, author: newReq.author })
-        });
-      } catch (err) {}
+      feedback.className = 'request-feedback-msg success';
+      feedback.textContent = '✓ Idea added to the community wishlist!';
+
+      setTimeout(() => {
+        feedback.style.display = 'none';
+      }, 4000);
     }
 
-    // Initialize wishlist
+    // Initial render
     renderCommunityWishlist();
     fetchCommunityRequests();
   </script>
 </body>
 </html>
-
