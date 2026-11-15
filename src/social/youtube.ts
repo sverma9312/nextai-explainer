@@ -74,6 +74,8 @@ export async function uploadToYouTubeShorts(
           '🌐 Interactive Architecture Diagrams & Case Studies:',
           '👉 https://explainer.nextai-apps.com/',
           '',
+          'ℹ️ Educational model simplified from public engineering whitepapers, blogs & conference talks. Not an official internal schematic.',
+          '',
           request.tags.join(' '),
         ].join('\n');
 
