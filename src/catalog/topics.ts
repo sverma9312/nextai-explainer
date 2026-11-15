@@ -7,7 +7,7 @@ export const TOPICS: ExplainerTopic[] = [
     companyLogo: '🚗',
     title: 'How Uber Matches 1M Drivers in 100ms',
     category: 'Distributed Systems',
-    scaleMetric: '1M+ Drivers // <100ms P99',
+    scaleMetric: '1M+ Drivers // Under 100ms P99',
     problemStatement: 'How does Uber pinpoint the closest driver to your exact location in under 100 milliseconds among 1 million moving vehicles?',
     tags: ['H3 Geospatial', 'Redis Cluster', 'Consistent Hashing', 'Ringpop'],
     nodes: [
@@ -42,7 +42,7 @@ export const TOPICS: ExplainerTopic[] = [
         narration: 'Instead, Uber divides the Earth into millions of tiny hexagonal cells using the open-source H3 spatial index. Every driver pings GPS every four seconds, stored directly as integer hex IDs inside Redis in-memory clusters.',
         activeNodeIds: ['h3', 'redis'],
         activeEdgeIds: ['e3', 'e4'],
-        calloutMetric: '< 2ms In-Memory Redis Lookup',
+        calloutMetric: 'Sub-2ms In-Memory Redis Lookup',
       },
       {
         stepNumber: 3,
@@ -154,7 +154,7 @@ export const TOPICS: ExplainerTopic[] = [
         narration: 'Mnesia in-memory routing delivers the packet in sub-milliseconds if the receiver is connected, or diverts it to a push notification queue if offline.',
         activeNodeIds: ['mnesia', 'push'],
         activeEdgeIds: ['e3', 'e4', 'e5'],
-        calloutMetric: '< 15ms Delivery Latency',
+        calloutMetric: 'Sub-15ms Delivery Latency',
       },
     ],
     takeaway: 'Erlang actor model lets one physical server maintain millions of live sockets with near-zero memory footprint.',
@@ -227,7 +227,7 @@ export const TOPICS: ExplainerTopic[] = [
     ],
     edges: [
       { id: 'e1', from: 'user', to: 'gateway', protocol: 'POST /v1/charges', label: 'Header: Idempotency-Key', stepActive: 1 },
-      { id: 'e2', from: 'gateway', to: 'redis_lock', protocol: 'SETNX Lock', label: 'Acquire Lease (< 2s)', stepActive: 2 },
+      { id: 'e2', from: 'gateway', to: 'redis_lock', protocol: 'SETNX Lock', label: 'Acquire Lease (Under 2s)', stepActive: 2 },
       { id: 'e3', from: 'gateway', to: 'payment', protocol: 'Execute Charge', label: 'Only Once', stepActive: 2 },
       { id: 'e4', from: 'payment', to: 'aurora', protocol: 'Save Response', label: 'Cache Result For 24h', stepActive: 3 },
     ],
