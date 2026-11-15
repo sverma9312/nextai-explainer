@@ -1459,6 +1459,14 @@
     // ==========================================
     let communityWishlist = [
       {
+        id: 'req_irctc_tatkal',
+        title: 'IRCTC Tatkal: How IRCTC Handles 30,000 Bookings/Sec During Peak 10 AM Tatkal Rush',
+        author: 'IRCTCEngineer',
+        upvotes: 52,
+        status: 'Planned',
+        createdAt: 'just now'
+      },
+      {
         id: 'req_kafka_linkedin',
         title: 'Kafka at LinkedIn: How LinkedIn Streams 7 Trillion Messages Daily',
         author: 'DistributedEngineer',
@@ -1500,6 +1508,25 @@
       }
     ];
 
+    function getLocalCustomRequests() {
+      try {
+        return JSON.parse(localStorage.getItem('explainer_custom_requests') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveLocalCustomRequest(item) {
+      try {
+        const list = getLocalCustomRequests();
+        const exists = list.some(x => (x.id === item.id) || (x.title === item.title));
+        if (!exists) {
+          list.unshift(item);
+          localStorage.setItem('explainer_custom_requests', JSON.stringify(list));
+        }
+      } catch (e) {}
+    }
+
     function getVotedIds() {
       try {
         return JSON.parse(localStorage.getItem('explainer_voted_requests') || '[]');
@@ -1524,12 +1551,29 @@
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
-            communityWishlist = data;
+            // Merge with local requests to ensure user ideas are never dropped
+            const localList = getLocalCustomRequests();
+            const combined = [...localList];
+            data.forEach(item => {
+              if (!combined.some(c => c.id === item.id || c.title === item.title)) {
+                combined.push(item);
+              }
+            });
+            communityWishlist = combined;
             renderCommunityWishlist();
           }
         }
       } catch (err) {
-        // Fallback to defaults
+        // Fallback to local + defaults
+        const localList = getLocalCustomRequests();
+        if (localList.length > 0) {
+          localList.forEach(item => {
+            if (!communityWishlist.some(c => c.id === item.id || c.title === item.title)) {
+              communityWishlist.unshift(item);
+            }
+          });
+          renderCommunityWishlist();
+        }
       }
     }
 
@@ -1545,25 +1589,30 @@
         countEl.textContent = communityWishlist.length;
       }
 
-      grid.innerHTML = communityWishlist.map(item => {
-        const isVoted = votedIds.includes(item.id);
+      grid.innerHTML = communityWishlist.map(rawItem => {
+        // Safely unwrap in case the payload was nested
+        const item = (rawItem && rawItem.item) ? rawItem.item : rawItem;
+        const id = item.id || 'req_' + Math.random().toString(36).substr(2, 6);
+        const title = item.title || item.text || 'Architecture Request';
+        const author = item.author || 'Anonymous';
+        const isVoted = votedIds.includes(id);
         const timeDisplay = item.createdAt ? (item.createdAt.includes('ago') || item.createdAt.includes('now') || item.createdAt.includes('yesterday') ? item.createdAt : new Date(item.createdAt).toLocaleDateString()) : 'Recently';
 
         return `
-          <div class="wishlist-card" id="card-${item.id}">
+          <div class="wishlist-card" id="card-${id}">
             <div class="wishlist-info">
-              <div class="wishlist-card-title">${item.title}</div>
+              <div class="wishlist-card-title">${title}</div>
               <div class="wishlist-card-sub">
-                <span>by @${item.author || 'Anonymous'}</span>
+                <span>by @${author}</span>
                 <span>·</span>
                 <span>${item.status === 'Planned' ? '⚡ Planned' : '💡 Requested'}</span>
                 <span>·</span>
                 <span>${timeDisplay}</span>
               </div>
             </div>
-            <button class="wishlist-upvote-btn ${isVoted ? 'voted' : ''}" onclick="upvoteRequest('${item.id}')" title="${isVoted ? 'Upvoted' : 'Upvote this architecture'}">
+            <button class="wishlist-upvote-btn ${isVoted ? 'voted' : ''}" onclick="upvoteRequest('${id}')" title="${isVoted ? 'Upvoted' : 'Upvote this architecture'}">
               <span style="font-size: 10px;">▲</span>
-              <span id="votes-${item.id}">${item.upvotes || 1}</span>
+              <span id="votes-${id}">${item.upvotes || 1}</span>
             </button>
           </div>
         `;
@@ -1574,9 +1623,10 @@
       const votedIds = getVotedIds();
       if (votedIds.includes(id)) return;
 
-      const item = communityWishlist.find(i => i.id === id);
+      const item = communityWishlist.find(i => (i.id === id) || (i.item && i.item.id === id));
       if (item) {
-        item.upvotes = (item.upvotes || 0) + 1;
+        const actualItem = item.item || item;
+        actualItem.upvotes = (actualItem.upvotes || 0) + 1;
         saveVotedId(id);
         renderCommunityWishlist();
 
@@ -1624,12 +1674,17 @@
 
         if (res.ok) {
           const savedData = await res.json();
-          communityWishlist.unshift(savedData || newEntry);
+          // Correctly extract the item whether it is returned as savedData.item or savedData directly
+          const itemToAdd = (savedData && savedData.item) ? savedData.item : (savedData && savedData.title ? savedData : newEntry);
+          communityWishlist.unshift(itemToAdd);
+          saveLocalCustomRequest(itemToAdd);
         } else {
           communityWishlist.unshift(newEntry);
+          saveLocalCustomRequest(newEntry);
         }
       } catch (err) {
         communityWishlist.unshift(newEntry);
+        saveLocalCustomRequest(newEntry);
       }
 
       saveVotedId(newId);
