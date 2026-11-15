@@ -532,34 +532,40 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
     }
     .topic-card-company {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      font-size: 12px;
+      gap: 9px;
+      font-size: 13px;
       font-weight: 800;
       color: #FFFFFF;
+      flex-shrink: 0;
     }
     .topic-card-metric {
-      font-size: 11px;
+      font-size: 10.5px;
       font-family: 'JetBrains Mono', monospace;
       color: #34D399;
       background: rgba(16, 185, 129, 0.1);
       border: 1px solid rgba(16, 185, 129, 0.25);
       padding: 2px 7px;
       border-radius: 6px;
+      white-space: nowrap;
     }
     .video-pill {
       font-size: 10px;
       font-weight: 700;
-      padding: 2px 8px;
+      padding: 2.5px 8px;
       border-radius: 999px;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .video-pill.live {
       background: rgba(34, 197, 94, 0.15);
@@ -1409,7 +1415,7 @@
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
               <span class="video-pill ${item.hasVideo ? 'live' : 'queued'}">
-                ${item.hasVideo ? '▶ Watch 16:9 Video' : '🗓️ Queued'}
+                ${item.hasVideo ? '▶ Watch Video' : '🗓️ Queued'}
               </span>
               <span class="topic-card-metric">${item.scaleMetric}</span>
             </div>
