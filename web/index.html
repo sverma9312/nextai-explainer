@@ -864,6 +864,38 @@
       color: var(--accent-vermilion);
     }
 
+    /* Editorial Architecture Disclosure */
+    .editorial-disclosure-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 18px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 860px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .disclosure-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-vermilion);
+    }
+
+    .disclosure-text {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
     /* Footer */
     footer {
       border-top: 1px solid var(--border-subtle);
@@ -872,7 +904,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 12px;
+      gap: 16px;
       font-size: 12px;
       color: var(--text-muted);
     }
@@ -1037,7 +1069,10 @@
             <span>REC</span>
             <span class="slate-time" id="slate-timecode">00:00 / 00:59</span>
           </div>
-          <div class="slate-badge">MASTER 1080P</div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="slate-badge" style="color: var(--accent-vermilion); border-color: rgba(255, 72, 32, 0.3); font-size: 9px;">PUBLIC PATTERN · SIMPLIFIED</div>
+            <div class="slate-badge">MASTER 1080P</div>
+          </div>
         </div>
 
         <!-- Video & Studio Simulation Screen -->
@@ -1160,6 +1195,19 @@
       </div>
     </section>
   </main>
+
+  <!-- Engineering Accuracy & Sources Disclosure -->
+  <div style="padding: 0 24px 40px; width: 100%; max-width: 1220px; margin: 0 auto;">
+    <div class="editorial-disclosure-card">
+      <div class="disclosure-badge">
+        <span>●</span>
+        <span>Architectural Scope & Sources Disclosure</span>
+      </div>
+      <p class="disclosure-text">
+        All 60-second architecture breakdowns are educational models deconstructed from publicly released engineering whitepapers, official tech blogs (e.g. Uber Engineering, Netflix TechBlog, Stripe Developers, NPCI circulars), and conference talks, combined with foundational distributed system patterns. They are simplified for conceptual clarity and do not represent proprietary internal codebases, trade secrets, or confidential production infrastructure of the referenced companies.
+      </p>
+    </div>
+  </div>
 
   <!-- Footer -->
   <footer>
