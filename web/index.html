@@ -795,6 +795,28 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      max-height: 580px;
+      overflow-y: auto;
+      padding-right: 6px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-active) transparent;
+    }
+
+    .wishlist-grid::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .wishlist-grid::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .wishlist-grid::-webkit-scrollbar-thumb {
+      background: var(--border-active);
+      border-radius: 4px;
+    }
+
+    .wishlist-grid::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-vermilion);
     }
 
     .wishlist-card {
@@ -1186,7 +1208,7 @@
 
       <!-- Wishlist List of Community Requests -->
       <div class="wishlist-meta-header">
-        <div><strong id="wishlist-total-count" style="color: var(--accent-vermilion);">5</strong> ARCHITECTURE REQUESTS</div>
+        <div><strong id="wishlist-total-count" style="color: var(--accent-vermilion);">7</strong> ARCHITECTURE REQUESTS <span style="font-size: 10px; color: var(--text-muted); margin-left: 6px;">(scrollable)</span></div>
         <div>Sorted by Upvotes ▲</div>
       </div>
 
