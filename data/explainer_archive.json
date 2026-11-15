@@ -1,2 +1,13 @@
-[]
-
+[
+  {
+    "topicId": "uber-h3-matching",
+    "company": "Uber",
+    "title": "How Uber Matches 1M Drivers in 100ms",
+    "videoTitle": "How Uber Matches 1M Drivers in 100ms #Shorts",
+    "videoPath": "/home/runner/work/nextai-explainer/nextai-explainer/out/uber-h3-matching_landscape.mp4",
+    "audioPath": "/home/runner/work/nextai-explainer/nextai-explainer/build/uber-h3-matching_audio.mp3",
+    "durationSeconds": 52.21,
+    "postedAt": "2026-11-15T06:59:06.220Z",
+    "instagramUrl": "https://www.instagram.com/reel/DfwMOUSF5Uv/"
+  }
+]
