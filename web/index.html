@@ -1327,29 +1327,8 @@
         takeaway: 'By replacing geometric distance calculations with integer hexagon lookups in Redis, Uber searches 1M vehicles in microseconds.'
       },
       {
-        id: 'stripe-idempotency-engine',
-        caseNum: 'CASE STUDY 02',
-        company: 'Stripe',
-        title: 'How Stripe never double-charges you',
-        category: 'FinTech & Payments',
-        scaleMetric: '99.999% Consistency // Millions TPS',
-        phoneSubtitle: 'Client Idempotency Keys + Redis Mutex in 60s',
-        phoneMetric: '🔒 Zero Double Charges',
-        videoSrc: 'https://explainer.nextai-apps.com/videos/stripe-idempotency-engine.mp4?v=landscape',
-        hasVideo: true,
-        desc: 'When internet connections drop right after clicking Pay, how does Stripe ensure network retries never charge you twice?',
-        tags: ['IDEMPOTENCY', 'REDIS LOCKS', 'ACID'],
-        footerSubtitle: 'Idempotency keys turn dangerous retries into safe reads.',
-        steps: [
-          { num: '01', title: 'Client Idempotency Keys', desc: 'Every payment injects a unique client UUID inside the HTTP header before leaving the browser.' },
-          { num: '02', title: 'Distributed Redis Mutex', desc: 'Stripe gateway acquires an atomic SETNX lock in Redis. In-flight duplicates are held safely.' },
-          { num: '03', title: 'Response Caching & Replay', desc: 'Successful payloads are stored for 24h. Repeated retries simply receive cached responses.' }
-        ],
-        takeaway: 'By storing client idempotency keys in Redis locks and tables, Stripe turns dangerous retries into safe idempotent reads.'
-      },
-      {
         id: 'netflix-openconnect-cdn',
-        caseNum: 'CASE STUDY 03',
+        caseNum: 'CASE STUDY 02',
         company: 'Netflix',
         title: 'How Netflix streams 4K to 250M users',
         category: 'High-Throughput Streaming',
@@ -1369,6 +1348,27 @@
           { num: '03', title: 'Zero-Copy Kernel Streaming', desc: 'Custom FreeBSD kernel TLS flows bytes directly from NVMe flash to 100Gbps network cards.' }
         ],
         takeaway: 'Netflix avoids CDN bandwidth costs by installing custom zero-copy FreeBSD appliances directly inside internet service providers.'
+      },
+      {
+        id: 'stripe-idempotency-engine',
+        caseNum: 'CASE STUDY 03',
+        company: 'Stripe',
+        title: 'How Stripe never double-charges you',
+        category: 'FinTech & Payments',
+        scaleMetric: '99.999% Consistency // Millions TPS',
+        phoneSubtitle: 'Client Idempotency Keys + Redis Mutex in 60s',
+        phoneMetric: '🔒 Zero Double Charges',
+        videoSrc: null,
+        hasVideo: false,
+        desc: 'When internet connections drop right after clicking Pay, how does Stripe ensure network retries never charge you twice?',
+        tags: ['IDEMPOTENCY', 'REDIS LOCKS', 'ACID'],
+        footerSubtitle: 'Idempotency keys turn dangerous retries into safe reads.',
+        steps: [
+          { num: '01', title: 'Client Idempotency Keys', desc: 'Every payment injects a unique client UUID inside the HTTP header before leaving the browser.' },
+          { num: '02', title: 'Distributed Redis Mutex', desc: 'Stripe gateway acquires an atomic SETNX lock in Redis. In-flight duplicates are held safely.' },
+          { num: '03', title: 'Response Caching & Replay', desc: 'Successful payloads are stored for 24h. Repeated retries simply receive cached responses.' }
+        ],
+        takeaway: 'By storing client idempotency keys in Redis locks and tables, Stripe turns dangerous retries into safe idempotent reads.'
       },
       {
         id: 'whatsapp-erlang-concurrency',
