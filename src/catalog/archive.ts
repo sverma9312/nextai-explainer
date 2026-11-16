@@ -6,6 +6,7 @@ import type { PostedExplainerRecord } from '../schema/types.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ARCHIVE_FILE = path.resolve(__dirname, '../../data/explainer_archive.json');
+const WEB_ARCHIVE_FILE = path.resolve(__dirname, '../../web/archive.json');
 
 export async function getExplainerArchive(): Promise<PostedExplainerRecord[]> {
   try {
@@ -44,5 +45,11 @@ export async function recordPostedExplainer(record: PostedExplainerRecord): Prom
     archive.unshift(record); // Prepend so newest is always index 0
   }
   await fs.writeFile(ARCHIVE_FILE, JSON.stringify(archive, null, 2), 'utf-8');
+  try {
+    await fs.mkdir(path.dirname(WEB_ARCHIVE_FILE), { recursive: true });
+    await fs.writeFile(WEB_ARCHIVE_FILE, JSON.stringify(archive, null, 2), 'utf-8');
+  } catch (err) {
+    console.warn('Could not mirror archive to web/archive.json:', err);
+  }
 }
 

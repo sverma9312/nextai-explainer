@@ -797,6 +797,9 @@
       gap: 10px;
       max-height: 580px;
       overflow-y: auto;
+      overflow-x: hidden;
+      width: 100%;
+      box-sizing: border-box;
       padding-right: 6px;
       scrollbar-width: thin;
       scrollbar-color: var(--border-active) transparent;
@@ -828,6 +831,9 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
       transition: border-color 0.2s ease;
     }
 
@@ -840,6 +846,8 @@
       flex-direction: column;
       gap: 4px;
       flex: 1;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .wishlist-card-title {
@@ -847,15 +855,20 @@
       font-weight: 600;
       color: var(--text-primary);
       line-height: 1.4;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .wishlist-card-sub {
       display: flex;
       align-items: center;
-      gap: 8px;
+      flex-wrap: wrap;
+      column-gap: 8px;
+      row-gap: 2px;
       font-size: 11px;
       color: var(--text-muted);
       font-family: var(--font-mono);
+      word-break: break-word;
     }
 
     .wishlist-upvote-btn {
@@ -866,13 +879,19 @@
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border-subtle);
       border-radius: 6px;
-      padding: 6px 12px;
+      padding: 6px 10px;
       color: var(--text-secondary);
       cursor: pointer;
       font-family: var(--font-mono);
       font-size: 11px;
       transition: all 0.2s ease;
+      width: 48px;
       min-width: 48px;
+      max-width: 48px;
+      flex-shrink: 0;
+      box-sizing: border-box;
+      margin-left: auto;
+      align-self: center;
     }
 
     .wishlist-upvote-btn:hover {
@@ -1033,8 +1052,38 @@
         font-size: 14px;
       }
 
+      .wishlist-grid {
+        overflow-x: hidden;
+        padding-right: 0;
+      }
+
       .wishlist-card {
         padding: 12px 14px;
+        gap: 12px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      .wishlist-info {
+        min-width: 0;
+      }
+
+      .wishlist-card-title {
+        font-size: 13px;
+      }
+
+      .wishlist-card-sub {
+        font-size: 10px;
+        gap: 3px 6px;
+      }
+
+      .wishlist-upvote-btn {
+        flex-shrink: 0;
+        width: 44px;
+        min-width: 44px;
+        max-width: 44px;
+        padding: 6px 4px;
       }
     }
   </style>
@@ -1299,7 +1348,7 @@
         takeaway: 'By storing client idempotency keys in Redis locks and tables, Stripe turns dangerous retries into safe idempotent reads.'
       },
       {
-        id: 'netflix-open-connect-cdn',
+        id: 'netflix-openconnect-cdn',
         caseNum: 'CASE STUDY 03',
         company: 'Netflix',
         title: 'How Netflix streams 4K to 250M users',
@@ -1307,8 +1356,10 @@
         scaleMetric: '250M Users // 15% Web Traffic',
         phoneSubtitle: 'Open Connect CDN + Zero-Copy FreeBSD in 60s',
         phoneMetric: '🎬 15% Global Traffic',
-        videoSrc: null,
-        hasVideo: false,
+        videoSrc: 'https://explainer.nextai-apps.com/videos/netflix-openconnect-cdn.mp4?v=landscape',
+        hasVideo: true,
+        youtubeUrl: 'https://youtu.be/PX5WncFFOJs',
+        instagramUrl: 'https://www.instagram.com/reel/DfyUujYGQDR/',
         desc: 'Netflix accounts for 15% of all internet traffic. How do they stream 4K globally without buffering or commercial CDNs?',
         tags: ['OPEN CONNECT', 'FREEBSD', 'ZERO-COPY'],
         footerSubtitle: 'Zero-copy kernel streaming from NVMe flash directly to 100GbE NICs.',
@@ -1406,7 +1457,8 @@
 
     function selectTopic(id) {
       currentSelectedId = id;
-      const topic = CATALOG.find(t => t.id === id) || CATALOG[0];
+      const cleanId = (id || '').replace(/-/g, '').toLowerCase();
+      const topic = CATALOG.find(t => t.id === id || (t.id || '').replace(/-/g, '').toLowerCase() === cleanId) || CATALOG[0];
 
       const placeholderEl = document.getElementById('player-placeholder');
       const footerStrip = document.getElementById('monitor-footer-text');
@@ -1777,9 +1829,47 @@
       }, 4000);
     }
 
+    async function syncArchiveLedger() {
+      try {
+        const res = await fetch('/archive.json');
+        if (res.ok) {
+          const archive = await res.json();
+          if (Array.isArray(archive)) {
+            let updated = false;
+            archive.forEach(record => {
+              const recClean = (record.topicId || '').replace(/-/g, '').toLowerCase();
+              const topic = CATALOG.find(t => t.id === record.topicId || (t.id || '').replace(/-/g, '').toLowerCase() === recClean);
+              if (topic) {
+                if (!topic.hasVideo) {
+                  topic.hasVideo = true;
+                  updated = true;
+                }
+                if (!topic.videoSrc) {
+                  topic.videoSrc = `https://explainer.nextai-apps.com/videos/${record.topicId}.mp4?v=landscape`;
+                  updated = true;
+                }
+                if (record.youtubeUrl) topic.youtubeUrl = record.youtubeUrl;
+                if (record.instagramUrl) topic.instagramUrl = record.instagramUrl;
+              }
+            });
+            if (updated) {
+              renderCatalog();
+              const currentTopic = CATALOG.find(t => t.id === currentSelectedId);
+              if (currentTopic && currentTopic.hasVideo && (!document.getElementById('phone-video').src || document.getElementById('player-placeholder').style.display !== 'none')) {
+                selectTopic(currentSelectedId);
+              }
+            }
+          }
+        }
+      } catch (err) {
+        // Silently fallback to static catalog
+      }
+    }
+
     // Initial render
     renderCommunityWishlist();
     fetchCommunityRequests();
+    syncArchiveLedger();
   </script>
 </body>
 </html>

@@ -131,18 +131,18 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      - name: Commit Updated Explainer Archive Ledger
+      - name: Commit Updated Explainer Archive Ledger and Web Assets
         if: always()
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "NextAI Autonomous Explainer Bot"
-          if [[ -n $(git status -s data/explainer_archive.json) ]]; then
-            git add data/explainer_archive.json
-            git commit -m "chore(archive): record published explainer episode [skip ci]"
+          if [[ -n $(git status -s data/explainer_archive.json web/) ]]; then
+            git add data/explainer_archive.json web/
+            git commit -m "chore(archive): record published explainer episode and web assets [skip ci]"
             git pull --rebase origin main || true
             git push origin main || true
           else
-            echo "No new topics recorded in explainer archive."
+            echo "No new topics or web assets recorded in explainer archive."
           fi
 
       - name: Pipeline Failure Alert & Summary
