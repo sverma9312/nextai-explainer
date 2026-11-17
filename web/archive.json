@@ -1,5 +1,17 @@
 [
   {
+    "topicId": "stripe-idempotency-engine",
+    "company": "Stripe",
+    "title": "How Stripe Never Double-Charges You",
+    "videoTitle": "How Stripe Prevents Double Charges #Shorts",
+    "videoPath": "/home/runner/work/nextai-explainer/nextai-explainer/out/stripe-idempotency-engine_landscape.mp4",
+    "audioPath": "/home/runner/work/nextai-explainer/nextai-explainer/build/stripe-idempotency-engine_audio.mp3",
+    "durationSeconds": 51.01,
+    "postedAt": "2026-11-17T03:08:48.328Z",
+    "youtubeUrl": "https://youtu.be/gdUNB9B4sDw",
+    "instagramUrl": "https://www.instagram.com/reel/Df07fwhmajb/"
+  },
+  {
     "topicId": "netflix-openconnect-cdn",
     "company": "Netflix",
     "title": "How Netflix Streams 4K to 250M Users",
