@@ -1,5 +1,17 @@
 [
   {
+    "topicId": "whatsapp-erlang-concurrency",
+    "company": "WhatsApp",
+    "title": "How WhatsApp Handles 100B Messages Daily",
+    "videoTitle": "How WhatsApp Handled 100 Billion Messages #Shorts",
+    "videoPath": "/home/runner/work/nextai-explainer/nextai-explainer/out/whatsapp-erlang-concurrency_landscape.mp4",
+    "audioPath": "/home/runner/work/nextai-explainer/nextai-explainer/build/whatsapp-erlang-concurrency_audio.mp3",
+    "durationSeconds": 42.66,
+    "postedAt": "2026-11-18T13:49:56.956Z",
+    "youtubeUrl": "https://youtu.be/T_8Qv3ZNNJ4",
+    "instagramUrl": "https://www.instagram.com/reel/Df4pngIEWDv/"
+  },
+  {
     "topicId": "stripe-idempotency-engine",
     "company": "Stripe",
     "title": "How Stripe Never Double-Charges You",
