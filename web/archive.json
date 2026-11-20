@@ -1,5 +1,17 @@
 [
   {
+    "topicId": "upi-instant-payments",
+    "company": "UPI",
+    "title": "How UPI Handles 50,000 TPS with 0 Downtime",
+    "videoTitle": "How UPI Handles 50k TPS with Zero Downtime #Shorts",
+    "videoPath": "/home/runner/work/nextai-explainer/nextai-explainer/out/upi-instant-payments_landscape.mp4",
+    "audioPath": "/home/runner/work/nextai-explainer/nextai-explainer/build/upi-instant-payments_audio.mp3",
+    "durationSeconds": 58.84,
+    "postedAt": "2026-11-20T04:14:31.846Z",
+    "youtubeUrl": "https://youtu.be/USSMjDgW6CA",
+    "instagramUrl": "https://www.instagram.com/reel/Df8xXASAGOx/"
+  },
+  {
     "topicId": "whatsapp-erlang-concurrency",
     "company": "WhatsApp",
     "title": "How WhatsApp Handles 100B Messages Daily",
