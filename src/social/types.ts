@@ -1,6 +1,7 @@
 export interface SocialPublishRequest {
   videoPath: string; // Primary video (16:9 Landscape for YouTube & Web)
   reelVideoPath?: string; // Secondary video (9:16 Portrait for Instagram Reels)
+  coverImagePath?: string; // Custom 9:16 cover thumbnail for Instagram Reels
   title: string;
   description: string;
   tags: string[];

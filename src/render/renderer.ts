@@ -1,9 +1,10 @@
 import { bundle } from '@remotion/bundler';
-import { renderMedia, selectComposition } from '@remotion/renderer';
+import { renderMedia, renderStill, selectComposition } from '@remotion/renderer';
 import path from 'node:path';
 import fsp from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import type { ExplainerCompositionProps } from '../schema/types.js';
+import type { ExplainerPosterProps } from '../video/components/ExplainerPoster.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,9 +16,59 @@ export interface RenderOptions {
   onProgress?: (progress: number) => void;
 }
 
+export interface RenderPosterOptions {
+  inputProps: ExplainerPosterProps;
+  outputPath: string;
+  bundleLocation?: string;
+}
+
 export interface DualRenderResult {
   landscapePath: string;
   reelPath: string;
+  coverPath?: string;
+}
+
+export async function renderPosterToDisk(options: RenderPosterOptions): Promise<string> {
+  const { inputProps, outputPath } = options;
+  await fsp.mkdir(path.dirname(outputPath), { recursive: true });
+
+  const entryPoint = path.resolve(__dirname, '../video/Root.tsx');
+  const bundleLocation =
+    options.bundleLocation ||
+    (await bundle({
+      entryPoint,
+      webpackOverride: (config) => ({
+        ...config,
+        resolve: {
+          ...config.resolve,
+          extensionAlias: {
+            '.js': ['.ts', '.tsx', '.js', '.jsx'],
+            '.mjs': ['.mts', '.mjs'],
+            '.cjs': ['.cts', '.cjs'],
+          },
+        },
+      }),
+    }));
+
+  console.log('🎨 Selecting composition "ExplainerPoster" for editorial cover...');
+  const composition = await selectComposition({
+    serveUrl: bundleLocation,
+    id: 'ExplainerPoster',
+    inputProps,
+  });
+
+  console.log(`🖼️ Rendering 1080x1920 Instagram Reel Cover to: ${outputPath}`);
+  await renderStill({
+    composition,
+    serveUrl: bundleLocation,
+    output: outputPath,
+    imageFormat: 'jpeg',
+    jpegQuality: 92,
+    inputProps,
+  });
+
+  console.log(`✅ Reel Cover Poster rendered successfully: ${outputPath}`);
+  return outputPath;
 }
 
 export async function renderVideoToDisk(options: RenderOptions): Promise<string> {
@@ -85,9 +136,11 @@ export async function renderDualAspectVideos(options: {
   inputProps: ExplainerCompositionProps;
   topicId: string;
   outDir?: string;
+  coverOutputPath?: string;
+  posterProps?: ExplainerPosterProps;
   onProgress?: (platform: string, progress: number) => void;
 }): Promise<DualRenderResult> {
-  const { inputProps, topicId, outDir = path.resolve(process.cwd(), 'out'), onProgress } = options;
+  const { inputProps, topicId, outDir = path.resolve(process.cwd(), 'out'), coverOutputPath, posterProps, onProgress } = options;
   await fsp.mkdir(outDir, { recursive: true });
 
   const entryPoint = path.resolve(__dirname, '../video/Root.tsx');
@@ -163,9 +216,39 @@ export async function renderDualAspectVideos(options: {
     },
   });
 
+  // 3. Render 9:16 Editorial Cover Thumbnail (Instagram Reels)
+  let coverPath: string | undefined;
+  if (coverOutputPath && posterProps) {
+    console.log('\n🎨 [3/3] Rendering 1080x1920 Instagram Reel Cover Poster...');
+    try {
+      const posterComp = await selectComposition({
+        serveUrl: bundleLocation,
+        id: 'ExplainerPoster',
+        inputProps: posterProps,
+      });
+
+      await renderStill({
+        composition: posterComp,
+        serveUrl: bundleLocation,
+        output: coverOutputPath,
+        imageFormat: 'jpeg',
+        jpegQuality: 92,
+        inputProps: posterProps,
+      });
+      coverPath = coverOutputPath;
+      console.log(`   📸 Reel Cover Poster: ${coverPath}\n`);
+    } catch (coverErr: any) {
+      console.warn(`⚠️ Cover thumbnail rendering failed: ${coverErr.message}`);
+    }
+  }
+
   console.log('\n✨ Dual Aspect Renders Complete:');
   console.log(`   🖥️ 16:9 Landscape: ${landscapePath}`);
-  console.log(`   📱 9:16 Reel:      ${reelPath}\n`);
+  console.log(`   📱 9:16 Reel:      ${reelPath}`);
+  if (coverPath) {
+    console.log(`   🖼️ Cover Poster:   ${coverPath}`);
+  }
+  console.log('');
 
-  return { landscapePath, reelPath };
+  return { landscapePath, reelPath, coverPath };
 }

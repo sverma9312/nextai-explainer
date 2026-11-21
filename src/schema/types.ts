@@ -158,6 +158,8 @@ export interface PostedExplainerRecord {
   title: string;
   videoTitle: string;
   videoPath: string;
+  reelVideoPath?: string;
+  coverPath?: string;
   audioPath: string;
   durationSeconds: number;
   postedAt: string;

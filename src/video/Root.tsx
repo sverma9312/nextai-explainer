@@ -2,10 +2,21 @@ import React from 'react';
 import { Composition, Still, registerRoot } from 'remotion';
 import { ExplainerComposition } from './Composition';
 import { ExplainerAvatar } from './ExplainerAvatar';
+import { ExplainerPoster, type ExplainerPosterProps } from './components/ExplainerPoster';
 import { TOPICS } from '../catalog/topics';
 import type { ExplainerCompositionProps } from '../schema/types';
 
 const sampleTopic = TOPICS[0];
+
+const defaultPosterProps: ExplainerPosterProps = {
+  company: sampleTopic.company,
+  companyLogo: sampleTopic.companyLogo,
+  topicTitle: sampleTopic.title,
+  volNumber: 'VOL. 01',
+  category: 'ANIMATED SYSTEM DESIGN',
+  scaleMetric: sampleTopic.scaleMetric,
+  summaryText: sampleTopic.problemStatement,
+};
 
 const defaultProps: ExplainerCompositionProps = {
   script: {
@@ -66,6 +77,15 @@ export const Root: React.FC = () => {
         component={ExplainerAvatar}
         width={1024}
         height={1024}
+      />
+
+      {/* 4. Instagram Reel Editorial Cover / Thumbnail (9:16) */}
+      <Still
+        id="ExplainerPoster"
+        component={ExplainerPoster}
+        width={1080}
+        height={1920}
+        defaultProps={defaultPosterProps}
       />
     </>
   );

@@ -5,7 +5,7 @@ import fsp from 'node:fs/promises';
 import { selectTopicForVideo } from './catalog/selector.js';
 import { generateExplainerScript } from './script/generator.js';
 import { synthesizeVoiceover } from './audio/tts.js';
-import { renderVideoToDisk, renderDualAspectVideos } from './render/renderer.js';
+import { renderVideoToDisk, renderDualAspectVideos, renderPosterToDisk } from './render/renderer.js';
 import { getExplainerArchive, recordPostedExplainer } from './catalog/archive.js';
 import { publishToAllChannels } from './social/publisher.js';
 import type { ExplainerCompositionProps } from './schema/types.js';
@@ -176,9 +176,41 @@ export async function runPipeline(): Promise<void> {
       });
     }
 
+    // Check if Reel cover image exists on disk, or generate on the fly
+    const defaultCoverPath = path.resolve(process.cwd(), 'out', `${targetRecord.topicId}_cover.jpg`);
+    let coverPathToPublish: string | undefined = fs.existsSync(defaultCoverPath) ? defaultCoverPath : undefined;
+
+    if (!coverPathToPublish) {
+      try {
+        console.log(`🖼️ Rendering editorial cover poster for retry: ${defaultCoverPath}...`);
+        await renderPosterToDisk({
+          inputProps: {
+            company: topic.company,
+            companyLogo: topic.companyLogo,
+            topicTitle: topic.title,
+            volNumber: 'VOL. 01',
+            category: 'ANIMATED SYSTEM DESIGN',
+            scaleMetric: topic.scaleMetric,
+            summaryText: topic.problemStatement || script.hook,
+          },
+          outputPath: defaultCoverPath,
+        });
+        if (fs.existsSync(defaultCoverPath)) {
+          coverPathToPublish = defaultCoverPath;
+          console.log(`   Editorial cover rendered: ${coverPathToPublish}`);
+        }
+      } catch (coverErr) {
+        console.warn('⚠️ Could not generate poster cover in retry mode:', coverErr);
+      }
+    }
+
     console.log('🚀 Distributing missing platform(s)...');
     const publishRequest = {
       videoPath: videoPathToPublish,
+      reelVideoPath: fs.existsSync(path.resolve(process.cwd(), 'out', `${targetRecord.topicId}_reel.mp4`))
+        ? path.resolve(process.cwd(), 'out', `${targetRecord.topicId}_reel.mp4`)
+        : undefined,
+      coverImagePath: coverPathToPublish,
       title: targetRecord.videoTitle || script.videoTitle,
       topic: topic.title,
       description: `🏗️ Architecture Deep Dive: ${topic.title}
@@ -355,12 +387,25 @@ ${script.takeaway}
     }
   }
 
-  console.log('🎬 [4/5] Rendering Dual Aspect MP4s (16:9 Landscape for YouTube/Web & 9:16 Reel for Instagram)...');
+  console.log('🎬 [4/5] Rendering Dual Aspect MP4s & Instagram Reel Cover Poster...');
+  const outCoverPath = path.resolve(outDir, `${topic.id}_cover.jpg`);
+  const posterProps = {
+    company: topic.company,
+    companyLogo: topic.companyLogo,
+    topicTitle: topic.title,
+    volNumber: 'VOL. 01',
+    category: 'ANIMATED SYSTEM DESIGN',
+    scaleMetric: topic.scaleMetric,
+    summaryText: topic.problemStatement || script.hook,
+  };
+
   let lastPct = 0;
   const dualResult = await renderDualAspectVideos({
     inputProps,
     topicId: topic.id,
     outDir,
+    coverOutputPath: outCoverPath,
+    posterProps,
     onProgress: (platform, pct) => {
       if (pct >= lastPct + 25 || pct === 100) {
         console.log(`   [${platform.toUpperCase()}] Progress: ${pct}%`);
@@ -396,6 +441,7 @@ ${script.takeaway}
   const publishRequest = {
     videoPath: dualResult.landscapePath, // 16:9 Landscape for standard YouTube video
     reelVideoPath: dualResult.reelPath,  // 9:16 Portrait for Instagram Reels
+    coverImagePath: fs.existsSync(outCoverPath) ? outCoverPath : dualResult.coverPath,
     title: script.videoTitle.replace(/#Shorts/gi, '').trim(),
     topic: topic.title,
     description: `🏗️ Architecture Deep Dive: ${topic.title}
@@ -428,6 +474,8 @@ ${script.takeaway}
       title: topic.title,
       videoTitle: script.videoTitle,
       videoPath: outVideoPath,
+      reelVideoPath: dualResult.reelPath,
+      coverPath: fs.existsSync(outCoverPath) ? outCoverPath : dualResult.coverPath,
       audioPath: ttsResult.audioPath,
       durationSeconds: ttsResult.durationSeconds,
       postedAt: new Date().toISOString(),
