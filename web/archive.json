@@ -1,5 +1,19 @@
 [
   {
+    "topicId": "discord-scylladb-migration",
+    "company": "Discord",
+    "title": "Why Discord Moved to ScyllaDB for Trillions of Messages",
+    "videoTitle": "Why Discord Swapped Cassandra for ScyllaDB #Shorts",
+    "videoPath": "/home/runner/work/nextai-explainer/nextai-explainer/out/discord-scylladb-migration_landscape.mp4",
+    "reelVideoPath": "/home/runner/work/nextai-explainer/nextai-explainer/out/discord-scylladb-migration_reel.mp4",
+    "coverPath": "/home/runner/work/nextai-explainer/nextai-explainer/out/discord-scylladb-migration_cover.jpg",
+    "audioPath": "/home/runner/work/nextai-explainer/nextai-explainer/build/discord-scylladb-migration_audio.mp3",
+    "durationSeconds": 53.6,
+    "postedAt": "2026-11-21T05:30:49.717Z",
+    "youtubeUrl": "https://youtu.be/tKpCisOrrzg",
+    "instagramUrl": "https://www.instagram.com/reel/Df_e6-JEmTv/"
+  },
+  {
     "topicId": "upi-instant-payments",
     "company": "UPI",
     "title": "How UPI Handles 50,000 TPS with 0 Downtime",
