@@ -10,12 +10,19 @@ import type { SocialPublishRequest, PlatformPublishResult } from './types.js';
 async function uploadToEphemeralCdn(filePath: string): Promise<string> {
   const fileName = path.basename(filePath);
   const fileBuffer = await fsp.readFile(filePath);
+  const ext = path.extname(filePath).toLowerCase();
+  const mimeType =
+    ext === '.jpg' || ext === '.jpeg'
+      ? 'image/jpeg'
+      : ext === '.png'
+      ? 'image/png'
+      : 'video/mp4';
 
-  // Strategy 1: Uguu.se (fast, direct raw MP4 link, 3-hour retention)
+  // Strategy 1: Uguu.se (fast, direct raw link, 3-hour retention)
   try {
-    console.log('🌐 [Ephemeral CDN] Uploading video to primary host (uguu.se)...');
+    console.log(`🌐 [Ephemeral CDN] Uploading ${mimeType} to primary host (uguu.se)...`);
     const form = new FormData();
-    const blob = new Blob([fileBuffer], { type: 'video/mp4' });
+    const blob = new Blob([fileBuffer], { type: mimeType });
     form.append('files[]', blob, fileName);
 
     const res = await fetch('https://uguu.se/upload.php', {
@@ -40,7 +47,7 @@ async function uploadToEphemeralCdn(filePath: string): Promise<string> {
   try {
     console.log('🌐 [Ephemeral CDN] Trying fallback host (tmpfiles.org)...');
     const form = new FormData();
-    const blob = new Blob([fileBuffer], { type: 'video/mp4' });
+    const blob = new Blob([fileBuffer], { type: mimeType });
     form.append('file', blob, fileName);
 
     const res = await fetch('https://tmpfiles.org/api/v1/upload', {
