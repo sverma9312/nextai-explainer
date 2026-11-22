@@ -1,5 +1,18 @@
 [
   {
+    "topicId": "linkedin-kafka-7t-messages",
+    "company": "LinkedIn",
+    "title": "How LinkedIn Streams 7 Trillion Messages Daily",
+    "videoTitle": "How LinkedIn Streams 7 Trillion Messages Daily #Shorts",
+    "videoPath": "/home/runner/work/nextai-explainer/nextai-explainer/out/linkedin-kafka-7t-messages_landscape.mp4",
+    "reelVideoPath": "/home/runner/work/nextai-explainer/nextai-explainer/out/linkedin-kafka-7t-messages_reel.mp4",
+    "coverPath": "/home/runner/work/nextai-explainer/nextai-explainer/out/linkedin-kafka-7t-messages_cover.jpg",
+    "audioPath": "/home/runner/work/nextai-explainer/nextai-explainer/build/linkedin-kafka-7t-messages_audio.mp3",
+    "durationSeconds": 53.77,
+    "postedAt": "2026-11-22T10:42:15.950Z",
+    "instagramUrl": "https://www.instagram.com/reel/DgCnXJNjSpm/"
+  },
+  {
     "topicId": "discord-scylladb-migration",
     "company": "Discord",
     "title": "Why Discord Moved to ScyllaDB for Trillions of Messages",
