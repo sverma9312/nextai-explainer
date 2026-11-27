@@ -79,11 +79,13 @@
     "company": "Uber",
     "title": "How Uber Matches 1M Drivers in 100ms",
     "videoTitle": "How Uber Matches 1M Drivers in 100ms #Shorts",
-    "videoPath": "/home/runner/work/nextai-explainer/nextai-explainer/web/videos/uber-h3-matching.mp4",
+    "videoPath": "/home/runner/work/nextai-explainer/nextai-explainer/out/uber-h3-matching_landscape.mp4",
     "audioPath": "/home/runner/work/nextai-explainer/nextai-explainer/build/uber-h3-matching_audio.mp3",
-    "durationSeconds": 52.21,
-    "postedAt": "2026-11-15T07:35:25.533Z",
-    "instagramUrl": "https://www.instagram.com/reel/DfwMOUSF5Uv/",
-    "youtubeUrl": "https://youtu.be/DsCnx1Lpt_g"
+    "durationSeconds": 47.46,
+    "postedAt": "2026-11-27T05:50:45.710Z",
+    "instagramUrl": "https://www.instagram.com/reel/DgO98OHRW1B/",
+    "youtubeUrl": "https://youtu.be/DsCnx1Lpt_g",
+    "reelVideoPath": "/home/runner/work/nextai-explainer/nextai-explainer/out/uber-h3-matching_reel.mp4",
+    "coverPath": "/home/runner/work/nextai-explainer/nextai-explainer/out/uber-h3-matching_cover.jpg"
   }
 ]
