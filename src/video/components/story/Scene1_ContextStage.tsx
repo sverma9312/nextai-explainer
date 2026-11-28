@@ -154,7 +154,7 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEnti
 
         {/* 2. Central Brand Hub Node */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, zIndex: 10 }}>
-          <BrandHubCircle name={company} size={isLandscape ? 120 : 130} />
+          <BrandHubCircle name={company} size={isLandscape ? 120 : 130} minimal={true} />
           <div
             style={{
               backgroundColor: '#1E293B',

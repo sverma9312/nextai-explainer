@@ -361,6 +361,74 @@ export const BrandLogo: React.FC<{
     );
   }
 
+  // 7. LinkedIn Official Logo (Official White 'in' Glyph)
+  if (norm.includes('linkedin')) {
+    return (
+      <svg
+        width={size * 0.78}
+        height={size * 0.78}
+        viewBox="0 0 24 24"
+        fill="none"
+        preserveAspectRatio="xMidYMid meet"
+        style={{ filter: inBadge ? 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4))' : undefined }}
+      >
+        <path
+          fill={inBadge ? '#FFFFFF' : '#0A66C2'}
+          d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z"
+        />
+      </svg>
+    );
+  }
+
+  // 8. OpenAI Official Logo (Authentic Rosette / Spiral Vector)
+  if (norm.includes('openai') || norm.includes('chatgpt')) {
+    return (
+      <svg
+        width={size * 0.76}
+        height={size * 0.76}
+        viewBox="0 0 24 24"
+        fill="none"
+        preserveAspectRatio="xMidYMid meet"
+        style={{ filter: inBadge ? 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4))' : undefined }}
+      >
+        <path
+          fill={inBadge ? '#FFFFFF' : '#10A37F'}
+          d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"
+        />
+      </svg>
+    );
+  }
+
+  // 9. Google / DeepMind Official Logo
+  if (norm.includes('google') || norm.includes('deepmind')) {
+    return (
+      <svg
+        width={size * 0.74}
+        height={size * 0.74}
+        viewBox="0 0 24 24"
+        preserveAspectRatio="xMidYMid meet"
+        style={{ filter: inBadge ? 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4))' : undefined }}
+      >
+        <path
+          fill="#4285F4"
+          d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"
+        />
+        <path
+          fill="#34A853"
+          d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.36 24 12 24z"
+        />
+        <path
+          fill="#FBBC05"
+          d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.17 0 9.99 0 12s.45 3.83 1.25 5.42l4.03-3.15z"
+        />
+        <path
+          fill="#EA4335"
+          d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.36 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+        />
+      </svg>
+    );
+  }
+
   return (
     <span
       style={{
@@ -424,6 +492,21 @@ export const BrandHubCircle: React.FC<{
     borderColor = 'rgba(9, 121, 57, 0.55)';
     glowColor = 'rgba(9, 121, 57, 0.5)';
     badgeLabel = 'UPI GATEWAY';
+  } else if (norm.includes('linkedin')) {
+    bgGradient = 'linear-gradient(135deg, #0A66C2 0%, #004182 100%)';
+    borderColor = 'rgba(255, 255, 255, 0.35)';
+    glowColor = 'rgba(10, 102, 194, 0.65)';
+    badgeLabel = 'LINKEDIN';
+  } else if (norm.includes('openai') || norm.includes('chatgpt')) {
+    bgGradient = 'linear-gradient(135deg, #10A37F 0%, #064E3B 100%)';
+    borderColor = 'rgba(255, 255, 255, 0.35)';
+    glowColor = 'rgba(16, 163, 127, 0.65)';
+    badgeLabel = 'OPENAI';
+  } else if (norm.includes('google') || norm.includes('deepmind')) {
+    bgGradient = 'linear-gradient(145deg, #1F2937 0%, #111827 100%)';
+    borderColor = 'rgba(255, 255, 255, 0.35)';
+    glowColor = 'rgba(66, 133, 244, 0.6)';
+    badgeLabel = 'GOOGLE';
   }
 
   const squircleRadius = Math.round(size * 0.24);
