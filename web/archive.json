@@ -1,5 +1,19 @@
 [
   {
+    "topicId": "openai-chatgpt-llm-inference",
+    "company": "OpenAI",
+    "title": "How ChatGPT Processes and Generates Real-Time LLM Responses",
+    "videoTitle": "How ChatGPT Scales Real-Time LLM Inference #Shorts",
+    "videoPath": "/home/runner/work/nextai-explainer/nextai-explainer/out/openai-chatgpt-llm-inference_landscape.mp4",
+    "reelVideoPath": "/home/runner/work/nextai-explainer/nextai-explainer/out/openai-chatgpt-llm-inference_reel.mp4",
+    "coverPath": "/home/runner/work/nextai-explainer/nextai-explainer/out/openai-chatgpt-llm-inference_cover.jpg",
+    "audioPath": "/home/runner/work/nextai-explainer/nextai-explainer/build/openai-chatgpt-llm-inference_audio.mp3",
+    "durationSeconds": 54.28,
+    "postedAt": "2026-11-28T14:11:14.988Z",
+    "youtubeUrl": "https://youtu.be/AtuoT71QzEA",
+    "instagramUrl": "https://www.instagram.com/reel/DgScBesBrVf/"
+  },
+  {
     "topicId": "linkedin-kafka-7t-messages",
     "company": "LinkedIn",
     "title": "How LinkedIn Streams 7 Trillion Messages Daily",
