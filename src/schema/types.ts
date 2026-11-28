@@ -130,6 +130,7 @@ export interface ExplainerScript {
   topicId: string;
   company: string;
   companyLogo: string;
+  companySvgDataUri?: string;
   videoTitle: string;
   hook: string;
   problemStatement?: string;

@@ -1,6 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
 import type { ExplainerTopic, ExplainerScript, VisualEntity } from '../schema/types.js';
-import { resolveEntitiesIcons } from '../icons/resolver.js';
+import { resolveEntitiesIcons, resolveIconSvg } from '../icons/resolver.js';
 
 function getDefaultVisualEntities(topic: ExplainerTopic): VisualEntity[] {
   const isUber = topic.id.includes('uber') || topic.company.toLowerCase().includes('uber');
@@ -152,7 +152,10 @@ Takeaway: ${topic.takeaway}`;
         : getDefaultVisualEntities(topic);
 
     console.log(`🎨 [DynamicIconResolver] Resolving ${rawEntities.length} visual entities for "${topic.title}"...`);
-    const visualEntities = await resolveEntitiesIcons(rawEntities);
+    const [visualEntities, companySvgDataUri] = await Promise.all([
+      resolveEntitiesIcons(rawEntities),
+      resolveIconSvg(topic.company).catch(() => undefined),
+    ]);
 
     const stageArchetype = parsed.stageArchetype || 'spatial';
 
@@ -160,6 +163,7 @@ Takeaway: ${topic.takeaway}`;
       topicId: topic.id,
       company: topic.company,
       companyLogo: topic.companyLogo,
+      companySvgDataUri,
       videoTitle: parsed.videoTitle || `${topic.title} #Shorts`,
       hook,
       scaleMetric: topic.scaleMetric,
@@ -182,12 +186,16 @@ async function buildFallbackScript(topic: ExplainerTopic): Promise<ExplainerScri
   const fullSpokenText = `${hook} ${topic.steps[0].narration} ${topic.steps[1].narration} ${topic.steps[2].narration} ${topic.takeaway}`;
 
   const rawEntities = getDefaultVisualEntities(topic);
-  const visualEntities = await resolveEntitiesIcons(rawEntities);
+  const [visualEntities, companySvgDataUri] = await Promise.all([
+    resolveEntitiesIcons(rawEntities),
+    resolveIconSvg(topic.company).catch(() => undefined),
+  ]);
 
   return {
     topicId: topic.id,
     company: topic.company,
     companyLogo: topic.companyLogo,
+    companySvgDataUri,
     videoTitle: `${topic.title} #Shorts`,
     hook,
     scaleMetric: topic.scaleMetric,

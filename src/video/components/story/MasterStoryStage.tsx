@@ -122,6 +122,7 @@ export const MasterStoryStage: React.FC<MasterStoryStageProps> = ({ script }) =>
         {sceneIndex === 1 && (
           <Scene1_ContextStage
             company={script.company}
+            companySvgDataUri={script.companySvgDataUri}
             visualEntities={script.visualEntities}
             scaleMetric={script.scaleMetric}
           />

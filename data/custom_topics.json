@@ -270,5 +270,164 @@
       }
     ],
     "takeaway": "Real-time LLM inference relies on continuous token generation pipelines powered by distributed GPU tensor parallelism and efficient KV-cache memory management."
+  },
+  {
+    "id": "irctc-tatkal-30k-tps",
+    "company": "IRCTC",
+    "companyLogo": "🚆",
+    "title": "How IRCTC Handles 30,000 Tatkal Bookings Per Second",
+    "category": "Distributed Systems",
+    "scaleMetric": "30,000 TPS // < 2ms Seat Lock",
+    "problemStatement": "During the daily Tatkal flash sale, millions of concurrent users caused catastrophic row-level database lock contention on train seat inventory tables. IRCTC redesigned its architecture to decouple instant seat reservation from heavy relational transaction persistence.",
+    "tags": [
+      "#IRCTC",
+      "#Redis",
+      "#Concurrency",
+      "#DistributedSystems"
+    ],
+    "nodes": [
+      {
+        "id": "user-app",
+        "label": "Mobile & Web Clients",
+        "type": "client",
+        "x": 12,
+        "y": 50,
+        "stepRevealed": 1
+      },
+      {
+        "id": "cdn-waf",
+        "label": "Edge WAF & Bot Defense",
+        "type": "cdn",
+        "x": 30,
+        "y": 50,
+        "stepRevealed": 1
+      },
+      {
+        "id": "api-gateway",
+        "label": "API Gateway & Token Bucket",
+        "type": "gateway",
+        "x": 48,
+        "y": 50,
+        "stepRevealed": 1
+      },
+      {
+        "id": "redis-cluster",
+        "label": "Redis Atomic Seat Cache",
+        "type": "cache",
+        "x": 66,
+        "y": 25,
+        "stepRevealed": 2
+      },
+      {
+        "id": "booking-service",
+        "label": "Booking Allocation Engine",
+        "type": "service",
+        "x": 66,
+        "y": 75,
+        "stepRevealed": 2
+      },
+      {
+        "id": "kafka-queue",
+        "label": "Async Transaction Queue",
+        "type": "queue",
+        "x": 84,
+        "y": 75,
+        "stepRevealed": 3
+      },
+      {
+        "id": "main-db",
+        "label": "Sharded RDBMS Cluster",
+        "type": "db",
+        "x": 84,
+        "y": 25,
+        "stepRevealed": 3
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "user-app",
+        "target": "cdn-waf",
+        "protocol": "HTTPS / TLS 1.3"
+      },
+      {
+        "id": "e2",
+        "source": "cdn-waf",
+        "target": "api-gateway",
+        "protocol": "HTTP/2"
+      },
+      {
+        "id": "e3",
+        "source": "api-gateway",
+        "target": "booking-service",
+        "protocol": "gRPC"
+      },
+      {
+        "id": "e4",
+        "source": "booking-service",
+        "target": "redis-cluster",
+        "protocol": "Redis Lua Script"
+      },
+      {
+        "id": "e5",
+        "source": "booking-service",
+        "target": "kafka-queue",
+        "protocol": "Kafka Event"
+      },
+      {
+        "id": "e6",
+        "source": "kafka-queue",
+        "target": "main-db",
+        "protocol": "Batch JDBC Write"
+      }
+    ],
+    "steps": [
+      {
+        "stepNumber": 1,
+        "stepTitle": "01 // EDGE THROTTLING & BOT FILTERING",
+        "narration": "At peak Tatkal opening time, tens of millions of concurrent connections hit the system. The Edge WAF and Token-Bucket Gateways shed malicious bot scripts and apply rate limiting before requests reach the core cluster.",
+        "activeNodeIds": [
+          "user-app",
+          "cdn-waf",
+          "api-gateway"
+        ],
+        "activeEdgeIds": [
+          "e1",
+          "e2"
+        ],
+        "calloutMetric": "90% Bot Traffic Filtered at Edge"
+      },
+      {
+        "stepNumber": 2,
+        "stepTitle": "02 // ATOMIC IN-MEMORY SEAT LOCKING",
+        "narration": "Instead of hitting disk-backed databases, booking requests execute single-threaded atomic Lua scripts on sharded Redis clusters. Seat holds are claimed in sub-2 milliseconds, preventing double-booking without blocking database rows.",
+        "activeNodeIds": [
+          "api-gateway",
+          "booking-service",
+          "redis-cluster"
+        ],
+        "activeEdgeIds": [
+          "e3",
+          "e4"
+        ],
+        "calloutMetric": "< 2ms In-Memory Lua Seat Hold"
+      },
+      {
+        "stepNumber": 3,
+        "stepTitle": "03 // ASYNCHRONOUS TRANSACTION PERSISTENCE",
+        "narration": "Once a seat reservation is locked in Redis, payment token and allocation events are pushed into Kafka queues. Workers batch-write these queued bookings into sharded relational databases asynchronously to guarantee durable ACID compliance.",
+        "activeNodeIds": [
+          "booking-service",
+          "kafka-queue",
+          "main-db"
+        ],
+        "activeEdgeIds": [
+          "e5",
+          "e6"
+        ],
+        "calloutMetric": "30,000 TPS Queued Async Writes"
+      }
+    ],
+    "takeaway": "Decouple immediate high-concurrency state claims using atomic in-memory primitives from final ACID persistence via asynchronous message queues."
   }
 ]

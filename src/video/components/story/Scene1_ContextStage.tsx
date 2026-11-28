@@ -14,12 +14,13 @@ import type { VisualEntity } from '../../../schema/types';
 
 interface Scene1Props {
   company: string;
+  companySvgDataUri?: string;
   category?: string;
   visualEntities?: VisualEntity[];
   scaleMetric?: string;
 }
 
-export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEntities, scaleMetric }) => {
+export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, companySvgDataUri, visualEntities, scaleMetric }) => {
   const frame = useCurrentFrame();
   const { fps, width } = useVideoConfig();
   const isLandscape = width > 1200;
@@ -154,7 +155,7 @@ export const Scene1_ContextStage: React.FC<Scene1Props> = ({ company, visualEnti
 
         {/* 2. Central Brand Hub Node */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, zIndex: 10 }}>
-          <BrandHubCircle name={company} size={isLandscape ? 120 : 130} minimal={true} />
+          <BrandHubCircle name={company} svgDataUri={companySvgDataUri} size={isLandscape ? 120 : 130} minimal={true} />
           <div
             style={{
               backgroundColor: '#1E293B',
