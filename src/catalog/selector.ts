@@ -28,9 +28,24 @@ export async function selectTopicForVideo(options: TopicSelectionOptions = {}): 
   // If specific topic requested:
   if (options.topicId) {
     const cleanId = options.topicId.trim();
-    const match = allKnownTopics.find(
-      (t) => t.id === cleanId || t.title.toLowerCase().includes(cleanId.toLowerCase())
+    const cleanLower = cleanId.toLowerCase();
+
+    // 1. Exact ID match or exact full title match
+    let match = allKnownTopics.find(
+      (t) => t.id.toLowerCase() === cleanLower || t.title.toLowerCase() === cleanLower
     );
+
+    // 2. Keyword/slug match (e.g. 'uber', 'kafka', 'scylladb', 'stripe', 'netflix', 'upi')
+    // Only apply if the search term is a single keyword (> 3 chars) to avoid false matches on common words like 'how'
+    if (!match && !cleanId.includes(' ') && cleanId.length > 3) {
+      match = allKnownTopics.find(
+        (t) =>
+          t.id.toLowerCase().includes(cleanLower) ||
+          t.company.toLowerCase() === cleanLower ||
+          t.title.toLowerCase().includes(cleanLower)
+      );
+    }
+
     if (match) {
       console.log(`📌 Selected existing topic from catalog: "${match.title}" (ID: ${match.id})`);
       return match;

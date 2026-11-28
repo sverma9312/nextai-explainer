@@ -141,5 +141,134 @@
       }
     ],
     "takeaway": "Transforming message queues into immutable, sequential distributed commit logs powered by OS page cache and zero-copy operations eliminates scaling bottlenecks."
+  },
+  {
+    "id": "openai-chatgpt-llm-inference",
+    "company": "OpenAI",
+    "companyLogo": "🤖",
+    "title": "How ChatGPT Processes and Generates LLM Responses",
+    "category": "Real-Time Messaging",
+    "scaleMetric": "100M+ Users // ~50 Tokens/Sec Streaming",
+    "problemStatement": "Serving massive autoregressive transformer models with low latency required distributing massive model weights across specialized GPU clusters and optimizing token streaming pipelines.",
+    "tags": [
+      "#LLM",
+      "#Transformers",
+      "#GPUCluster",
+      "#StreamingInference"
+    ],
+    "nodes": [
+      {
+        "id": "client",
+        "label": "Web/Mobile Client",
+        "type": "client",
+        "x": 15,
+        "y": 50,
+        "stepRevealed": 1
+      },
+      {
+        "id": "api-gateway",
+        "label": "API Gateway & Rate Limiter",
+        "type": "gateway",
+        "x": 35,
+        "y": 50,
+        "stepRevealed": 1
+      },
+      {
+        "id": "orchestrator",
+        "label": "Inference Orchestrator",
+        "type": "service",
+        "x": 55,
+        "y": 35,
+        "stepRevealed": 2
+      },
+      {
+        "id": "redis-cache",
+        "label": "Context & Session Cache",
+        "type": "cache",
+        "x": 55,
+        "y": 75,
+        "stepRevealed": 2
+      },
+      {
+        "id": "gpu-cluster",
+        "label": "vLLM GPU Cluster (Tensor Parallelism)",
+        "type": "service",
+        "x": 80,
+        "y": 50,
+        "stepRevealed": 3
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "from": "client",
+        "to": "api-gateway",
+        "protocol": "HTTPS / SSE"
+      },
+      {
+        "id": "e2",
+        "from": "api-gateway",
+        "to": "orchestrator",
+        "protocol": "gRPC"
+      },
+      {
+        "id": "e3",
+        "from": "orchestrator",
+        "to": "redis-cache",
+        "protocol": "Redis Protocol"
+      },
+      {
+        "id": "e4",
+        "from": "orchestrator",
+        "to": "gpu-cluster",
+        "protocol": "NCCL / gRPC"
+      }
+    ],
+    "steps": [
+      {
+        "stepNumber": 1,
+        "stepTitle": "01 // REQUEST INGESTION",
+        "narration": "User prompts are transmitted via Server-Sent Events (SSE) through global load balancers and API gateways. The system authenticates the user, checks token rate limits, and tokenizes the prompt string into integer token IDs.",
+        "activeNodeIds": [
+          "client",
+          "api-gateway"
+        ],
+        "activeEdgeIds": [
+          "e1"
+        ],
+        "calloutMetric": "< 10ms Ingestion Latency"
+      },
+      {
+        "stepNumber": 2,
+        "stepTitle": "02 // CONTEXT RETRIEVAL",
+        "narration": "The orchestrator fetches the user's conversation history and system prompts from a distributed Redis cache. This forms the complete prompt context window required for the autoregressive transformer model.",
+        "activeNodeIds": [
+          "api-gateway",
+          "orchestrator",
+          "redis-cache"
+        ],
+        "activeEdgeIds": [
+          "e2",
+          "e3"
+        ],
+        "calloutMetric": "128k Context Window Cache"
+      },
+      {
+        "stepNumber": 3,
+        "stepTitle": "03 // GPU INFERENCE & STREAMING",
+        "narration": "The aggregated token array is processed across a cluster of GPUs utilizing tensor parallelism and KV-caching. Tokens are generated one by one and streamed back immediately to the client over the active SSE connection.",
+        "activeNodeIds": [
+          "orchestrator",
+          "gpu-cluster",
+          "client"
+        ],
+        "activeEdgeIds": [
+          "e4",
+          "e1"
+        ],
+        "calloutMetric": "50 Tokens/Sec Streaming"
+      }
+    ],
+    "takeaway": "Real-time LLM inference relies on continuous token generation pipelines powered by distributed GPU tensor parallelism and efficient KV-cache memory management."
   }
 ]

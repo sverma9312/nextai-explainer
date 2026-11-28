@@ -108,21 +108,22 @@ jobs:
           YOUTUBE_PRIVACY_STATUS: ${{ vars.YOUTUBE_PRIVACY_STATUS || 'public' }}
           INSTAGRAM_ACCOUNT_ID: ${{ secrets.INSTAGRAM_ACCOUNT_ID }}
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+          TOPIC_ID: ${{ inputs.topic }}
         run: |
-          FLAGS=""
+          FLAGS=()
           if [ "${{ inputs.retry_last }}" = "true" ]; then
-            FLAGS="$FLAGS --retry-last"
+            FLAGS+=("--retry-last")
           fi
           if [ "${{ inputs.force }}" = "true" ]; then
-            FLAGS="$FLAGS --force"
+            FLAGS+=("--force")
           fi
           if [ "${{ inputs.dry_run }}" = "true" ]; then
-            FLAGS="$FLAGS --dry-run"
+            FLAGS+=("--dry-run")
           fi
           if [ -n "${{ inputs.topic }}" ]; then
-            FLAGS="$FLAGS --topic ${{ inputs.topic }}"
+            FLAGS+=("--topic" "${{ inputs.topic }}")
           fi
-          pnpm generate:latest $FLAGS
+          pnpm generate:latest "${FLAGS[@]}"
 
       - name: Upload Rendered Video Artifact
         if: always()

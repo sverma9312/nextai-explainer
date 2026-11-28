@@ -42,7 +42,17 @@ export async function runPipeline(): Promise<void> {
   const isNoPublish = args.includes('--no-publish');
   const isRetryLast = args.includes('--retry-last') || process.env.RETRY_LAST === 'true';
   const topicIdx = args.indexOf('--topic');
-  let targetTopicId = topicIdx !== -1 && args[topicIdx + 1] ? args[topicIdx + 1] : undefined;
+  let targetTopicId: string | undefined = undefined;
+  if (topicIdx !== -1) {
+    const topicTokens: string[] = [];
+    for (let i = topicIdx + 1; i < args.length; i++) {
+      if (args[i].startsWith('--')) break;
+      topicTokens.push(args[i]);
+    }
+    if (topicTokens.length > 0) {
+      targetTopicId = topicTokens.join(' ').trim();
+    }
+  }
   if (!targetTopicId && process.env.TOPIC_ID) {
     targetTopicId = process.env.TOPIC_ID.trim();
   }
